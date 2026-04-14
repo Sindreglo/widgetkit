@@ -20,7 +20,7 @@ importers:
 
   apps/docs: {}
 
-  apps/playground:
+  apps/playground-react:
     dependencies:
       '@breeze/core':
         specifier: workspace:*
