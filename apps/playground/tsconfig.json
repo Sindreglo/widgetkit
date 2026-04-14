@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@breeze/scheduler-react/styles.css": ["../../packages/scheduler-react/src/styles.css"],
+      "@breeze/scheduler-react": ["../../packages/scheduler-react/src/index.ts"],
+      "@breeze/scheduler": ["../../packages/scheduler/src/index.ts"],
+      "@breeze/core": ["../../packages/core/src/index.ts"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

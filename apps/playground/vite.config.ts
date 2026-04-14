@@ -1,0 +1,28 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+
+// Resolve workspace packages directly from source — no build step needed during dev.
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: [
+      {
+        find: '@breeze/scheduler-react/styles.css',
+        replacement: resolve(__dirname, '../../packages/scheduler-react/src/styles.css'),
+      },
+      {
+        find: '@breeze/scheduler-react',
+        replacement: resolve(__dirname, '../../packages/scheduler-react/src/index.ts'),
+      },
+      {
+        find: '@breeze/scheduler',
+        replacement: resolve(__dirname, '../../packages/scheduler/src/index.ts'),
+      },
+      {
+        find: '@breeze/core',
+        replacement: resolve(__dirname, '../../packages/core/src/index.ts'),
+      },
+    ],
+  },
+});
