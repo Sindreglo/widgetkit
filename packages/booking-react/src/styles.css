@@ -138,17 +138,37 @@
   white-space: nowrap;
 }
 
+.bk-day-available {
+  background: var(--bk-available-bg, #eff6ff);
+}
+.bk-day-available .bk-day-num {
+  font-weight: 600;
+  color: var(--bk-accent, #3b82f6);
+}
+.bk-day-available .bk-day-price {
+  color: var(--bk-accent, #3b82f6);
+  opacity: 0.75;
+}
 .bk-day-available:hover {
-  background: var(--bk-hover-bg, #f1f5f9);
-  border-color: var(--bk-border-color, #e2e8f0);
+  background: var(--bk-hover-bg, #dbeafe);
 }
 .bk-day-disabled {
   cursor: default;
-  opacity: 0.35;
+  opacity: 0.45;
 }
 .bk-day-today .bk-day-num {
-  color: var(--bk-accent, #3b82f6);
-  font-weight: 700;
+  position: relative;
+}
+.bk-day-today .bk-day-num::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--bk-accent, #3b82f6);
 }
 .bk-day-selected {
   background: var(--bk-accent, #3b82f6) !important;
