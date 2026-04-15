@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@widgetkit/booking": "workspace:*",
-    "@widgetkit/core": "^0.0.2"
+    "@widgetkit/core": "^0.0.3"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

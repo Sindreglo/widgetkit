@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Framework-agnostic core utilities for WidgetKit UI components",
   "license": "MIT",
   "author": "Sindre Glomnes",

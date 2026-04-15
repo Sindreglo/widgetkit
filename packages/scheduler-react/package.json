@@ -33,7 +33,7 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@widgetkit/core": "^0.0.2",
+    "@widgetkit/core": "^0.0.3",
     "@widgetkit/scheduler": "workspace:*"
   },
   "peerDependencies": {
