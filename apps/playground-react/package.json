@@ -12,7 +12,9 @@
     "@widgetkit/scheduler": "workspace:*",
     "@widgetkit/scheduler-react": "workspace:*",
     "@widgetkit/booking-react": "workspace:*",
-    "@widgetkit/booking": "workspace:*"
+    "@widgetkit/booking": "workspace:*",
+    "@widgetkit/spreadsheet": "workspace:*",
+    "@widgetkit/spreadsheet-react": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

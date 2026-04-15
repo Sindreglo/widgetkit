@@ -56,6 +56,12 @@ importers:
       '@widgetkit/scheduler-react':
         specifier: workspace:*
         version: link:../../packages/scheduler-react
+      '@widgetkit/spreadsheet':
+        specifier: workspace:*
+        version: link:../../packages/spreadsheet
+      '@widgetkit/spreadsheet-react':
+        specifier: workspace:*
+        version: link:../../packages/spreadsheet-react
     devDependencies:
       '@types/react':
         specifier: ^19.0.0
@@ -302,6 +308,40 @@ importers:
       vue-tsc:
         specifier: ^2.0.0
         version: 2.2.12(typescript@5.9.3)
+
+  packages/spreadsheet:
+    devDependencies:
+      tsup:
+        specifier: ^8.3.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.2(@types/node@22.19.17))(postcss@8.5.9)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
+  packages/spreadsheet-react:
+    dependencies:
+      '@widgetkit/spreadsheet':
+        specifier: workspace:*
+        version: link:../spreadsheet
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.14)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.5
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.5(react@19.2.5)
+      tsup:
+        specifier: ^8.3.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.2(@types/node@22.19.17))(postcss@8.5.9)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
 packages:
 

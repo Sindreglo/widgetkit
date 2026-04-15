@@ -1,0 +1,252 @@
+/* ── CSS Variables ────────────────────────────────────────────────────────── */
+.ss-root {
+  --ss-accent: #3b82f6;
+  --ss-bg: #ffffff;
+  --ss-header-bg: #f8fafc;
+  --ss-border: #e2e8f0;
+  --ss-text: #1e293b;
+  --ss-muted: #64748b;
+  --ss-error: #ef4444;
+  --ss-font: sans-serif;
+
+  font-family: var(--ss-font);
+  font-size: 13px;
+  color: var(--ss-text);
+  background: var(--ss-bg);
+  border: 1px solid var(--ss-border);
+  border-radius: 4px;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.ss-root *,
+.ss-root *::before,
+.ss-root *::after {
+  box-sizing: border-box;
+}
+
+/* ── Formula Bar ─────────────────────────────────────────────────────────── */
+.ss-formula-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--ss-header-bg);
+  border-bottom: 1px solid var(--ss-border);
+  min-height: 30px;
+}
+
+.ss-formula-ref {
+  width: 56px;
+  min-width: 56px;
+  padding: 2px 6px;
+  border: 1px solid var(--ss-border);
+  border-radius: 3px;
+  background: var(--ss-bg);
+  color: var(--ss-text);
+  font-family: var(--ss-font);
+  font-size: 12px;
+  text-align: center;
+  outline: none;
+}
+
+.ss-formula-sep {
+  color: var(--ss-muted);
+  font-weight: 600;
+  user-select: none;
+  padding: 0 2px;
+}
+
+.ss-formula-input {
+  flex: 1;
+  padding: 2px 8px;
+  border: 1px solid var(--ss-border);
+  border-radius: 3px;
+  background: var(--ss-bg);
+  color: var(--ss-text);
+  font-family: monospace;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ss-formula-input:focus {
+  border-color: var(--ss-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ss-accent) 20%, transparent);
+}
+
+/* ── Container ───────────────────────────────────────────────────────────── */
+.ss-container {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Column Headers ──────────────────────────────────────────────────────── */
+.ss-col-header-row {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--ss-header-bg);
+  border-bottom: 1px solid var(--ss-border);
+  overflow: hidden;
+}
+
+.ss-corner {
+  flex-shrink: 0;
+  background: var(--ss-header-bg);
+  border-right: 1px solid var(--ss-border);
+}
+
+.ss-col-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ss-muted);
+  border-right: 1px solid var(--ss-border);
+  user-select: none;
+  background: var(--ss-header-bg);
+}
+
+/* ── Scroll Body ─────────────────────────────────────────────────────────── */
+.ss-scroll-body {
+  overflow: auto;
+  flex: 1;
+}
+
+/* ── Grid Inner ──────────────────────────────────────────────────────────── */
+.ss-grid-inner {
+  position: relative;
+}
+
+/* ── Rows ────────────────────────────────────────────────────────────────── */
+.ss-visible-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.ss-row {
+  display: flex;
+  border-bottom: 1px solid var(--ss-border);
+}
+
+/* ── Row Numbers ─────────────────────────────────────────────────────────── */
+.ss-row-num {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 6px;
+  font-size: 11px;
+  color: var(--ss-muted);
+  background: var(--ss-header-bg);
+  border-right: 1px solid var(--ss-border);
+  user-select: none;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+/* ── Cells ───────────────────────────────────────────────────────────────── */
+.ss-cell {
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-right: 1px solid var(--ss-border);
+  padding: 0 4px;
+  cursor: default;
+  pointer-events: auto;
+  background: var(--ss-bg);
+  transition: background 0.05s;
+}
+
+.ss-cell:focus {
+  outline: none;
+}
+
+.ss-cell-content {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* Selected cell */
+.ss-cell--selected {
+  outline: 2px solid var(--ss-accent);
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+/* Editing cell */
+.ss-cell--editing {
+  padding: 0;
+  overflow: visible;
+  z-index: 2;
+}
+
+.ss-cell-input {
+  width: 100%;
+  height: 100%;
+  padding: 0 4px;
+  border: 2px solid var(--ss-accent);
+  outline: none;
+  font-family: var(--ss-font);
+  font-size: 13px;
+  color: var(--ss-text);
+  background: var(--ss-bg);
+}
+
+/* Error cells */
+.ss-cell--error .ss-cell-content {
+  color: var(--ss-error);
+  font-style: italic;
+}
+
+/* Formula cells */
+.ss-cell--formula .ss-cell-content {
+  color: var(--ss-text);
+}
+
+/* ── Spacers ─────────────────────────────────────────────────────────────── */
+.ss-top-spacer,
+.ss-bottom-spacer {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* ── Scrollbar styling (Webkit) ──────────────────────────────────────────── */
+.ss-scroll-body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ss-scroll-body::-webkit-scrollbar-track {
+  background: var(--ss-header-bg);
+}
+
+.ss-scroll-body::-webkit-scrollbar-thumb {
+  background: var(--ss-border);
+  border-radius: 4px;
+}
+
+.ss-scroll-body::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+.ss-scroll-body::-webkit-scrollbar-corner {
+  background: var(--ss-header-bg);
+}

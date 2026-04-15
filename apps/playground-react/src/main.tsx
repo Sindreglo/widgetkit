@@ -6,6 +6,9 @@ import "@widgetkit/scheduler-react/styles.css";
 import { BookingScheduler } from "@widgetkit/booking-react";
 import type { AvailabilityDay, BookingMode, BookingSelection } from "@widgetkit/booking-react";
 import "@widgetkit/booking-react/styles.css";
+import { Spreadsheet } from "@widgetkit/spreadsheet-react";
+import type { CellMap } from "@widgetkit/spreadsheet-react";
+import "@widgetkit/spreadsheet-react/styles.css";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -345,6 +348,39 @@ function BookingDemo() {
   );
 }
 
+// ── Spreadsheet demo ─────────────────────────────────────────────────────────
+
+const initialCells: CellMap = {
+  A1: "Name",    B1: "Q1",  C1: "Q2",  D1: "Q3",  E1: "Total",
+  A2: "Alice",   B2: 9200,  C2: 10500, D2: 11800,
+  A3: "Bob",     B3: 7400,  C3: 8100,  D3: 9300,
+  A4: "Carol",   B4: 11000, C4: 12500, D4: 13200,
+  A5: "David",   B5: 6800,  C5: 7200,  D5: 8400,
+  A6: "Total",
+  E2: "=SUM(B2:D2)",
+  E3: "=SUM(B3:D3)",
+  E4: "=SUM(B4:D4)",
+  E5: "=SUM(B5:D5)",
+  B6: "=SUM(B2:B5)",
+  C6: "=SUM(C2:C5)",
+  D6: "=SUM(D2:D5)",
+  E6: "=SUM(E2:E5)",
+};
+
+function SpreadsheetDemo() {
+  const [cells, setCells] = useState<CellMap>(initialCells);
+
+  return (
+    <Spreadsheet
+      cells={cells}
+      rows={20}
+      cols={8}
+      maxHeight={360}
+      onCellsChange={setCells}
+    />
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 function App() {
@@ -502,6 +538,12 @@ function App() {
       </h2>
 
       <BookingDemo />
+
+      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginTop: 24 }}>
+        spreadsheet-react
+      </h2>
+
+      <SpreadsheetDemo />
 
       <div style={{ height: 80 }} />
     </div>

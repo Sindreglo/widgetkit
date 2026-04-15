@@ -35,6 +35,18 @@ export default defineConfig({
         find: '@widgetkit/core',
         replacement: resolve(__dirname, '../../packages/core/src/index.ts'),
       },
+      {
+        find: '@widgetkit/spreadsheet-react/styles.css',
+        replacement: resolve(__dirname, '../../packages/spreadsheet-react/src/styles.css'),
+      },
+      {
+        find: '@widgetkit/spreadsheet-react',
+        replacement: resolve(__dirname, '../../packages/spreadsheet-react/src/index.ts'),
+      },
+      {
+        find: '@widgetkit/spreadsheet',
+        replacement: resolve(__dirname, '../../packages/spreadsheet/src/index.ts'),
+      },
     ],
   },
 });
