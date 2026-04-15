@@ -1,6 +1,6 @@
 # WidgetKit
 
-Clean, accessible UI components for React and Vue 3. Zero dependencies beyond the framework itself.
+Clean, accessible UI components for React, Vue 3, and vanilla JavaScript. Zero dependencies beyond the framework itself.
 
 ## Components
 
@@ -14,6 +14,7 @@ A resource scheduler for displaying and booking time blocks across multiple reso
 | ------- | ------- |
 | [`@widgetkit/scheduler-react`](packages/scheduler-react) | [![npm](https://img.shields.io/npm/v/@widgetkit/scheduler-react)](https://www.npmjs.com/package/@widgetkit/scheduler-react) |
 | [`@widgetkit/scheduler-vue`](packages/scheduler-vue) | [![npm](https://img.shields.io/npm/v/@widgetkit/scheduler-vue)](https://www.npmjs.com/package/@widgetkit/scheduler-vue) |
+| [`@widgetkit/scheduler-js`](packages/scheduler-js) | [![npm](https://img.shields.io/npm/v/@widgetkit/scheduler-js)](https://www.npmjs.com/package/@widgetkit/scheduler-js) |
 
 ---
 
@@ -38,12 +39,14 @@ packages/
   scheduler/         # Framework-agnostic scheduler core
   scheduler-react/   # React component
   scheduler-vue/     # Vue 3 component
+  scheduler-js/      # Vanilla JavaScript component
   booking/           # Framework-agnostic booking core
   booking-react/     # React component
   booking-vue/       # Vue 3 component
 apps/
   playground-react/  # React dev playground
   playground-vue/    # Vue dev playground
+  playground-js/     # Vanilla JS dev playground
 ```
 
 ## Development
