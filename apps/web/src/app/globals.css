@@ -6,6 +6,7 @@
 
 :root {
   --bg: #0a0a0f;
+  --bg-nav: rgba(10, 10, 15, 0.8);
   --bg-card: #111118;
   --bg-card-hover: #16161f;
   --border: rgba(255, 255, 255, 0.08);
@@ -17,6 +18,19 @@
   --accent-glow: rgba(108, 99, 255, 0.25);
   --radius: 12px;
   --radius-sm: 6px;
+}
+
+[data-theme="light"] {
+  --bg: #fafafa;
+  --bg-nav: rgba(250, 250, 250, 0.85);
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f5f7;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.16);
+  --text: #0a0a0f;
+  --text-muted: #666677;
+  --accent-2: #7c3aed;
+  --accent-glow: rgba(108, 99, 255, 0.15);
 }
 
 html {
@@ -45,7 +59,7 @@ a {
   justify-content: space-between;
   padding: 0 2rem;
   height: 60px;
-  background: rgba(10, 10, 15, 0.8);
+  background: var(--bg-nav);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
@@ -274,7 +288,7 @@ a {
   font-weight: 500;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--border);
   color: var(--text-muted);
   letter-spacing: 0.02em;
 }
@@ -311,6 +325,27 @@ a {
 .feature-item span {
   font-size: 0.8125rem;
   color: var(--text-muted);
+}
+
+/* Theme icon button */
+.theme-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.theme-icon-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
 }
 
 /* Footer */

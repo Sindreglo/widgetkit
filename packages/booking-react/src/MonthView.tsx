@@ -16,12 +16,13 @@ interface Props {
   selectedDate: string | null;
   minDate?: Date;
   maxDate?: Date;
+  showPrice?: boolean;
   onMonthChange: (year: number, month: number) => void;
   onDateSelect: (date: string) => void;
 }
 
 export function MonthView({
-  year, month, availability, selectedDate, minDate, maxDate,
+  year, month, availability, selectedDate, minDate, maxDate, showPrice = true,
   onMonthChange, onDateSelect,
 }: Props) {
   const weeks = buildMonthGrid(year, month);
@@ -86,7 +87,7 @@ export function MonthView({
               aria-pressed={selected}
             >
               <span className="bk-day-num">{dayNum}</span>
-              {day?.price != null && (
+              {showPrice && day?.price != null && (
                 <span className="bk-day-price">{day.price}</span>
               )}
             </button>

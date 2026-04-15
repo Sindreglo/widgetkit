@@ -12,6 +12,8 @@ interface Props {
   date: string; // 'YYYY-MM-DD'
   day: AvailabilityDay | undefined;
   selectedTime: string | null;
+  showPrice?: boolean;
+  showDuration?: boolean;
   onTimeSelect: (time: string, duration: number) => void;
   onBack?: () => void; // shown in month-day mode
 }
@@ -28,7 +30,7 @@ function formatDateLabel(dateStr: string): string {
   return `${DAY_NAMES[d.getDay()]}, ${d.getDate()}. ${MONTH_NAMES[d.getMonth()]}`;
 }
 
-export function DayView({ date, day, selectedTime, onTimeSelect, onBack }: Props) {
+export function DayView({ date, day, selectedTime, showPrice = true, showDuration = true, onTimeSelect, onBack }: Props) {
   const slots = day?.slots ?? [];
   const hasSlots = slots.length > 0;
 
@@ -65,10 +67,10 @@ export function DayView({ date, day, selectedTime, onTimeSelect, onBack }: Props
               aria-pressed={selected}
             >
               <span className="bk-slot-time">{slot.time}</span>
-              {slot.duration != null && (
+              {showDuration && slot.duration != null && (
                 <span className="bk-slot-duration">{formatDuration(slot.duration)}</span>
               )}
-              {slot.price != null && (
+              {showPrice && slot.price != null && (
                 <span className="bk-slot-price">{slot.price}</span>
               )}
             </button>

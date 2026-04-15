@@ -16,6 +16,10 @@ export interface BookingSchedulerProps {
   minDate?: Date;
   maxDate?: Date;
 
+  // Display
+  showPrice?: boolean;
+  showDuration?: boolean;
+
   onSelect?: (selection: BookingSelection) => void;
 }
 
@@ -26,6 +30,8 @@ export function BookingScheduler({
   initialMonth,
   minDate,
   maxDate,
+  showPrice = true,
+  showDuration = true,
   onSelect,
 }: BookingSchedulerProps) {
   const now = initialMonth ?? new Date();
@@ -74,6 +80,7 @@ export function BookingScheduler({
             selectedDate={selectedDate}
             minDate={minDate}
             maxDate={maxDate}
+            showPrice={showPrice}
             onMonthChange={(y, m) => { setViewYear(y); setViewMonth(m); }}
             onDateSelect={handleDateSelect}
           />
@@ -85,6 +92,8 @@ export function BookingScheduler({
           date={dayDate}
           day={dayMap.get(dayDate)}
           selectedTime={selectedTime}
+          showPrice={showPrice}
+          showDuration={showDuration}
           onTimeSelect={handleTimeSelect}
           onBack={mode === 'month-day' ? handleBack : undefined}
         />

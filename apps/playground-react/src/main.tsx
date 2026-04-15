@@ -274,28 +274,48 @@ const bookingAvailability: AvailabilityDay[] = [
 
 function BookingDemo() {
   const [mode, setMode] = useState<BookingMode>("month-day");
+  const [showPrice, setShowPrice] = useState(true);
+  const [showDuration, setShowDuration] = useState(true);
   const [selection, setSelection] = useState<BookingSelection | null>(null);
+
+  const checkboxes: [string, boolean, (v: boolean) => void][] = [
+    ["Show price", showPrice, setShowPrice],
+    ["Show duration", showDuration, setShowDuration],
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", gap: 12, fontSize: 13, flexWrap: "wrap" }}>
-        {(["month-day", "month-only", "day-only"] as BookingMode[]).map((m) => (
-          <label key={m} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
-            <input
-              type="radio"
-              name="booking-mode"
-              checked={mode === m}
-              onChange={() => { setMode(m); setSelection(null); }}
-            />
-            {m}
-          </label>
-        ))}
+      <div style={{ display: "flex", gap: 20, fontSize: 13, flexWrap: "wrap", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 12 }}>
+          {(["month-day", "month-only", "day-only"] as BookingMode[]).map((m) => (
+            <label key={m} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+              <input
+                type="radio"
+                name="booking-mode"
+                checked={mode === m}
+                onChange={() => { setMode(m); setSelection(null); }}
+              />
+              {m}
+            </label>
+          ))}
+        </div>
+        <div style={{ width: 1, height: 16, background: "#e2e8f0" }} />
+        <div style={{ display: "flex", gap: 12 }}>
+          {checkboxes.map(([label, value, setter]) => (
+            <label key={label} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+              <input type="checkbox" checked={value} onChange={(e) => setter(e.target.checked)} />
+              {label}
+            </label>
+          ))}
+        </div>
       </div>
 
       <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
         <BookingScheduler
           mode={mode}
           availability={bookingAvailability}
+          showPrice={showPrice}
+          showDuration={showDuration}
           date={mode === "day-only" ? new Date(bookingDate(1)) : undefined}
           onSelect={(s) => setSelection(s)}
         />

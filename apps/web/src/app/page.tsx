@@ -1,3 +1,5 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 const products = [
   {
     icon: "🗓",
@@ -49,7 +51,10 @@ export default function HomePage() {
           <li><a href="#">Docs</a></li>
           <li><a href="#">Pricing</a></li>
         </ul>
-        <a href="#" className="nav-cta">Get started</a>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <ThemeToggle />
+          <a href="#" className="nav-cta">Get started</a>
+        </div>
       </nav>
 
       <section className="hero">

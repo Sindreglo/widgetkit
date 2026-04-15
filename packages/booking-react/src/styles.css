@@ -25,7 +25,6 @@
 }
 .bk-root.bk-side-by-side .bk-month-col {
   flex: 0 0 360px;
-  border-right: 1px solid var(--bk-border-color, #e2e8f0);
 }
 .bk-root.bk-side-by-side .bk-day {
   width: 240px;
