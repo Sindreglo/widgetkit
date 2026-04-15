@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/booking-vue",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Vue 3 booking scheduler component",
   "license": "MIT",
   "author": "Sindre Glomnes",
@@ -33,7 +33,7 @@
     "dev": "vite build --watch"
   },
   "dependencies": {
-    "@widgetkit/booking": "workspace:*",
+    "@widgetkit/booking": "^0.0.2",
     "@widgetkit/core": "^0.0.3"
   },
   "peerDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/booking-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "React booking scheduler component",
   "license": "MIT",
   "author": "Sindre Glomnes",
@@ -33,7 +33,7 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@widgetkit/booking": "workspace:*",
+    "@widgetkit/booking": "^0.0.2",
     "@widgetkit/core": "^0.0.3"
   },
   "peerDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/booking",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Framework-agnostic booking scheduler core for WidgetKit",
   "license": "MIT",
   "author": "Sindre Glomnes",
