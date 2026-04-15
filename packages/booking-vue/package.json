@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@widgetkit/booking": "workspace:*",
-    "@widgetkit/core": "workspace:*"
+    "@widgetkit/core": "^0.0.2"
   },
   "peerDependencies": {
     "vue": ">=3.3.0"
