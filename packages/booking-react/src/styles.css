@@ -31,6 +31,7 @@
   width: 240px;
   border-top: none;
   overflow-y: auto;
+  max-height: var(--bk-day-max-height, 460px);
 }
 .bk-root.bk-side-by-side .bk-back-btn {
   display: none;
