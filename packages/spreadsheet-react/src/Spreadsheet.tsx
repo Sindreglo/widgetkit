@@ -30,6 +30,77 @@ function toCellValue(raw: string): CellValue {
   return raw;
 }
 
+// ── Row / column shift helpers ────────────────────────────────────────────────
+
+function shiftRows(cells: CellMap, fromRow: number, delta: number): CellMap {
+  const out: CellMap = {};
+  for (const [ref, val] of Object.entries(cells)) {
+    const m = ref.match(/^([A-Z]+)(\d+)$/i);
+    if (!m) { out[ref] = val; continue; }
+    const r = parseInt(m[2], 10) - 1;
+    if (delta < 0 && r === fromRow) continue; // deleted row — drop it
+    out[r < fromRow ? ref : `${m[1]}${r + delta + 1}`] = val;
+  }
+  return out;
+}
+
+function shiftCols(cells: CellMap, fromCol: number, delta: number): CellMap {
+  const out: CellMap = {};
+  for (const [ref, val] of Object.entries(cells)) {
+    const m = ref.match(/^([A-Z]+)(\d+)$/i);
+    if (!m) { out[ref] = val; continue; }
+    let c = 0;
+    for (const ch of m[1].toUpperCase()) c = c * 26 + (ch.charCodeAt(0) - 64);
+    c--;
+    if (delta < 0 && c === fromCol) continue; // deleted col — drop it
+    out[c < fromCol ? ref : `${colToLetters(c + delta)}${m[2]}`] = val;
+  }
+  return out;
+}
+
+// ── Context menu ──────────────────────────────────────────────────────────────
+
+interface CtxItem { label: string; action: () => void; disabled?: boolean }
+type CtxEntry = CtxItem | null; // null = separator
+
+function CtxMenu({ x, y, items, onClose }: {
+  x: number; y: number; items: CtxEntry[]; onClose: () => void;
+}) {
+  useEffect(() => {
+    const onDown = () => onClose();
+    const onKey  = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('pointerdown', onDown, true);
+    window.addEventListener('keydown', onKey, true);
+    return () => {
+      window.removeEventListener('pointerdown', onDown, true);
+      window.removeEventListener('keydown', onKey, true);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="ss-ctx-menu"
+      style={{ position: 'fixed', left: x, top: y }}
+      onPointerDown={e => e.stopPropagation()}
+    >
+      {items.map((item, i) =>
+        item === null ? (
+          <div key={i} className="ss-ctx-sep" />
+        ) : (
+          <button
+            key={i}
+            className="ss-ctx-item"
+            disabled={item.disabled}
+            onClick={() => { item.action(); onClose(); }}
+          >
+            {item.label}
+          </button>
+        )
+      )}
+    </div>
+  );
+}
+
 export function Spreadsheet({
   cells,
   rows = DEFAULT_ROWS,
@@ -49,6 +120,11 @@ export function Spreadsheet({
   const [selectedRef, setSelectedRef] = useState<string>('A1');
   const [editingRef, setEditingRef] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
+
+  // Context menu + clipboard
+  const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
+  const closeCtx = useCallback(() => setCtxMenu(null), []);
+  const clipboardRef = useRef<{ value: CellValue; cut: boolean; fromRef: string } | null>(null);
 
   // Virtual scrolling state
   const [scrollTop, setScrollTop] = useState(0);
@@ -350,6 +426,12 @@ export function Spreadsheet({
                             gridWrapperRef.current?.focus();
                           }}
                           onDoubleClick={() => enterEditMode(ref)}
+                          onContextMenu={e => {
+                            e.preventDefault();
+                            if (editingRef && editingRef !== ref) commitEdit(editingRef, editValue);
+                            setSelectedRef(ref);
+                            setCtxMenu({ x: e.clientX, y: e.clientY });
+                          }}
                         >
                           {isEditing ? (
                             <input
@@ -379,6 +461,50 @@ export function Spreadsheet({
           </div>
         </div>
       </div>
+
+      {ctxMenu && (() => {
+        const cb = clipboardRef.current;
+        const rawVal = cells[selectedRef] ?? null;
+
+        const items: CtxEntry[] = [
+          {
+            label: 'Cut',
+            action: () => { clipboardRef.current = { value: rawVal, cut: true, fromRef: selectedRef }; },
+          },
+          {
+            label: 'Copy',
+            action: () => { clipboardRef.current = { value: rawVal, cut: false, fromRef: selectedRef }; },
+          },
+          {
+            label: 'Paste',
+            disabled: !cb,
+            action: () => {
+              if (!cb) return;
+              const next = { ...cells, [selectedRef]: cb.value };
+              if (cb.cut) { delete next[cb.fromRef]; clipboardRef.current = null; }
+              onCellsChange?.(next);
+            },
+          },
+          {
+            label: 'Clear',
+            action: () => {
+              const next = { ...cells };
+              delete next[selectedRef];
+              onCellsChange?.(next);
+            },
+          },
+          null,
+          { label: 'Insert row above', action: () => onCellsChange?.(shiftRows(cells, selectedAddr.row,     1)) },
+          { label: 'Insert row below', action: () => onCellsChange?.(shiftRows(cells, selectedAddr.row + 1, 1)) },
+          { label: 'Delete row',       action: () => onCellsChange?.(shiftRows(cells, selectedAddr.row,    -1)) },
+          null,
+          { label: 'Insert column left',  action: () => onCellsChange?.(shiftCols(cells, selectedAddr.col,     1)) },
+          { label: 'Insert column right', action: () => onCellsChange?.(shiftCols(cells, selectedAddr.col + 1, 1)) },
+          { label: 'Delete column',       action: () => onCellsChange?.(shiftCols(cells, selectedAddr.col,    -1)) },
+        ];
+
+        return <CtxMenu x={ctxMenu.x} y={ctxMenu.y} items={items} onClose={closeCtx} />;
+      })()}
     </div>
   );
 }
