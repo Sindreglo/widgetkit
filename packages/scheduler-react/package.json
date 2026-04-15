@@ -2,6 +2,17 @@
   "name": "@widgetkit/scheduler-react",
   "version": "0.0.1",
   "description": "React timeline scheduler component",
+  "license": "MIT",
+  "author": "Sindre Glomnes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sindreglo/widgetkit.git",
+    "directory": "packages/scheduler-react"
+  },
+  "homepage": "https://github.com/Sindreglo/widgetkit/tree/main/packages/scheduler-react",
+  "bugs": {
+    "url": "https://github.com/Sindreglo/widgetkit/issues"
+  },
   "type": "module",
   "exports": {
     ".": {

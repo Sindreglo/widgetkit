@@ -2,6 +2,17 @@
   "name": "@widgetkit/core",
   "version": "0.0.1",
   "description": "Framework-agnostic core utilities for WidgetKit UI components",
+  "license": "MIT",
+  "author": "Sindre Glomnes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sindreglo/widgetkit.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/Sindreglo/widgetkit/tree/main/packages/core",
+  "bugs": {
+    "url": "https://github.com/Sindreglo/widgetkit/issues"
+  },
   "type": "module",
   "exports": {
     ".": {

@@ -2,6 +2,17 @@
   "name": "@widgetkit/scheduler",
   "version": "0.0.1",
   "description": "Framework-agnostic scheduler logic for WidgetKit",
+  "license": "MIT",
+  "author": "Sindre Glomnes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sindreglo/widgetkit.git",
+    "directory": "packages/scheduler"
+  },
+  "homepage": "https://github.com/Sindreglo/widgetkit/tree/main/packages/scheduler",
+  "bugs": {
+    "url": "https://github.com/Sindreglo/widgetkit/issues"
+  },
   "type": "module",
   "exports": {
     ".": {
