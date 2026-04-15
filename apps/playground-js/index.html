@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scheduler-js playground</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+      }
+      h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+      p  { font-size: 13px; color: #64748b; margin: 0 0 24px; }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 24px;
+        align-items: center;
+      }
+      .controls label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+      #scheduler { height: 400px; }
+      #log {
+        margin-top: 24px;
+        font-size: 12px;
+        font-family: monospace;
+        background: #1e293b;
+        color: #94a3b8;
+        border-radius: 6px;
+        padding: 12px 16px;
+        max-height: 160px;
+        overflow-y: auto;
+      }
+      #log .entry { padding: 2px 0; border-bottom: 1px solid #334155; }
+      #log .entry:last-child { border-bottom: none; }
+    </style>
+  </head>
+  <body>
+    <h1>@widgetkit/scheduler-js</h1>
+    <p>Vanilla JavaScript timeline scheduler — zero framework dependencies.</p>
+
+    <div class="controls">
+      <label><input type="checkbox" id="toggle-nav" checked /> Show nav</label>
+      <label><input type="checkbox" id="toggle-avatar" checked /> Show avatars</label>
+      <label><input type="checkbox" id="toggle-time" checked /> Show time</label>
+      <label><input type="checkbox" id="toggle-tooltip" checked /> Show tooltip</label>
+      <label><input type="checkbox" id="toggle-nowline" checked /> Now line</label>
+      <label><input type="checkbox" id="toggle-draggable" checked /> Draggable</label>
+      <label><input type="checkbox" id="toggle-resizable" /> Resizable</label>
+      <label><input type="checkbox" id="toggle-creatable" /> Creatable</label>
+      <label><input type="checkbox" id="toggle-readonly" /> Readonly</label>
+    </div>
+
+    <div id="scheduler"></div>
+    <div id="log"><div class="entry">Events will appear here...</div></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

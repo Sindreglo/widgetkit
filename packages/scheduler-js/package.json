@@ -1,0 +1,43 @@
+{
+  "name": "@widgetkit/scheduler-js",
+  "version": "0.0.1",
+  "description": "Vanilla JavaScript timeline scheduler component",
+  "license": "MIT",
+  "author": "Sindre Glomnes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sindreglo/widgetkit.git",
+    "directory": "packages/scheduler-js"
+  },
+  "homepage": "https://github.com/Sindreglo/widgetkit/tree/main/packages/scheduler-js",
+  "bugs": {
+    "url": "https://github.com/Sindreglo/widgetkit/issues"
+  },
+  "keywords": ["widgetkit", "scheduler", "timeline", "calendar", "resource-scheduler", "vanilla", "javascript", "zero-dependency"],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "sideEffects": ["./dist/styles.css"],
+  "scripts": {
+    "build": "tsup && cp src/styles.css dist/styles.css",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@widgetkit/core": "^0.0.3",
+    "@widgetkit/scheduler": "^0.0.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0"
+  }
+}

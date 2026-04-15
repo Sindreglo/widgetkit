@@ -20,6 +20,25 @@ importers:
 
   apps/docs: {}
 
+  apps/playground-js:
+    dependencies:
+      '@widgetkit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@widgetkit/scheduler':
+        specifier: workspace:*
+        version: link:../../packages/scheduler
+      '@widgetkit/scheduler-js':
+        specifier: workspace:*
+        version: link:../../packages/scheduler-js
+    devDependencies:
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.2(@types/node@22.19.17)
+
   apps/playground-react:
     dependencies:
       '@widgetkit/booking':
@@ -134,8 +153,11 @@ importers:
   packages/booking-react:
     dependencies:
       '@widgetkit/booking':
-        specifier: workspace:*
-        version: link:../booking
+        specifier: ^0.0.2
+        version: 0.0.2
+      '@widgetkit/core':
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@types/react':
         specifier: ^19.0.0
@@ -159,11 +181,11 @@ importers:
   packages/booking-vue:
     dependencies:
       '@widgetkit/booking':
-        specifier: workspace:*
-        version: link:../booking
+        specifier: ^0.0.2
+        version: 0.0.2
       '@widgetkit/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.0
@@ -199,8 +221,24 @@ importers:
   packages/scheduler:
     dependencies:
       '@widgetkit/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.3
+        version: 0.0.3
+    devDependencies:
+      tsup:
+        specifier: ^8.3.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.2(@types/node@22.19.17))(postcss@8.5.9)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
+  packages/scheduler-js:
+    dependencies:
+      '@widgetkit/core':
+        specifier: ^0.0.3
+        version: 0.0.3
+      '@widgetkit/scheduler':
+        specifier: ^0.0.2
+        version: 0.0.2
     devDependencies:
       tsup:
         specifier: ^8.3.0
@@ -212,8 +250,8 @@ importers:
   packages/scheduler-react:
     dependencies:
       '@widgetkit/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.3
+        version: 0.0.3
       '@widgetkit/scheduler':
         specifier: workspace:*
         version: link:../scheduler
@@ -240,8 +278,8 @@ importers:
   packages/scheduler-vue:
     dependencies:
       '@widgetkit/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.3
+        version: 0.0.3
       '@widgetkit/scheduler':
         specifier: workspace:*
         version: link:../scheduler
@@ -1313,6 +1351,15 @@ packages:
 
   '@vue/shared@3.5.32':
     resolution: {integrity: sha512-ksNyrmRQzWJJ8n3cRDuSF7zNNontuJg1YHnmWRJd2AMu8Ij2bqwiiri2lH5rHtYPZjj4STkNcgcmiQqlOjiYGg==}
+
+  '@widgetkit/booking@0.0.2':
+    resolution: {integrity: sha512-9QIidWYONl96q+9WeEy0cSx/JU1mvFUmpOisj0Gsp2jd/n+vjt2ehDMqK4fh8fEX76AmMOhpeCHHlN7QiS3MvQ==}
+
+  '@widgetkit/core@0.0.3':
+    resolution: {integrity: sha512-AgNAzU4skQjVnLWmkDOMaAm3TPu+4iTVt7kr717elVslNgjEbcviTxkQOzSVsY9c1tHib+gJCn7EBMhOTO5rRg==}
+
+  '@widgetkit/scheduler@0.0.2':
+    resolution: {integrity: sha512-Xe2pQUhzLUPo6x5qnj8VJeSNWu6R6rn+6MRQY+0WsVOfIGTxxBrLd+Kv7/Nl5YIFP6C44l9oA5x7r6QzMTEENA==}
 
   acorn@8.16.0:
     resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
@@ -3291,6 +3338,14 @@ snapshots:
       vue: 3.5.32(typescript@5.9.3)
 
   '@vue/shared@3.5.32': {}
+
+  '@widgetkit/booking@0.0.2': {}
+
+  '@widgetkit/core@0.0.3': {}
+
+  '@widgetkit/scheduler@0.0.2':
+    dependencies:
+      '@widgetkit/core': 0.0.3
 
   acorn@8.16.0: {}
 
