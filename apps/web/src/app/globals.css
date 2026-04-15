@@ -65,20 +65,18 @@ a {
 }
 
 .nav-logo {
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 
-.nav-logo-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
+.nav-logo-widget {
+  color: var(--text);
+}
+
+.nav-logo-kit {
+  color: var(--accent);
 }
 
 .nav-links {

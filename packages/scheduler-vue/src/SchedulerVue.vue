@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import type { TimelineItem, Resource } from '@widgetkit/core';
-import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows } from '@widgetkit/core';
+import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows, icons } from '@widgetkit/core';
 import TlGrid from './TlGrid.vue';
 import TlItem from './TlItem.vue';
 import type { TlItemDragStartDetail, TlItemResizeStartDetail } from './types';
@@ -474,11 +474,15 @@ function updateDraft(patch: Partial<EditDraft>) {
     <div v-if="showNav && (showDateNav || showZoomControls)" class="tl-nav-bar">
       <template v-if="showDateNav">
         <div class="tl-nav-group">
-          <button class="tl-nav-btn" @click="navigate(-1)">&#8249;</button>
+          <button class="tl-nav-btn" @click="navigate(-1)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path :d="icons.chevronLeft" /></svg>
+          </button>
           <button class="tl-nav-date" @click="openDatePicker">
             {{ date.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
           </button>
-          <button class="tl-nav-btn" @click="navigate(1)">&#8250;</button>
+          <button class="tl-nav-btn" @click="navigate(1)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path :d="icons.chevronRight" /></svg>
+          </button>
         </div>
         <input
           ref="dateInputRef"

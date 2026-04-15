@@ -43,8 +43,7 @@ export default function HomePage() {
     <>
       <nav className="nav">
         <div className="nav-logo">
-          <div className="nav-logo-dot" />
-          widgetkit
+          <span className="nav-logo-widget">Widget</span><span className="nav-logo-kit">Kit</span>
         </div>
         <ul className="nav-links">
           <li><a href="#products">Products</a></li>

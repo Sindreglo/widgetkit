@@ -1,6 +1,7 @@
 import React from 'react';
 import { parseDate } from '@widgetkit/booking';
 import type { AvailabilityDay } from '@widgetkit/booking';
+import { icons } from '@widgetkit/core';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTH_NAMES = [
@@ -39,7 +40,7 @@ export function DayView({ date, day, selectedTime, showPrice = true, showDuratio
       <div className="bk-day-header">
         {onBack && (
           <button className="bk-back-btn" onClick={onBack} aria-label="Back to calendar">
-            &#8249;
+            <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d={icons.chevronLeft} /></svg>
           </button>
         )}
         <span className="bk-day-title">{formatDateLabel(date)}</span>

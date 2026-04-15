@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import type { TimelineItem } from '@widgetkit/core';
-import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows } from '@widgetkit/core';
+import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows, icons } from '@widgetkit/core';
 import type { TimelineSchedulerProps } from './types';
 import { TlGrid } from './TlGrid';
 import { TlItem } from './TlItem';
@@ -502,11 +502,15 @@ export function TimelineScheduler({
           {showDateNav && (
             <>
               <div className="tl-nav-group">
-                <button className="tl-nav-btn" onClick={() => navigate(-1)}>&#8249;</button>
+                <button className="tl-nav-btn" onClick={() => navigate(-1)}>
+                  <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d={icons.chevronLeft} /></svg>
+                </button>
                 <button className="tl-nav-date" onClick={openDatePicker}>
                   {date.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </button>
-                <button className="tl-nav-btn" onClick={() => navigate(1)}>&#8250;</button>
+                <button className="tl-nav-btn" onClick={() => navigate(1)}>
+                  <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d={icons.chevronRight} /></svg>
+                </button>
               </div>
               <input
                 ref={dateInputRef}

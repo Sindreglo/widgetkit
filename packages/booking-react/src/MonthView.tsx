@@ -1,6 +1,7 @@
 import React from 'react';
 import { buildMonthGrid, parseDate } from '@widgetkit/booking';
 import type { AvailabilityDay } from '@widgetkit/booking';
+import { icons } from '@widgetkit/core';
 
 const DAY_LABELS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
@@ -52,9 +53,13 @@ export function MonthView({
   return (
     <div className="bk-month">
       <div className="bk-month-nav">
-        <button className="bk-nav-btn" onClick={prevMonth} aria-label="Previous month">&#8249;</button>
+        <button className="bk-nav-btn" onClick={prevMonth} aria-label="Previous month">
+          <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d={icons.chevronLeft} /></svg>
+        </button>
         <span className="bk-month-title">{MONTH_NAMES[month]} {year}</span>
-        <button className="bk-nav-btn" onClick={nextMonth} aria-label="Next month">&#8250;</button>
+        <button className="bk-nav-btn" onClick={nextMonth} aria-label="Next month">
+          <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d={icons.chevronRight} /></svg>
+        </button>
       </div>
 
       <div className="bk-month-grid">
