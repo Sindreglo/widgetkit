@@ -2,7 +2,7 @@
 
 A fast, accessible timeline scheduler component for React. Supports drag-and-drop, resize, multi-row layouts, zoom, and full keyboard navigation — with zero dependencies beyond React itself.
 
-![](../../scheduler.png)
+![](https://raw.githubusercontent.com/sindreglo/widgetkit/main/scheduler.png)
 
 ## Installation
 
