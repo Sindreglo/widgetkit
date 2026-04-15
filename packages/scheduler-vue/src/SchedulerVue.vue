@@ -112,6 +112,7 @@ let createHoldTimer: ReturnType<typeof setTimeout> | null = null;
 let nowTimer: ReturnType<typeof setInterval> | null = null;
 
 // ── Template refs ────────────────────────────────────────────────────────────
+const rootRef = ref<HTMLDivElement | null>(null);
 const wrapperRef = ref<HTMLDivElement | null>(null);
 const dateInputRef = ref<HTMLInputElement | null>(null);
 
@@ -240,7 +241,7 @@ function handleDragStart(detail: TlItemDragStartDetail) {
     mode: 'move',
   };
   emit('item-drag-start', { item: detail.item });
-  wrapperRef.value?.setPointerCapture(detail.pointerId);
+  rootRef.value?.setPointerCapture(detail.pointerId);
 }
 
 function handleResizeStart(detail: TlItemResizeStartDetail) {
@@ -255,10 +256,17 @@ function handleResizeStart(detail: TlItemResizeStartDetail) {
     mode: detail.edge === 'left' ? 'resize-left' : 'resize-right',
   };
   emit('item-resize-start', { item: detail.item });
-  wrapperRef.value?.setPointerCapture(detail.pointerId);
+  rootRef.value?.setPointerCapture(detail.pointerId);
 }
 
 function handlePointerMove(e: PointerEvent) {
+  // If no button is pressed but we still have active state, the pointerup was missed
+  // (e.g. released outside the browser window). Clean up immediately.
+  if (e.buttons === 0 && (dragState.value || createState.value || createPending)) {
+    handlePointerUp(e);
+    return;
+  }
+
   if (createPending && e.pointerId === createPending.pointerId) {
     createPending.lastX = e.clientX;
     return;
@@ -313,7 +321,7 @@ function handlePointerMove(e: PointerEvent) {
 function handlePointerUp(e: PointerEvent) {
   if (createPending && e.pointerId === createPending.pointerId) {
     if (createHoldTimer !== null) { clearTimeout(createHoldTimer); createHoldTimer = null; }
-    wrapperRef.value?.releasePointerCapture(e.pointerId);
+    rootRef.value?.releasePointerCapture(e.pointerId);
     createPending = null;
     return;
   }
@@ -321,19 +329,19 @@ function handlePointerUp(e: PointerEvent) {
   const drag = dragState.value;
   if (drag && e.pointerId === drag.pointerId) {
     const finalResourceId = drag.mode === 'move' ? drag.targetResourceId : drag.item.resourceId;
+    dragState.value = null;
     emit('update:items', props.items.map(i =>
       i.id === drag.item.id ? { ...i, resourceId: finalResourceId, start: drag.targetStart, end: drag.targetEnd } : i
     ));
     if (drag.mode === 'move') emit('item-drag-end', { item: drag.item, resourceId: finalResourceId, start: drag.targetStart, end: drag.targetEnd });
     else emit('item-resize-end', { item: drag.item, start: drag.targetStart, end: drag.targetEnd });
-    wrapperRef.value?.releasePointerCapture(drag.pointerId);
-    dragState.value = null;
+    rootRef.value?.releasePointerCapture(drag.pointerId);
     return;
   }
 
   const create = createState.value;
   if (create && e.pointerId === create.pointerId) {
-    wrapperRef.value?.releasePointerCapture(create.pointerId);
+    rootRef.value?.releasePointerCapture(create.pointerId);
     createState.value = null;
     emit('item-create', { resourceId: create.resourceId, start: create.previewStart, end: create.previewEnd });
   }
@@ -348,7 +356,7 @@ function handleContentPointerDown(resourceId: string, e: PointerEvent) {
   const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
   const anchorTime = snapToInterval(percentToTime(clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100), props.startHour, props.endHour, props.date), props.snapMinutes);
   createPending = { pointerId: e.pointerId, resourceId, anchorTime, lastX: e.clientX };
-  wrapperRef.value?.setPointerCapture(e.pointerId);
+  rootRef.value?.setPointerCapture(e.pointerId);
   createHoldTimer = setTimeout(() => {
     const pending = createPending;
     if (!pending) return;
@@ -455,7 +463,13 @@ function updateDraft(patch: Partial<EditDraft>) {
 </script>
 
 <template>
-  <div class="tl-root">
+  <div
+    ref="rootRef"
+    class="tl-root"
+    @pointermove="handlePointerMove"
+    @pointerup="handlePointerUp"
+    @pointercancel="handlePointerUp"
+  >
     <!-- Nav bar -->
     <div v-if="showNav && (showDateNav || showZoomControls)" class="tl-nav-bar">
       <template v-if="showDateNav">
@@ -489,8 +503,6 @@ function updateDraft(patch: Partial<EditDraft>) {
     <div
       ref="wrapperRef"
       class="tl-wrapper"
-      @pointermove="handlePointerMove"
-      @pointerup="handlePointerUp"
     >
       <div
         class="tl-zoom-content"

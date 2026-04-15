@@ -272,6 +272,14 @@ export function TimelineScheduler({
 
   // ── Pointer events on wrapper (drag/resize/create move & up) ────────────
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.buttons === 0 && (dragStateRef.current || createStateRef.current || createPendingRef.current)) {
+      if (createHoldTimerRef.current !== null) { clearTimeout(createHoldTimerRef.current); createHoldTimerRef.current = null; }
+      createPendingRef.current = null;
+      setDragState(null); dragStateRef.current = null;
+      setCreateState(null); createStateRef.current = null;
+      wrapperRef.current?.releasePointerCapture(e.pointerId);
+      return;
+    }
     if (createPendingRef.current && e.pointerId === createPendingRef.current.pointerId) {
       createPendingRef.current.lastX = e.clientX;
       return;

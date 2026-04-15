@@ -63,6 +63,7 @@ function onPointerDown(e: PointerEvent) {
 function onPointerMove(e: PointerEvent) {
   if (props.readonly) return;
   if (e.pointerId !== downRef.pointerId) return;
+  if (e.buttons === 0) { cleanHold(); return; }
   const dx = Math.abs(e.clientX - downRef.x);
   const dy = Math.abs(e.clientY - downRef.y);
   if (props.dragEnabled && (dx > 5 || dy > 5)) {
