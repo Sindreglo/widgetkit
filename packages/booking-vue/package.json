@@ -13,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/Sindreglo/widgetkit/issues"
   },
+  "keywords": ["widgetkit", "vue", "vue3", "vue-component", "booking", "calendar", "datepicker", "appointment", "timeslot", "scheduler"],
   "type": "module",
   "exports": {
     ".": {

@@ -13,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/Sindreglo/widgetkit/issues"
   },
+  "keywords": ["widgetkit", "ui", "utilities", "icons"],
   "type": "module",
   "exports": {
     ".": {

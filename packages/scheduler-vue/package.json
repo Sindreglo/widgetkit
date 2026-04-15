@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/scheduler-vue",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Vue 3 timeline scheduler component",
   "license": "MIT",
   "author": "Sindre Glomnes",
@@ -13,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/Sindreglo/widgetkit/issues"
   },
+  "keywords": ["widgetkit", "vue", "vue3", "vue-component", "scheduler", "timeline", "calendar", "resource-scheduler"],
   "type": "module",
   "exports": {
     ".": {
@@ -32,7 +33,7 @@
     "dev": "vite build --watch"
   },
   "dependencies": {
-    "@widgetkit/core": "workspace:*",
+    "@widgetkit/core": "^0.0.2",
     "@widgetkit/scheduler": "workspace:*"
   },
   "peerDependencies": {

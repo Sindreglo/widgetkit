@@ -13,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/Sindreglo/widgetkit/issues"
   },
+  "keywords": ["widgetkit", "booking", "calendar", "datepicker", "appointment", "timeslot", "scheduler"],
   "type": "module",
   "exports": {
     ".": {
