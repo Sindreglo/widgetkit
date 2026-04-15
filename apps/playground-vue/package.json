@@ -11,6 +11,8 @@
     "@widgetkit/core": "workspace:*",
     "@widgetkit/scheduler": "workspace:*",
     "@widgetkit/scheduler-vue": "workspace:*",
+    "@widgetkit/booking": "workspace:*",
+    "@widgetkit/booking-vue": "workspace:*",
     "vue": "^3.4.0"
   },
   "devDependencies": {

@@ -16,6 +16,18 @@ export default defineConfig({
         replacement: resolve(__dirname, '../../packages/scheduler-vue/src/index.ts'),
       },
       {
+        find: '@widgetkit/booking-vue/styles.css',
+        replacement: resolve(__dirname, '../../packages/booking-vue/src/styles.css'),
+      },
+      {
+        find: '@widgetkit/booking-vue',
+        replacement: resolve(__dirname, '../../packages/booking-vue/src/index.ts'),
+      },
+      {
+        find: '@widgetkit/booking',
+        replacement: resolve(__dirname, '../../packages/booking/src/index.ts'),
+      },
+      {
         find: '@widgetkit/scheduler',
         replacement: resolve(__dirname, '../../packages/scheduler/src/index.ts'),
       },

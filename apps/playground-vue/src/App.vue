@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { SchedulerVue } from '@widgetkit/scheduler-vue';
 import type { Resource, TimelineItem } from '@widgetkit/scheduler-vue';
+import { BookingScheduler } from '@widgetkit/booking-vue';
+import type { AvailabilityDay, BookingMode, BookingSelection } from '@widgetkit/booking-vue';
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -11,6 +13,8 @@ function d(h: number, m = 0): Date {
   date.setHours(h, m, 0, 0);
   return date;
 }
+
+// ── Scheduler data ────────────────────────────────────────────────────────────
 
 const resources: Resource[] = [
   { id: 'r1', name: 'Alice Johnson', avatar: 'https://i.pravatar.cc/64?img=1' },
@@ -58,7 +62,7 @@ const showDateNav = ref(true);
 const showZoomControls = ref(true);
 const log = ref('');
 
-const toggles = [
+const schedulerToggles = [
   ['Draggable', draggable],
   ['Resizable', resizable],
   ['Creatable', creatable],
@@ -79,16 +83,114 @@ function onItemCreate({ resourceId, start, end }: { resourceId: string; start: D
 }
 
 function fmt(d: Date) { return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+
+// ── Booking data ──────────────────────────────────────────────────────────────
+
+function bookingDate(offsetDays: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().slice(0, 10);
+}
+
+const bookingAvailability: AvailabilityDay[] = [
+  {
+    date: bookingDate(1), available: true, price: '$40',
+    slots: [
+      { time: '08:00', available: true, duration: 30, price: '$30' },
+      { time: '08:30', available: true, duration: 30, price: '$30' },
+      { time: '09:00', available: true, duration: 60, price: '$40' },
+      { time: '09:30', available: false, duration: 30 },
+      { time: '10:00', available: true, duration: 60, price: '$40' },
+      { time: '10:30', available: true, duration: 30, price: '$35' },
+      { time: '11:00', available: false, duration: 60 },
+      { time: '11:30', available: true, duration: 30, price: '$35' },
+      { time: '12:00', available: true, duration: 60, price: '$40' },
+      { time: '13:00', available: true, duration: 90, price: '$50' },
+      { time: '14:00', available: true, duration: 90, price: '$50' },
+      { time: '14:30', available: true, duration: 60, price: '$45' },
+      { time: '15:00', available: true, duration: 90, price: '$50' },
+      { time: '15:30', available: false, duration: 60 },
+      { time: '16:00', available: true, duration: 60, price: '$45' },
+      { time: '16:30', available: true, duration: 30, price: '$35' },
+      { time: '17:00', available: true, duration: 60, price: '$45' },
+    ],
+  },
+  {
+    date: bookingDate(2), available: true, price: '$40',
+    slots: [
+      { time: '09:00', available: true, duration: 60, price: '$40' },
+      { time: '10:00', available: false, duration: 60 },
+      { time: '11:00', available: true, duration: 30, price: '$40' },
+      { time: '14:00', available: true, duration: 120, price: '$55' },
+    ],
+  },
+  { date: bookingDate(3), available: false },
+  {
+    date: bookingDate(4), available: true, price: '$35',
+    slots: [
+      { time: '08:00', available: true, duration: 60, price: '$35' },
+      { time: '09:00', available: true, duration: 60, price: '$35' },
+      { time: '10:00', available: true, duration: 60, price: '$35' },
+      { time: '11:00', available: true, duration: 60, price: '$35' },
+      { time: '13:00', available: true, duration: 90, price: '$45' },
+      { time: '14:00', available: true, duration: 90, price: '$45' },
+      { time: '15:00', available: false, duration: 90 },
+      { time: '16:00', available: true, duration: 90, price: '$45' },
+    ],
+  },
+  {
+    date: bookingDate(5), available: true, price: '$40',
+    slots: [
+      { time: '10:00', available: true, duration: 60, price: '$40' },
+      { time: '11:00', available: true, duration: 60, price: '$40' },
+      { time: '12:00', available: true, duration: 60, price: '$40' },
+    ],
+  },
+  {
+    date: bookingDate(8), available: true, price: '$40',
+    slots: [
+      { time: '09:00', available: true, duration: 60, price: '$40' },
+      { time: '10:00', available: true, duration: 60, price: '$40' },
+      { time: '14:00', available: true, duration: 90, price: '$50' },
+    ],
+  },
+  {
+    date: bookingDate(9), available: true, price: '$55',
+    slots: [
+      { time: '13:00', available: true, duration: 120, price: '$55' },
+      { time: '14:00', available: true, duration: 120, price: '$55' },
+      { time: '15:00', available: true, duration: 120, price: '$55' },
+    ],
+  },
+];
+
+const bookingMode = ref<BookingMode>('month-day');
+const showPrice = ref(true);
+const showDuration = ref(true);
+const bookingSelection = ref<BookingSelection | null>(null);
+
+const bookingModes: BookingMode[] = ['month-day', 'month-only', 'day-only'];
+const bookingToggles = [
+  ['Show price', showPrice],
+  ['Show duration', showDuration],
+] as const;
+
+function onBookingSelect(selection: BookingSelection) {
+  bookingSelection.value = selection;
+}
 </script>
 
 <template>
   <div style="display: flex; flex-direction: column; gap: 16px; padding: 24px; min-height: 100vh;">
     <h1 style="font-size: 20px; font-weight: 700; color: #1e293b; margin: 0;">
-      WidgetKit — scheduler-vue playground
+      WidgetKit — Vue playground
     </h1>
 
+    <!-- Scheduler -->
+    <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0;">scheduler-vue</h2>
+
     <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px;">
-      <label v-for="[label, value] in toggles" :key="label" style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+      <label v-for="[label, value] in schedulerToggles" :key="label" style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
         <input type="checkbox" v-model="value.value" />
         {{ label }}
       </label>
@@ -125,5 +227,47 @@ function fmt(d: Date) { return d.toLocaleTimeString([], { hour: '2-digit', minut
         @item-resize-end="({ item, start, end }) => log = `Resize end: ${item.name} ${fmt(start)}–${fmt(end)}`"
       />
     </div>
+
+    <!-- Booking -->
+    <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 8px 0 0;">booking-vue</h2>
+
+    <div style="display: flex; gap: 20px; font-size: 13px; flex-wrap: wrap; align-items: center;">
+      <div style="display: flex; gap: 12px;">
+        <label v-for="m in bookingModes" :key="m" style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="radio" name="booking-mode" :value="m" v-model="bookingMode" @change="bookingSelection = null" />
+          {{ m }}
+        </label>
+      </div>
+      <div style="width: 1px; height: 16px; background: #e2e8f0;" />
+      <div style="display: flex; gap: 12px;">
+        <label v-for="[label, value] in bookingToggles" :key="label" style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="checkbox" v-model="value.value" />
+          {{ label }}
+        </label>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+      <BookingScheduler
+        :mode="bookingMode"
+        :availability="bookingAvailability"
+        :show-price="showPrice"
+        :show-duration="showDuration"
+        :date="bookingMode === 'day-only' ? new Date(bookingDate(1)) : undefined"
+        @select="onBookingSelect"
+      />
+
+      <div
+        v-if="bookingSelection"
+        style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #166534; line-height: 1.6;"
+      >
+        <strong>Selected</strong><br />
+        Date: {{ bookingSelection.date }}<br v-if="bookingSelection.time" />
+        <template v-if="bookingSelection.time">Time: {{ bookingSelection.time }}<br /></template>
+        Duration: {{ bookingSelection.duration }} min
+      </div>
+    </div>
+
+    <div style="height: 80px;" />
   </div>
 </template>

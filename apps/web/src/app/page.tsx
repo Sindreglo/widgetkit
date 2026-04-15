@@ -19,14 +19,14 @@ const products = [
     icon: "📋",
     name: "Kanban",
     desc: "A fully-featured Kanban board with drag-and-drop lanes, card customization, and state management.",
-    tags: ["React"],
+    tags: [],
     soon: true,
   },
   {
     icon: "⚡",
     name: "Datagrid",
     desc: "A high-performance data grid for large datasets with sorting, filtering, grouping, and virtual scrolling.",
-    tags: ["React"],
+    tags: [],
     soon: true,
   },
 ];
@@ -48,7 +48,6 @@ export default function HomePage() {
         <ul className="nav-links">
           <li><a href="#products">Products</a></li>
           <li><a href="#">Docs</a></li>
-          <li><a href="#">Pricing</a></li>
         </ul>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <ThemeToggle />
@@ -57,7 +56,7 @@ export default function HomePage() {
       </nav>
 
       <section className="hero">
-        <div className="hero-badge">Now in early access</div>
+        <div className="hero-badge">Free and open source</div>
         <h1>
           UI widgets built for<br />
           <span>serious applications</span>
@@ -68,7 +67,7 @@ export default function HomePage() {
         </p>
         <div className="hero-actions">
           <a href="#products" className="btn-primary">Explore widgets</a>
-          <a href="#" className="btn-secondary">View on GitHub</a>
+          <a href="https://github.com/Sindreglo/widgetkit" className="btn-secondary">View on GitHub</a>
         </div>
       </section>
 
@@ -102,7 +101,7 @@ export default function HomePage() {
       </section>
 
       <footer className="footer">
-        <p>© {new Date().getFullYear()} Widgetkit. Built for developers.</p>
+        <p>© {new Date().getFullYear()} Widgetkit — MIT License. Built for developers.</p>
       </footer>
     </>
   );
