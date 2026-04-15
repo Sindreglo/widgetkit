@@ -6,7 +6,7 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', '@breeze/core', '@breeze/scheduler'],
+  external: ['react', 'react-dom', '@widgetkit/core', '@widgetkit/scheduler'],
   esbuildOptions(options) {
     options.jsx = 'automatic';
   },

@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { Resource, TimelineItem } from '@breeze/core';
+import type { Resource, TimelineItem } from '@widgetkit/core';
 import type {
   ItemCreateDetail,
   ItemClickDetail,
@@ -10,7 +10,7 @@ import type {
   ItemDragEndDetail,
   ItemResizeStartDetail,
   ItemResizeEndDetail,
-} from '@breeze/scheduler';
+} from '@widgetkit/scheduler';
 
 export type { Resource, TimelineItem };
 export type {

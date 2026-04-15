@@ -22,13 +22,13 @@ importers:
 
   apps/playground-react:
     dependencies:
-      '@breeze/core':
+      '@widgetkit/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@breeze/scheduler':
+      '@widgetkit/scheduler':
         specifier: workspace:*
         version: link:../../packages/scheduler
-      '@breeze/scheduler-react':
+      '@widgetkit/scheduler-react':
         specifier: workspace:*
         version: link:../../packages/scheduler-react
     devDependencies:
@@ -56,13 +56,13 @@ importers:
 
   apps/playground-vue:
     dependencies:
-      '@breeze/core':
+      '@widgetkit/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@breeze/scheduler':
+      '@widgetkit/scheduler':
         specifier: workspace:*
         version: link:../../packages/scheduler
-      '@breeze/scheduler-vue':
+      '@widgetkit/scheduler-vue':
         specifier: workspace:*
         version: link:../../packages/scheduler-vue
       vue:
@@ -96,7 +96,7 @@ importers:
 
   packages/scheduler:
     dependencies:
-      '@breeze/core':
+      '@widgetkit/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -109,10 +109,10 @@ importers:
 
   packages/scheduler-react:
     dependencies:
-      '@breeze/core':
+      '@widgetkit/core':
         specifier: workspace:*
         version: link:../core
-      '@breeze/scheduler':
+      '@widgetkit/scheduler':
         specifier: workspace:*
         version: link:../scheduler
     devDependencies:
@@ -137,10 +137,10 @@ importers:
 
   packages/scheduler-vue:
     dependencies:
-      '@breeze/core':
+      '@widgetkit/core':
         specifier: workspace:*
         version: link:../core
-      '@breeze/scheduler':
+      '@widgetkit/scheduler':
         specifier: workspace:*
         version: link:../scheduler
     devDependencies:

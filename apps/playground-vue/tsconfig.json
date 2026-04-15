@@ -15,9 +15,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@breeze/scheduler-vue": ["../../packages/scheduler-vue/src/index.ts"],
-      "@breeze/scheduler": ["../../packages/scheduler/src/index.ts"],
-      "@breeze/core": ["../../packages/core/src/index.ts"]
+      "@widgetkit/scheduler-vue": ["../../packages/scheduler-vue/src/index.ts"],
+      "@widgetkit/scheduler": ["../../packages/scheduler/src/index.ts"],
+      "@widgetkit/core": ["../../packages/core/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.vue"]

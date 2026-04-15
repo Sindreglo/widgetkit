@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import type { TimelineItem } from '@breeze/core';
+import type { TimelineItem } from '@widgetkit/core';
 
 // Internal callback shapes — only used by TimelineScheduler
 export interface TlItemDragStartDetail {

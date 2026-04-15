@@ -8,9 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@breeze/core": "workspace:*",
-    "@breeze/scheduler": "workspace:*",
-    "@breeze/scheduler-react": "workspace:*"
+    "@widgetkit/core": "workspace:*",
+    "@widgetkit/scheduler": "workspace:*",
+    "@widgetkit/scheduler-react": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

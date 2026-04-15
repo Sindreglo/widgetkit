@@ -8,9 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@breeze/core": "workspace:*",
-    "@breeze/scheduler": "workspace:*",
-    "@breeze/scheduler-vue": "workspace:*",
+    "@widgetkit/core": "workspace:*",
+    "@widgetkit/scheduler": "workspace:*",
+    "@widgetkit/scheduler-vue": "workspace:*",
     "vue": "^3.4.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 {
-  "name": "@breeze/scheduler-vue",
+  "name": "@widgetkit/scheduler-vue",
   "version": "0.0.1",
   "description": "Vue 3 timeline scheduler component",
   "type": "module",
@@ -21,8 +21,8 @@
     "dev": "vite build --watch"
   },
   "dependencies": {
-    "@breeze/core": "workspace:*",
-    "@breeze/scheduler": "workspace:*"
+    "@widgetkit/core": "workspace:*",
+    "@widgetkit/scheduler": "workspace:*"
   },
   "peerDependencies": {
     "vue": ">=3.3.0"

@@ -1,7 +1,7 @@
 {
-  "name": "@breeze/core",
+  "name": "@widgetkit/core",
   "version": "0.0.1",
-  "description": "Framework-agnostic core utilities for Breeze UI components",
+  "description": "Framework-agnostic core utilities for WidgetKit UI components",
   "type": "module",
   "exports": {
     ".": {

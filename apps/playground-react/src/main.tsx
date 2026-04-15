@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { TimelineScheduler } from "@breeze/scheduler-react";
-import type { Resource, TimelineItem } from "@breeze/scheduler-react";
-import "@breeze/scheduler-react/styles.css";
+import { TimelineScheduler } from "@widgetkit/scheduler-react";
+import type { Resource, TimelineItem } from "@widgetkit/scheduler-react";
+import "@widgetkit/scheduler-react/styles.css";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -203,7 +203,7 @@ function App() {
       }}
     >
       <h1 style={{ fontSize: 20, fontWeight: 700, color: "#1e293b" }}>
-        Breeze — scheduler-react playground
+        WidgetKit — scheduler-react playground
       </h1>
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 13 }}>

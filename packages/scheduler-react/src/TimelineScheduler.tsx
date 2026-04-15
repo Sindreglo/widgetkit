@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import type { TimelineItem } from '@breeze/core';
-import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows } from '@breeze/core';
+import type { TimelineItem } from '@widgetkit/core';
+import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows } from '@widgetkit/core';
 import type { TimelineSchedulerProps } from './types';
 import { TlGrid } from './TlGrid';
 import { TlItem } from './TlItem';

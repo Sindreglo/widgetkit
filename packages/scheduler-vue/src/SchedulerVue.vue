@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import type { TimelineItem, Resource } from '@breeze/core';
-import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows } from '@breeze/core';
+import type { TimelineItem, Resource } from '@widgetkit/core';
+import { timeToPercent, percentToTime, snapToInterval, clamp, assignSubRows } from '@widgetkit/core';
 import TlGrid from './TlGrid.vue';
 import TlItem from './TlItem.vue';
 import type { TlItemDragStartDetail, TlItemResizeStartDetail } from './types';

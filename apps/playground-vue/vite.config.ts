@@ -8,19 +8,19 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: '@breeze/scheduler-vue/styles.css',
+        find: '@widgetkit/scheduler-vue/styles.css',
         replacement: resolve(__dirname, '../../packages/scheduler-vue/src/styles.css'),
       },
       {
-        find: '@breeze/scheduler-vue',
+        find: '@widgetkit/scheduler-vue',
         replacement: resolve(__dirname, '../../packages/scheduler-vue/src/index.ts'),
       },
       {
-        find: '@breeze/scheduler',
+        find: '@widgetkit/scheduler',
         replacement: resolve(__dirname, '../../packages/scheduler/src/index.ts'),
       },
       {
-        find: '@breeze/core',
+        find: '@widgetkit/core',
         replacement: resolve(__dirname, '../../packages/core/src/index.ts'),
       },
     ],

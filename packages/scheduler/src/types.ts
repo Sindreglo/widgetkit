@@ -1,4 +1,4 @@
-import type { TimelineItem } from '@breeze/core';
+import type { TimelineItem } from '@widgetkit/core';
 
 export interface ItemCreateDetail   { resourceId: string; start: Date; end: Date; }
 export interface ItemClickDetail    { item: TimelineItem; }

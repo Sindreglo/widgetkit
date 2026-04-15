@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { SchedulerVue } from '@breeze/scheduler-vue';
-import type { Resource, TimelineItem } from '@breeze/scheduler-vue';
+import { SchedulerVue } from '@widgetkit/scheduler-vue';
+import type { Resource, TimelineItem } from '@widgetkit/scheduler-vue';
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -84,7 +84,7 @@ function fmt(d: Date) { return d.toLocaleTimeString([], { hour: '2-digit', minut
 <template>
   <div style="display: flex; flex-direction: column; gap: 16px; padding: 24px; min-height: 100vh;">
     <h1 style="font-size: 20px; font-weight: 700; color: #1e293b; margin: 0;">
-      Breeze — scheduler-vue playground
+      WidgetKit — scheduler-vue playground
     </h1>
 
     <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px;">

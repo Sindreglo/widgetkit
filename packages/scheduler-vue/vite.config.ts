@@ -15,7 +15,7 @@ export default defineConfig({
       fileName: (format) => format === 'es' ? 'index.js' : 'index.cjs',
     },
     rollupOptions: {
-      external: ['vue', '@breeze/core', '@breeze/scheduler'],
+      external: ['vue', '@widgetkit/core', '@widgetkit/scheduler'],
       output: { globals: { vue: 'Vue' } },
     },
   },

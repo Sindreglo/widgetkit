@@ -3,9 +3,9 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "paths": {
-      "@breeze/scheduler-react": ["../../packages/scheduler-react/src/index.ts"],
-      "@breeze/scheduler": ["../../packages/scheduler/src/index.ts"],
-      "@breeze/core": ["../../packages/core/src/index.ts"]
+      "@widgetkit/scheduler-react": ["../../packages/scheduler-react/src/index.ts"],
+      "@widgetkit/scheduler": ["../../packages/scheduler/src/index.ts"],
+      "@widgetkit/core": ["../../packages/core/src/index.ts"]
     }
   },
   "include": ["src", "vite.config.ts"]

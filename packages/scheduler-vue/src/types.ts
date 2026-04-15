@@ -1,4 +1,4 @@
-import type { TimelineItem } from '@breeze/core';
+import type { TimelineItem } from '@widgetkit/core';
 
 // Internal detail shapes emitted by TlItem — used only by SchedulerVue
 export interface TlItemDragStartDetail {

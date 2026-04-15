@@ -1,5 +1,5 @@
 {
-  "name": "@breeze/scheduler-react",
+  "name": "@widgetkit/scheduler-react",
   "version": "0.0.1",
   "description": "React timeline scheduler component",
   "type": "module",
@@ -21,8 +21,8 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@breeze/core": "workspace:*",
-    "@breeze/scheduler": "workspace:*"
+    "@widgetkit/core": "workspace:*",
+    "@widgetkit/scheduler": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

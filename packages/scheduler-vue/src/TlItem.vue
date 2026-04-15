@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import type { TimelineItem } from '@breeze/core';
+import type { TimelineItem } from '@widgetkit/core';
 import type { TlItemDragStartDetail, TlItemResizeStartDetail } from './types';
 
 const props = defineProps<{
