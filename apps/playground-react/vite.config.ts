@@ -16,8 +16,20 @@ export default defineConfig({
         replacement: resolve(__dirname, '../../packages/scheduler-react/src/index.ts'),
       },
       {
+        find: '@widgetkit/booking-react/styles.css',
+        replacement: resolve(__dirname, '../../packages/booking-react/src/styles.css'),
+      },
+      {
+        find: '@widgetkit/booking-react',
+        replacement: resolve(__dirname, '../../packages/booking-react/src/index.ts'),
+      },
+      {
         find: '@widgetkit/scheduler',
         replacement: resolve(__dirname, '../../packages/scheduler/src/index.ts'),
+      },
+      {
+        find: '@widgetkit/booking',
+        replacement: resolve(__dirname, '../../packages/booking/src/index.ts'),
       },
       {
         find: '@widgetkit/core',

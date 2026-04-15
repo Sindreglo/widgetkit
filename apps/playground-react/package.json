@@ -10,7 +10,9 @@
   "dependencies": {
     "@widgetkit/core": "workspace:*",
     "@widgetkit/scheduler": "workspace:*",
-    "@widgetkit/scheduler-react": "workspace:*"
+    "@widgetkit/scheduler-react": "workspace:*",
+    "@widgetkit/booking-react": "workspace:*",
+    "@widgetkit/booking": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

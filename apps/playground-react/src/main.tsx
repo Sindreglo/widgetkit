@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import { TimelineScheduler } from "@widgetkit/scheduler-react";
 import type { Resource, TimelineItem } from "@widgetkit/scheduler-react";
 import "@widgetkit/scheduler-react/styles.css";
+import { BookingScheduler } from "@widgetkit/booking-react";
+import type { AvailabilityDay, BookingMode, BookingSelection } from "@widgetkit/booking-react";
+import "@widgetkit/booking-react/styles.css";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -174,6 +177,145 @@ const initialItems: TimelineItem[] = [
   },
 ];
 
+// ── Booking demo data ────────────────────────────────────────────────────────
+
+function bookingDate(offsetDays: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().slice(0, 10);
+}
+
+const bookingAvailability: AvailabilityDay[] = [
+  {
+    date: bookingDate(1),
+    available: true,
+    price: "$40",
+    slots: [
+      { time: "09:00", available: true, duration: 60, price: "$40" },
+      { time: "10:00", available: true, duration: 60, price: "$40" },
+      { time: "11:00", available: false, duration: 60 },
+      { time: "13:00", available: true, duration: 90, price: "$50" },
+      { time: "14:00", available: true, duration: 90, price: "$50" },
+      { time: "15:00", available: true, duration: 90, price: "$50" },
+    ],
+  },
+  {
+    date: bookingDate(2),
+    available: true,
+    price: "$40",
+    slots: [
+      { time: "09:00", available: true, duration: 60, price: "$40" },
+      { time: "10:00", available: false, duration: 60 },
+      { time: "11:00", available: true, duration: 30, price: "$40" },
+      { time: "14:00", available: true, duration: 120, price: "$55" },
+    ],
+  },
+  {
+    date: bookingDate(3),
+    available: false,
+  },
+  {
+    date: bookingDate(4),
+    available: true,
+    price: "$35",
+    slots: [
+      { time: "08:00", available: true, duration: 60, price: "$35" },
+      { time: "09:00", available: true, duration: 60, price: "$35" },
+      { time: "10:00", available: true, duration: 60, price: "$35" },
+      { time: "11:00", available: true, duration: 60, price: "$35" },
+      { time: "13:00", available: true, duration: 90, price: "$45" },
+      { time: "14:00", available: true, duration: 90, price: "$45" },
+      { time: "15:00", available: false, duration: 90 },
+      { time: "16:00", available: true, duration: 90, price: "$45" },
+    ],
+  },
+  {
+    date: bookingDate(5),
+    available: true,
+    price: "$40",
+    slots: [
+      { time: "10:00", available: true, duration: 60, price: "$40" },
+      { time: "11:00", available: true, duration: 60, price: "$40" },
+      { time: "12:00", available: true, duration: 60, price: "$40" },
+    ],
+  },
+  {
+    date: bookingDate(8),
+    available: true,
+    price: "$40",
+    slots: [
+      { time: "09:00", available: true, duration: 60, price: "$40" },
+      { time: "10:00", available: true, duration: 60, price: "$40" },
+      { time: "14:00", available: true, duration: 90, price: "$50" },
+    ],
+  },
+  {
+    date: bookingDate(9),
+    available: true,
+    price: "$55",
+    slots: [
+      { time: "13:00", available: true, duration: 120, price: "$55" },
+      { time: "14:00", available: true, duration: 120, price: "$55" },
+      { time: "15:00", available: true, duration: 120, price: "$55" },
+    ],
+  },
+];
+
+function BookingDemo() {
+  const [mode, setMode] = useState<BookingMode>("month-day");
+  const [selection, setSelection] = useState<BookingSelection | null>(null);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", gap: 12, fontSize: 13, flexWrap: "wrap" }}>
+        {(["month-day", "month-only", "day-only"] as BookingMode[]).map((m) => (
+          <label key={m} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+            <input
+              type="radio"
+              name="booking-mode"
+              checked={mode === m}
+              onChange={() => { setMode(m); setSelection(null); }}
+            />
+            {m}
+          </label>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
+        <BookingScheduler
+          mode={mode}
+          availability={bookingAvailability}
+          date={mode === "day-only" ? new Date(bookingDate(1)) : undefined}
+          onSelect={(s) => setSelection(s)}
+        />
+
+        {selection && (
+          <div
+            style={{
+              background: "#f0fdf4",
+              border: "1px solid #bbf7d0",
+              borderRadius: 8,
+              padding: "12px 16px",
+              fontSize: 13,
+              color: "#166534",
+              lineHeight: 1.6,
+            }}
+          >
+            <strong>Selected</strong>
+            <br />
+            Date: {selection.date}
+            {selection.time && <><br />Time: {selection.time}</>}
+            <br />
+            Duration: {selection.duration} min
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 function App() {
   const [items, setItems] = useState(initialItems);
   const [date, setDate] = useState(today);
@@ -203,7 +345,7 @@ function App() {
       }}
     >
       <h1 style={{ fontSize: 20, fontWeight: 700, color: "#1e293b" }}>
-        WidgetKit — scheduler-react playground
+        WidgetKit — React playground
       </h1>
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 13 }}>
@@ -254,6 +396,10 @@ function App() {
       >
         {log || "Events will appear here"}
       </div>
+
+      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginTop: 8 }}>
+        scheduler-react
+      </h2>
 
       <div style={{ flex: 1, maxHeight: 600 }}>
         <TimelineScheduler
@@ -320,6 +466,13 @@ function App() {
           }
         />
       </div>
+      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginTop: 24 }}>
+        booking-react
+      </h2>
+
+      <BookingDemo />
+
+      <div style={{ height: 80 }} />
     </div>
   );
 }
