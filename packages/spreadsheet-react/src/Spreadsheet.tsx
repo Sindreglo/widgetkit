@@ -66,22 +66,26 @@ type CtxEntry = CtxItem | null; // null = separator
 function CtxMenu({ x, y, items, onClose }: {
   x: number; y: number; items: CtxEntry[]; onClose: () => void;
 }) {
+  const menuRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const onDown = () => onClose();
-    const onKey  = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('pointerdown', onDown, true);
-    window.addEventListener('keydown', onKey, true);
+    const onDown = (e: PointerEvent) => {
+      if (!menuRef.current?.contains(e.target as Node)) onClose();
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('pointerdown', onDown);
+    window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('pointerdown', onDown, true);
-      window.removeEventListener('keydown', onKey, true);
+      window.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('keydown', onKey);
     };
   }, [onClose]);
 
   return (
     <div
+      ref={menuRef}
       className="ss-ctx-menu"
       style={{ position: 'fixed', left: x, top: y }}
-      onPointerDown={e => e.stopPropagation()}
     >
       {items.map((item, i) =>
         item === null ? (
@@ -91,6 +95,7 @@ function CtxMenu({ x, y, items, onClose }: {
             key={i}
             className="ss-ctx-item"
             disabled={item.disabled}
+            onPointerDown={e => e.stopPropagation()}
             onClick={() => { item.action(); onClose(); }}
           >
             {item.label}
