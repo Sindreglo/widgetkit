@@ -259,33 +259,35 @@ export function Spreadsheet({
       )}
 
       <div className="ss-container">
-        {showColHeaders && (
-          <div className="ss-col-header-row">
-            {showRowNumbers && (
-              <div
-                className="ss-corner"
-                style={{ width: rowNumWidth, minWidth: rowNumWidth }}
-              />
-            )}
-            {Array.from({ length: cols }, (_, c) => (
-              <div
-                key={c}
-                className="ss-col-header"
-                style={{ width: colWidth(c), minWidth: colWidth(c) }}
-              >
-                {colToLetters(c)}
-              </div>
-            ))}
-          </div>
-        )}
-
         <div
           className="ss-scroll-body"
           ref={scrollBodyRef}
           style={{ maxHeight: scrollBodyHeight, overflowY: 'auto', overflowX: 'auto' }}
           onScroll={e => setScrollTop((e.currentTarget as HTMLDivElement).scrollTop)}
         >
-          {/* Sticky column headers inside scroll so horizontal scroll works */}
+          {showColHeaders && (
+            <div
+              className="ss-col-header-row"
+              style={{ minWidth: (showRowNumbers ? rowNumWidth : 0) + cols * DEFAULT_COL_WIDTH }}
+            >
+              {showRowNumbers && (
+                <div
+                  className="ss-corner"
+                  style={{ width: rowNumWidth, minWidth: rowNumWidth }}
+                />
+              )}
+              {Array.from({ length: cols }, (_, c) => (
+                <div
+                  key={c}
+                  className="ss-col-header"
+                  style={{ width: colWidth(c), minWidth: colWidth(c) }}
+                >
+                  {colToLetters(c)}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div
             className="ss-grid-inner"
             ref={gridWrapperRef}
@@ -311,7 +313,7 @@ export function Spreadsheet({
                     {showRowNumbers && (
                       <div
                         className="ss-row-num"
-                        style={{ width: rowNumWidth, minWidth: rowNumWidth, height: rowHeight }}
+                        style={{ width: rowNumWidth, minWidth: rowNumWidth }}
                       >
                         {rowIdx + 1}
                       </div>
@@ -339,7 +341,6 @@ export function Spreadsheet({
                           style={{
                             width: colWidth(colIdx),
                             minWidth: colWidth(colIdx),
-                            height: rowHeight,
                           }}
                           onClick={() => {
                             if (editingRef && editingRef !== ref) {

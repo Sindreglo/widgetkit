@@ -4,7 +4,11 @@ import { TimelineScheduler } from "@widgetkit/scheduler-react";
 import type { Resource, TimelineItem } from "@widgetkit/scheduler-react";
 import "@widgetkit/scheduler-react/styles.css";
 import { BookingScheduler } from "@widgetkit/booking-react";
-import type { AvailabilityDay, BookingMode, BookingSelection } from "@widgetkit/booking-react";
+import type {
+  AvailabilityDay,
+  BookingMode,
+  BookingSelection,
+} from "@widgetkit/booking-react";
 import "@widgetkit/booking-react/styles.css";
 import { Spreadsheet } from "@widgetkit/spreadsheet-react";
 import type { CellMap } from "@widgetkit/spreadsheet-react";
@@ -288,32 +292,72 @@ function BookingDemo() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", gap: 20, fontSize: 13, flexWrap: "wrap", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 20,
+          fontSize: 13,
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
         <div style={{ display: "flex", gap: 12 }}>
-          {(["month-day", "month-only", "day-only"] as BookingMode[]).map((m) => (
-            <label key={m} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
-              <input
-                type="radio"
-                name="booking-mode"
-                checked={mode === m}
-                onChange={() => { setMode(m); setSelection(null); }}
-              />
-              {m}
-            </label>
-          ))}
+          {(["month-day", "month-only", "day-only"] as BookingMode[]).map(
+            (m) => (
+              <label
+                key={m}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="radio"
+                  name="booking-mode"
+                  checked={mode === m}
+                  onChange={() => {
+                    setMode(m);
+                    setSelection(null);
+                  }}
+                />
+                {m}
+              </label>
+            ),
+          )}
         </div>
         <div style={{ width: 1, height: 16, background: "#e2e8f0" }} />
         <div style={{ display: "flex", gap: 12 }}>
           {checkboxes.map(([label, value, setter]) => (
-            <label key={label} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
-              <input type="checkbox" checked={value} onChange={(e) => setter(e.target.checked)} />
+            <label
+              key={label}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                cursor: "pointer",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={(e) => setter(e.target.checked)}
+              />
               {label}
             </label>
           ))}
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 24,
+          flexWrap: "wrap",
+          alignItems: "flex-start",
+        }}
+      >
         <BookingScheduler
           mode={mode}
           availability={bookingAvailability}
@@ -338,7 +382,12 @@ function BookingDemo() {
             <strong>Selected</strong>
             <br />
             Date: {selection.date}
-            {selection.time && <><br />Time: {selection.time}</>}
+            {selection.time && (
+              <>
+                <br />
+                Time: {selection.time}
+              </>
+            )}
             <br />
             Duration: {selection.duration} min
           </div>
@@ -351,11 +400,27 @@ function BookingDemo() {
 // ── Spreadsheet demo ─────────────────────────────────────────────────────────
 
 const initialCells: CellMap = {
-  A1: "Name",    B1: "Q1",  C1: "Q2",  D1: "Q3",  E1: "Total",
-  A2: "Alice",   B2: 9200,  C2: 10500, D2: 11800,
-  A3: "Bob",     B3: 7400,  C3: 8100,  D3: 9300,
-  A4: "Carol",   B4: 11000, C4: 12500, D4: 13200,
-  A5: "David",   B5: 6800,  C5: 7200,  D5: 8400,
+  A1: "Name",
+  B1: "Q1",
+  C1: "Q2",
+  D1: "Q3",
+  E1: "Total",
+  A2: "Alice",
+  B2: 9200,
+  C2: 10500,
+  D2: 11800,
+  A3: "Bob",
+  B3: 7400,
+  C3: 8100,
+  D3: 9300,
+  A4: "Carol",
+  B4: 11000,
+  C4: 12500,
+  D4: 13200,
+  A5: "David",
+  B5: 6800,
+  C5: 7200,
+  D5: 8400,
   A6: "Total",
   E2: "=SUM(B2:D2)",
   E3: "=SUM(B3:D3)",
@@ -373,8 +438,8 @@ function SpreadsheetDemo() {
   return (
     <Spreadsheet
       cells={cells}
-      rows={20}
-      cols={8}
+      rows={40}
+      cols={40}
       maxHeight={360}
       onCellsChange={setCells}
     />
@@ -464,7 +529,14 @@ function App() {
         {log || "Events will appear here"}
       </div>
 
-      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginTop: 8 }}>
+      <h2
+        style={{
+          fontSize: 16,
+          fontWeight: 700,
+          color: "#1e293b",
+          marginTop: 8,
+        }}
+      >
         scheduler-react
       </h2>
 
@@ -533,13 +605,27 @@ function App() {
           }
         />
       </div>
-      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginTop: 24 }}>
+      <h2
+        style={{
+          fontSize: 16,
+          fontWeight: 700,
+          color: "#1e293b",
+          marginTop: 24,
+        }}
+      >
         booking-react
       </h2>
 
       <BookingDemo />
 
-      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginTop: 24 }}>
+      <h2
+        style={{
+          fontSize: 16,
+          fontWeight: 700,
+          color: "#1e293b",
+          marginTop: 24,
+        }}
+      >
         spreadsheet-react
       </h2>
 
