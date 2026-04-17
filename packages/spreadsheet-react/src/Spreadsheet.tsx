@@ -188,18 +188,78 @@ export function Spreadsheet({
     minCol: number; maxCol: number; minRow: number; maxRow: number;
   } | null>(null);
 
+  // Resizable column widths and row heights (internal state, seeded from props)
+  const [internalColWidths, setInternalColWidths] = useState<Record<number, number>>(
+    () => ({ ...(colWidths ?? {}) })
+  );
+  const [internalRowHeights, setInternalRowHeights] = useState<Record<number, number>>({});
+  const colWidth = (col: number) => internalColWidths[col] ?? DEFAULT_COL_WIDTH;
+  const rowHeightOf = (row: number) => internalRowHeights[row] ?? rowHeight;
+
+  const startColResize = useCallback((col: number, startX: number) => {
+    const initW = internalColWidths[col] ?? DEFAULT_COL_WIDTH;
+    const onMove = (e: PointerEvent) => {
+      document.documentElement.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      setInternalColWidths(prev => ({ ...prev, [col]: Math.max(20, initW + e.clientX - startX) }));
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.documentElement.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, [internalColWidths]);
+
+  const startRowResize = useCallback((row: number, startY: number) => {
+    const initH = internalRowHeights[row] ?? rowHeight;
+    const onMove = (e: PointerEvent) => {
+      document.documentElement.style.cursor = 'row-resize';
+      document.body.style.userSelect = 'none';
+      setInternalRowHeights(prev => ({ ...prev, [row]: Math.max(12, initH + e.clientY - startY) }));
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.documentElement.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, [internalRowHeights, rowHeight]);
+
   // Virtual scrolling state
   const [scrollTop, setScrollTop] = useState(0);
   const scrollBodyRef = useRef<HTMLDivElement>(null);
   const gridWrapperRef = useRef<HTMLDivElement>(null);
 
-  const visibleStart = Math.max(0, Math.floor(scrollTop / rowHeight) - BUFFER);
-  const scrollBodyHeight = maxHeight;
-  const visibleCount = Math.ceil(scrollBodyHeight / rowHeight) + BUFFER * 2;
-  const visibleEnd = Math.min(rows - 1, visibleStart + visibleCount);
+  // Cumulative row tops for accurate virtual scroll with variable row heights
+  const rowTops = useMemo(() => {
+    const tops = new Array<number>(rows + 1);
+    tops[0] = 0;
+    for (let r = 0; r < rows; r++) tops[r + 1] = tops[r] + rowHeightOf(r);
+    return tops;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, internalRowHeights, rowHeight]);
 
-  const topSpacerHeight = visibleStart * rowHeight;
-  const bottomSpacerHeight = Math.max(0, (rows - 1 - visibleEnd) * rowHeight);
+  const scrollBodyHeight = maxHeight;
+
+  const visibleStart = useMemo(() => {
+    let r = 0;
+    while (r < rows - 1 && rowTops[r + 1] <= scrollTop) r++;
+    return Math.max(0, r - BUFFER);
+  }, [scrollTop, rowTops, rows]);
+
+  const visibleEnd = useMemo(() => {
+    let r = visibleStart;
+    while (r < rows - 1 && rowTops[r + 1] < scrollTop + scrollBodyHeight) r++;
+    return Math.min(rows - 1, r + BUFFER);
+  }, [visibleStart, scrollTop, scrollBodyHeight, rowTops, rows]);
+
+  const topSpacerHeight = rowTops[visibleStart];
+  const bottomSpacerHeight = Math.max(0, rowTops[rows] - rowTops[Math.min(rows, visibleEnd + 1)]);
 
   const getRawValue = useCallback(
     (ref: string): string => {
@@ -249,14 +309,14 @@ export function Spreadsheet({
   const scrollActiveIntoView = useCallback(
     (row: number) => {
       if (!scrollBodyRef.current) return;
-      const cellTop = row * rowHeight;
-      const cellBottom = cellTop + rowHeight;
+      const cellTop = rowTops[row];
+      const cellBottom = rowTops[row + 1];
       const st = scrollBodyRef.current.scrollTop;
       const vh = scrollBodyRef.current.clientHeight;
       if (cellTop < st) scrollBodyRef.current.scrollTop = cellTop;
       else if (cellBottom > st + vh) scrollBodyRef.current.scrollTop = cellBottom - vh;
     },
-    [rowHeight]
+    [rowTops]
   );
 
   const navigate = useCallback(
@@ -454,7 +514,6 @@ export function Spreadsheet({
 
   const formulaBarValue = editingRef ? editValue : getRawValue(anchorRef);
 
-  const colWidth = (col: number) => colWidths?.[col] ?? DEFAULT_COL_WIDTH;
   const rowNumWidth = 40;
 
   return (
@@ -520,6 +579,11 @@ export function Spreadsheet({
                     }}
                   >
                     {colToLetters(c)}
+                    <div
+                      className="ss-col-resize-handle"
+                      onClick={e => e.stopPropagation()}
+                      onPointerDown={e => { e.stopPropagation(); e.preventDefault(); startColResize(c, e.clientX); }}
+                    />
                   </div>
                 );
               })}
@@ -533,7 +597,7 @@ export function Spreadsheet({
             onKeyDown={handleGridKeyDown}
             style={{
               position: 'relative',
-              height: rows * rowHeight,
+              height: rowTops[rows],
               outline: 'none',
               minWidth: (showRowNumbers ? rowNumWidth : 0) + cols * DEFAULT_COL_WIDTH,
             }}
@@ -547,7 +611,7 @@ export function Spreadsheet({
                 const rowIdx = visibleStart + i;
                 const isRowSelected = rowIdx >= selMinRow && rowIdx <= selMaxRow;
                 return (
-                  <div key={rowIdx} className="ss-row" style={{ height: rowHeight }}>
+                  <div key={rowIdx} className="ss-row" style={{ height: rowHeightOf(rowIdx) }}>
                     {showRowNumbers && (
                       <div
                         className={`ss-row-num${isRowSelected ? ' ss-row-num--selected' : ''}`}
@@ -561,6 +625,11 @@ export function Spreadsheet({
                         }}
                       >
                         {rowIdx + 1}
+                        <div
+                          className="ss-row-resize-handle"
+                          onClick={e => e.stopPropagation()}
+                          onPointerDown={e => { e.stopPropagation(); e.preventDefault(); startRowResize(rowIdx, e.clientY); }}
+                        />
                       </div>
                     )}
                     {Array.from({ length: cols }, (_, colIdx) => {
@@ -650,10 +719,10 @@ export function Spreadsheet({
                 <div
                   className="ss-selection-overlay"
                   style={{
-                    top: selMinRow * rowHeight,
+                    top: rowTops[selMinRow],
                     left,
                     width,
-                    height: (selMaxRow - selMinRow + 1) * rowHeight,
+                    height: rowTops[selMaxRow + 1] - rowTops[selMinRow],
                   }}
                 />
               );
