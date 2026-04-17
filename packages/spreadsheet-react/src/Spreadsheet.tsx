@@ -446,6 +446,7 @@ export function Spreadsheet({
                               onChange={e => setEditValue(e.target.value)}
                               onKeyDown={e => handleCellInputKeyDown(e, ref)}
                               onBlur={() => commitEdit(ref, editValue)}
+                              onClick={e => e.stopPropagation()}
                               style={{ width: '100%', height: '100%' }}
                             />
                           ) : (
