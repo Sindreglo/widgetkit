@@ -130,6 +130,59 @@ export function Spreadsheet({
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
   const closeCtx = useCallback(() => setCtxMenu(null), []);
   const clipboardRef = useRef<{ value: CellValue; cut: boolean; fromRef: string } | null>(null);
+  const editSourceRef = useRef<'cell' | 'bar'>('cell');
+
+  // Drag-and-drop
+  const cellsRef = useRef(cells);
+  cellsRef.current = cells;
+  const onCellsChangeRef = useRef(onCellsChange);
+  onCellsChangeRef.current = onCellsChange;
+  const [dragOver, setDragOver] = useState<string | null>(null);
+  const didDragRef = useRef(false);
+
+  const startDrag = useCallback((fromRef: string, startX: number, startY: number) => {
+    if (readOnly) return;
+    let active = false;
+    let currentDragOver: string | null = null;
+
+    const onMove = (e: PointerEvent) => {
+      if (!active && Math.hypot(e.clientX - startX, e.clientY - startY) < 4) return;
+      if (!active) {
+        document.documentElement.style.cursor = 'grabbing';
+        document.body.style.userSelect = 'none';
+      }
+      active = true;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const cellEl = el?.closest<HTMLElement>('[data-ref]');
+      const target = cellEl?.dataset.ref ?? null;
+      const next = target !== fromRef ? target : null;
+      if (next !== currentDragOver) {
+        currentDragOver = next;
+        setDragOver(next);
+      }
+    };
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.documentElement.style.cursor = '';
+      document.body.style.userSelect = '';
+      if (active) {
+        didDragRef.current = true;
+        const fromValue = cellsRef.current[fromRef];
+        if (currentDragOver && fromValue !== undefined && fromValue !== null) {
+          const next = { ...cellsRef.current, [currentDragOver]: fromValue };
+          delete next[fromRef];
+          onCellsChangeRef.current?.(next);
+          setSelectedRef(currentDragOver);
+        }
+      }
+      setDragOver(null);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, [readOnly]);
 
   // Virtual scrolling state
   const [scrollTop, setScrollTop] = useState(0);
@@ -193,6 +246,7 @@ export function Spreadsheet({
   const enterEditMode = useCallback(
     (ref: string, initialValue?: string) => {
       if (readOnly) return;
+      editSourceRef.current = 'cell';
       const raw = initialValue !== undefined ? initialValue : getRawValue(ref);
       setEditingRef(ref);
       setEditValue(raw);
@@ -329,7 +383,10 @@ export function Spreadsheet({
             value={formulaBarValue}
             onChange={e => {
               if (readOnly) return;
-              if (!editingRef) setEditingRef(selectedRef);
+              if (!editingRef) {
+                editSourceRef.current = 'bar';
+                setEditingRef(selectedRef);
+              }
               setEditValue(e.target.value);
             }}
             onKeyDown={handleFormulaBarKeyDown}
@@ -413,6 +470,7 @@ export function Spreadsheet({
                       if (isEditing) cellClass += ' ss-cell--editing';
                       if (isErrorCel) cellClass += ' ss-cell--error';
                       else if (isFormulaCel) cellClass += ' ss-cell--formula';
+                      if (dragOver === ref) cellClass += ' ss-cell--drag-over';
 
                       return (
                         <div
@@ -423,7 +481,12 @@ export function Spreadsheet({
                             width: colWidth(colIdx),
                             minWidth: colWidth(colIdx),
                           }}
+                          onPointerDown={e => {
+                            if (e.button !== 0 || editingRef === ref) return;
+                            startDrag(ref, e.clientX, e.clientY);
+                          }}
                           onClick={() => {
+                            if (didDragRef.current) { didDragRef.current = false; return; }
                             if (editingRef && editingRef !== ref) {
                               commitEdit(editingRef, editValue);
                             }
@@ -442,7 +505,7 @@ export function Spreadsheet({
                             <input
                               className="ss-cell-input"
                               value={editValue}
-                              autoFocus
+                              autoFocus={editSourceRef.current === 'cell'}
                               onChange={e => setEditValue(e.target.value)}
                               onKeyDown={e => handleCellInputKeyDown(e, ref)}
                               onBlur={() => commitEdit(ref, editValue)}
