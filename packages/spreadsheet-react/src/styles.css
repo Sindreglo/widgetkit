@@ -201,13 +201,12 @@
   pointer-events: none;
 }
 
-/* Selected cell */
-.ss-cell--selected {
-  outline: 2px solid var(--ss-accent);
-  outline-offset: -2px;
-  z-index: 2;
+/* All cells within the selection — grab cursor */
+.ss-cell--in-selection {
   cursor: grab;
 }
+
+/* Selection border rendered as a single overlay (see .ss-selection-overlay) */
 
 /* Editing cell */
 .ss-cell--editing {
@@ -240,9 +239,18 @@
   color: var(--ss-text);
 }
 
-/* Multi-cell selection range */
+/* Non-anchor cells in the selection — blue tint */
 .ss-cell--in-range {
   background: color-mix(in srgb, var(--ss-accent) 12%, transparent);
+}
+
+/* Single border rectangle around the whole selection */
+.ss-selection-overlay {
+  position: absolute;
+  border: 2px solid var(--ss-accent);
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 3;
 }
 
 /* Drag-to-move drop preview */

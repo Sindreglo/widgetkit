@@ -160,6 +160,10 @@ export function Spreadsheet({
     () => addressToRef(selection.active.col, selection.active.row),
     [selection.active.col, selection.active.row]
   );
+  const anchorRef = useMemo(
+    () => addressToRef(selection.anchor.col, selection.anchor.row),
+    [selection.anchor.col, selection.anchor.row]
+  );
 
   const { minCol: selMinCol, maxCol: selMaxCol, minRow: selMinRow, maxRow: selMaxRow } =
     useMemo(() => selectionBounds(selection), [selection]);
@@ -393,16 +397,16 @@ export function Spreadsheet({
         case 'Enter':
         case 'F2':
           e.preventDefault();
-          enterEditMode(selectedRef);
+          enterEditMode(anchorRef);
           break;
         case 'Delete':
         case 'Backspace':
           e.preventDefault();
-          commitEdit(selectedRef, '');
+          commitEdit(anchorRef, '');
           break;
         default:
           if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-            enterEditMode(selectedRef, e.key);
+            enterEditMode(anchorRef, e.key);
           }
       }
     },
@@ -433,7 +437,7 @@ export function Spreadsheet({
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        commitEdit(editingRef ?? selectedRef, editValue);
+        commitEdit(editingRef ?? anchorRef, editValue);
         gridWrapperRef.current?.focus();
       } else if (e.key === 'Escape') {
         e.preventDefault();
@@ -448,8 +452,7 @@ export function Spreadsheet({
     gridWrapperRef.current?.focus();
   }, []);
 
-  const formulaBarValue =
-    editingRef === selectedRef ? editValue : getRawValue(selectedRef);
+  const formulaBarValue = editingRef ? editValue : getRawValue(anchorRef);
 
   const colWidth = (col: number) => colWidths?.[col] ?? DEFAULT_COL_WIDTH;
   const rowNumWidth = 40;
@@ -472,7 +475,7 @@ export function Spreadsheet({
               if (readOnly) return;
               if (!editingRef) {
                 editSourceRef.current = 'bar';
-                setEditingRef(selectedRef);
+                setEditingRef(anchorRef);
               }
               setEditValue(e.target.value);
             }}
@@ -562,11 +565,12 @@ export function Spreadsheet({
                     )}
                     {Array.from({ length: cols }, (_, colIdx) => {
                       const ref = addressToRef(colIdx, rowIdx);
-                      const isActive = ref === selectedRef;
                       const isEditing = ref === editingRef;
                       const isInRange =
                         colIdx >= selMinCol && colIdx <= selMaxCol &&
                         rowIdx >= selMinRow && rowIdx <= selMaxRow;
+                      const isAnchor =
+                        colIdx === selection.anchor.col && rowIdx === selection.anchor.row;
                       const isInDragPreview = dragPreview !== null &&
                         colIdx >= dragPreview.minCol && colIdx <= dragPreview.maxCol &&
                         rowIdx >= dragPreview.minRow && rowIdx <= dragPreview.maxRow;
@@ -576,8 +580,8 @@ export function Spreadsheet({
                       const isErrorCel = isError(computed[ref]);
 
                       let cellClass = 'ss-cell';
-                      if (isInRange && !isActive) cellClass += ' ss-cell--in-range';
-                      if (isActive) cellClass += ' ss-cell--selected';
+                      if (isInRange) cellClass += ' ss-cell--in-selection';
+                      if (isInRange && !isAnchor) cellClass += ' ss-cell--in-range';
                       if (isEditing) cellClass += ' ss-cell--editing';
                       if (isErrorCel) cellClass += ' ss-cell--error';
                       else if (isFormulaCel) cellClass += ' ss-cell--formula';
@@ -635,6 +639,25 @@ export function Spreadsheet({
             {bottomSpacerHeight > 0 && (
               <div className="ss-bottom-spacer" style={{ height: bottomSpacerHeight }} />
             )}
+
+            {/* Selection border overlay */}
+            {(() => {
+              let left = showRowNumbers ? rowNumWidth : 0;
+              for (let c = 0; c < selMinCol; c++) left += colWidth(c);
+              let width = 0;
+              for (let c = selMinCol; c <= selMaxCol; c++) width += colWidth(c);
+              return (
+                <div
+                  className="ss-selection-overlay"
+                  style={{
+                    top: selMinRow * rowHeight,
+                    left,
+                    width,
+                    height: (selMaxRow - selMinRow + 1) * rowHeight,
+                  }}
+                />
+              );
+            })()}
           </div>
         </div>
       </div>
