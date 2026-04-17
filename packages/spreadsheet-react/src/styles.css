@@ -117,6 +117,13 @@
   border-right: 1px solid var(--ss-border);
   user-select: none;
   background: var(--ss-header-bg);
+  cursor: pointer;
+}
+
+.ss-col-header:hover,
+.ss-col-header--selected {
+  background: color-mix(in srgb, var(--ss-accent) 10%, var(--ss-header-bg));
+  color: var(--ss-accent);
 }
 
 /* ── Scroll Body ─────────────────────────────────────────────────────────── */
@@ -153,9 +160,16 @@
   background: var(--ss-header-bg);
   border-right: 1px solid var(--ss-border);
   user-select: none;
+  cursor: pointer;
   position: sticky;
   left: 0;
   z-index: 3;
+}
+
+.ss-row-num:hover,
+.ss-row-num--selected {
+  background: color-mix(in srgb, var(--ss-accent) 10%, var(--ss-header-bg));
+  color: var(--ss-accent);
 }
 
 /* ── Cells ───────────────────────────────────────────────────────────────── */
@@ -226,9 +240,14 @@
   color: var(--ss-text);
 }
 
-/* Drag-over target */
-.ss-cell--drag-over {
-  background: color-mix(in srgb, var(--ss-accent) 15%, transparent);
+/* Multi-cell selection range */
+.ss-cell--in-range {
+  background: color-mix(in srgb, var(--ss-accent) 12%, transparent);
+}
+
+/* Drag-to-move drop preview */
+.ss-cell--drag-preview {
+  background: color-mix(in srgb, var(--ss-accent) 22%, transparent);
   outline: 2px dashed var(--ss-accent);
   outline-offset: -2px;
   z-index: 2;
