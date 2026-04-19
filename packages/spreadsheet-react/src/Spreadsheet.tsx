@@ -469,11 +469,33 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
   const scrollBodyRef = useRef<HTMLDivElement>(null);
   const gridWrapperRef = useRef<HTMLDivElement>(null);
 
-  // Cumulative row tops for accurate virtual scroll with variable row heights
+  // Guard: prevent multiple expand triggers per render cycle
+  const expandPendingRef = useRef(false);
+  useEffect(() => { expandPendingRef.current = false; }, [effectiveRows, effectiveCols]);
+
+  // Incremental rowTops — extends the cache instead of recomputing from scratch
+  const rowTopsCache = useRef<{
+    tops: number[];
+    heights: Record<number, number>;
+    rowHeight: number;
+  }>({ tops: [0], heights: {}, rowHeight: DEFAULT_ROW_HEIGHT });
+
   const rowTops = useMemo(() => {
+    const cache = rowTopsCache.current;
+    const heightsChanged = cache.heights !== internalRowHeights || cache.rowHeight !== rowHeight;
+    if (!heightsChanged && effectiveRows > cache.tops.length - 1) {
+      // Only new rows added — extend without recomputing existing entries
+      const tops = cache.tops.slice();
+      for (let r = cache.tops.length - 1; r < effectiveRows; r++)
+        tops[r + 1] = tops[r] + rowHeightOf(r);
+      rowTopsCache.current = { tops, heights: internalRowHeights, rowHeight };
+      return tops;
+    }
+    // Full recompute: height change or first render
     const tops = new Array<number>(effectiveRows + 1);
     tops[0] = 0;
     for (let r = 0; r < effectiveRows; r++) tops[r + 1] = tops[r] + rowHeightOf(r);
+    rowTopsCache.current = { tops, heights: internalRowHeights, rowHeight };
     return tops;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveRows, internalRowHeights, rowHeight]);
