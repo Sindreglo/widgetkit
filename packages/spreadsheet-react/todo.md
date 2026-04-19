@@ -22,7 +22,7 @@
 - [ ] Frozen rows/cols (sticky while scrolling)
 - [ ] Fill handle (drag corner to auto-fill a range)
 - [ ] Sort/filter by column
-- [ ] Merge cells
+- [x] Merge cells
 - [ ] Column/row hide & unhide
 - [ ] Find & replace
 - [ ] Multiple sheets (tabs)

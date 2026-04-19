@@ -8,18 +8,31 @@ const NAV = [
   {
     group: "Examples",
     items: [
-      { id: "drag-drop", label: "Drag & drop" },
+      { id: "drag-drop",     label: "Drag & drop" },
       { id: "custom-render", label: "Custom rendering" },
-      { id: "readonly", label: "Read only" },
+      { id: "readonly",      label: "Read only" },
     ],
   },
+  {
+    group: "Reference",
+    items: [
+      { id: "props",    label: "Props" },
+      { id: "types",    label: "TypeScript types" },
+      { id: "keyboard", label: "Keyboard shortcuts" },
+    ],
+  },
+];
+
+const ALL_IDS = [
+  "introduction", "installation",
+  "drag-drop", "custom-render", "readonly",
+  "props", "types", "keyboard",
 ];
 
 export function Sidebar() {
   const [active, setActive] = useState("introduction");
 
   useEffect(() => {
-    const ids = ["introduction", "installation", "drag-drop", "custom-render", "readonly"];
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -29,7 +42,7 @@ export function Sidebar() {
       { rootMargin: "-10% 0px -75% 0px" }
     );
 
-    ids.forEach((id) => {
+    ALL_IDS.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });

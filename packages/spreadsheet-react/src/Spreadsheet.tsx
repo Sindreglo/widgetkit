@@ -14,7 +14,7 @@ import {
   type CellMap,
   type CellValue,
 } from '@widgetkit/spreadsheet';
-import type { SpreadsheetProps, CellFormat, NumberFormat } from './types';
+import type { SpreadsheetProps, CellFormat, NumberFormat, MergeRegion } from './types';
 
 const DEFAULT_ROWS = 50;
 const DEFAULT_COLS = 26;
@@ -246,11 +246,27 @@ export function Spreadsheet({
   readOnly = false,
   maxHeight = DEFAULT_MAX_HEIGHT,
   formats,
+  merges,
   onCellChange,
   onCellsChange,
   onFormatsChange,
+  onMergesChange,
 }: SpreadsheetProps) {
   const computed = useMemo(() => evaluate(cells), [cells]);
+
+  // Map every cell ref in a merged region → its merge anchor info
+  const mergeMap = useMemo(() => {
+    const map = new Map<string, { anchorCol: number; anchorRow: number; colSpan: number; rowSpan: number }>();
+    if (!merges) return map;
+    for (const [ref, { colSpan, rowSpan }] of Object.entries(merges)) {
+      const addr = parseRef(ref);
+      if (!addr) continue;
+      for (let r = addr.row; r < addr.row + rowSpan; r++)
+        for (let c = addr.col; c < addr.col + colSpan; c++)
+          map.set(addressToRef(c, r), { anchorCol: addr.col, anchorRow: addr.row, colSpan, rowSpan });
+    }
+    return map;
+  }, [merges]);
 
   const [selection, setSelection] = useState<Sel>({
     anchor: { col: 0, row: 0 },
@@ -870,6 +886,12 @@ export function Spreadsheet({
                     )}
                     {Array.from({ length: cols }, (_, colIdx) => {
                       const ref = addressToRef(colIdx, rowIdx);
+                      // Hidden placeholder for any cell inside a merged region
+                      if (mergeMap.has(ref)) {
+                        return (
+                          <div key={colIdx} data-ref={ref} style={{ width: colWidth(colIdx), minWidth: colWidth(colIdx), flexShrink: 0, visibility: 'hidden', pointerEvents: 'none' }} />
+                        );
+                      }
                       const isEditing = ref === editingRef;
                       const isInRange =
                         colIdx >= selMinCol && colIdx <= selMaxCol &&
@@ -965,6 +987,89 @@ export function Spreadsheet({
               <div className="ss-bottom-spacer" style={{ height: bottomSpacerHeight }} />
             )}
 
+            {/* Merged cell overlays */}
+            {merges && Object.entries(merges).map(([mRef, { colSpan, rowSpan }]) => {
+              const addr = parseRef(mRef);
+              if (!addr) return null;
+              const { col: aC, row: aR } = addr;
+              const effCols = Math.min(colSpan, cols - aC);
+              const effRows = Math.min(rowSpan, rows - aR);
+              if (effCols <= 0 || effRows <= 0) return null;
+
+              let mLeft = showRowNumbers ? rowNumWidth : 0;
+              for (let c = 0; c < aC; c++) mLeft += colWidth(c);
+              let mWidth = 0;
+              for (let c = aC; c < aC + effCols; c++) mWidth += colWidth(c);
+              const mTop = rowTops[aR];
+              const mHeight = rowTops[aR + effRows] - mTop;
+
+              const isEditing = mRef === editingRef;
+              const isInRange = aC >= selMinCol && aC <= selMaxCol && aR >= selMinRow && aR <= selMaxRow;
+              const isAnchor = selection.anchor.col === aC && selection.anchor.row === aR;
+              const rawVal = getRawValue(mRef);
+              const displayVal = getDisplayValue(mRef);
+              const fmt = formats?.[mRef];
+              const isFormulaCel = rawVal.startsWith('=');
+              const isErrorCel = isError(computed[mRef]);
+
+              let mClass = 'ss-cell ss-merged-cell';
+              if (isInRange) mClass += ' ss-cell--in-selection';
+              if (isInRange && !isAnchor) mClass += ' ss-cell--in-range';
+              if (isEditing) mClass += ' ss-cell--editing';
+              if (isErrorCel) mClass += ' ss-cell--error';
+              else if (isFormulaCel) mClass += ' ss-cell--formula';
+
+              let mBg: string | undefined;
+              if (isInRange && !isAnchor) mBg = `color-mix(in srgb, var(--ss-accent) 12%, ${fmt?.background ?? 'var(--ss-bg)'})`;
+              else if (fmt?.background) mBg = fmt.background;
+
+              return (
+                <div
+                  key={mRef}
+                  className={mClass}
+                  data-ref={mRef}
+                  style={{
+                    position: 'absolute', top: mTop, left: mLeft, width: mWidth, height: mHeight, zIndex: 1,
+                    ...(fmt?.bold && { fontWeight: 'bold' }),
+                    ...(fmt?.italic && { fontStyle: 'italic' }),
+                    ...(fmt?.color && !isErrorCel && { color: fmt.color }),
+                    ...(mBg && { background: mBg }),
+                    ...(fmt?.numberFormat && fmt.numberFormat !== 'general' && fmt.numberFormat !== 'date' && typeof computed[mRef] === 'number' && { textAlign: 'right' as const }),
+                  }}
+                  onPointerDown={e => {
+                    if (e.button !== 0 || editingRef === mRef) return;
+                    if (editingRef && editingRef !== mRef) commitEdit(editingRef, editValue);
+                    if (e.shiftKey) {
+                      setSelection(prev => ({ anchor: prev.anchor, active: { col: aC, row: aR } }));
+                      gridWrapperRef.current?.focus({ preventScroll: true });
+                      return;
+                    }
+                    setSelection({ anchor: { col: aC, row: aR }, active: { col: aC + effCols - 1, row: aR + effRows - 1 } });
+                    gridWrapperRef.current?.focus({ preventScroll: true });
+                  }}
+                  onDoubleClick={() => enterEditMode(mRef)}
+                  onContextMenu={e => {
+                    e.preventDefault();
+                    if (editingRef && editingRef !== mRef) commitEdit(editingRef, editValue);
+                    setSelection({ anchor: { col: aC, row: aR }, active: { col: aC + effCols - 1, row: aR + effRows - 1 } });
+                    setCtxMenu({ x: e.clientX, y: e.clientY });
+                  }}
+                >
+                  {isEditing ? (
+                    <input className="ss-cell-input" value={editValue}
+                      autoFocus={editSourceRef.current === 'cell'}
+                      onChange={e => setEditValue(e.target.value)}
+                      onKeyDown={e => handleCellInputKeyDown(e, mRef)}
+                      onBlur={() => commitEdit(mRef, editValue)}
+                      onClick={e => e.stopPropagation()}
+                      style={{ width: '100%', height: '100%' }} />
+                  ) : (
+                    <span className="ss-cell-content">{displayVal}</span>
+                  )}
+                </div>
+              );
+            })}
+
             {/* Selection border overlay */}
             {(() => {
               let left = showRowNumbers ? rowNumWidth : 0;
@@ -1017,6 +1122,30 @@ export function Spreadsheet({
           { label: 'Insert column left',  action: () => { pushHistory(); onCellsChange?.(shiftCols(cells, selectedAddr.col,     1)); } },
           { label: 'Insert column right', action: () => { pushHistory(); onCellsChange?.(shiftCols(cells, selectedAddr.col + 1, 1)); } },
           { label: 'Delete column',       action: () => { pushHistory(); onCellsChange?.(shiftCols(cells, selectedAddr.col,    -1)); } },
+          null,
+          {
+            label: 'Merge cells',
+            disabled: !onMergesChange || (selMinCol === selMaxCol && selMinRow === selMaxRow),
+            action: () => {
+              const ref = addressToRef(selMinCol, selMinRow);
+              onMergesChange?.({ ...(merges ?? {}), [ref]: { colSpan: selMaxCol - selMinCol + 1, rowSpan: selMaxRow - selMinRow + 1 } });
+              // Clear values of non-anchor cells in merged region
+              const next = { ...cells };
+              for (let r = selMinRow; r <= selMaxRow; r++)
+                for (let c = selMinCol; c <= selMaxCol; c++)
+                  if (!(c === selMinCol && r === selMinRow)) delete next[addressToRef(c, r)];
+              onCellsChange?.(next);
+            },
+          },
+          {
+            label: 'Unmerge cells',
+            disabled: !onMergesChange || !merges?.[anchorRef],
+            action: () => {
+              const next = { ...(merges ?? {}) };
+              delete next[anchorRef];
+              onMergesChange?.(next);
+            },
+          },
         ];
 
         return <CtxMenu x={ctxMenu.x} y={ctxMenu.y} items={items} onClose={closeCtx} />;

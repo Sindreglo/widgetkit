@@ -1,4 +1,4 @@
 export { Spreadsheet } from './Spreadsheet';
-export type { SpreadsheetProps, CellFormat, NumberFormat } from './types';
+export type { SpreadsheetProps, CellFormat, NumberFormat, MergeRegion } from './types';
 export type { CellValue, CellMap, ComputedMap, SpreadsheetError } from '@widgetkit/spreadsheet';
 export { evaluate, evaluateFormula, exportCsv, ERRORS, isError } from '@widgetkit/spreadsheet';

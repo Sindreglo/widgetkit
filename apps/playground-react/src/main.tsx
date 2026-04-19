@@ -11,7 +11,7 @@ import type {
 } from "@widgetkit/booking-react";
 import "@widgetkit/booking-react/styles.css";
 import { Spreadsheet } from "@widgetkit/spreadsheet-react";
-import type { CellMap, CellFormat } from "@widgetkit/spreadsheet-react";
+import type { CellMap, CellFormat, MergeRegion } from "@widgetkit/spreadsheet-react";
 import "@widgetkit/spreadsheet-react/styles.css";
 
 const today = new Date();
@@ -400,62 +400,42 @@ function BookingDemo() {
 // ── Spreadsheet demo ─────────────────────────────────────────────────────────
 
 const initialCells: CellMap = {
-  A1: "Name",
-  B1: "Q1",
-  C1: "Q2",
-  D1: "Q3",
-  E1: "Total",
-  A2: "Alice",
-  B2: 9200,
-  C2: 10500,
-  D2: 11800,
-  A3: "Bob",
-  B3: 7400,
-  C3: 8100,
-  D3: 9300,
-  A4: "Carol",
-  B4: 11000,
-  C4: 12500,
-  D4: 13200,
-  A5: "David",
-  B5: 6800,
-  C5: 7200,
-  D5: 8400,
-  A6: "Total",
-  E2: "=SUM(B2:D2)",
-  E3: "=SUM(B3:D3)",
-  E4: "=SUM(B4:D4)",
-  E5: "=SUM(B5:D5)",
-  B6: "=SUM(B2:B5)",
-  C6: "=SUM(C2:C5)",
-  D6: "=SUM(D2:D5)",
-  E6: "=SUM(E2:E5)",
+  A1: "Q1–Q3 Sales Report",
+  A2: "Name",  B2: "Q1",    C2: "Q2",    D2: "Q3",    E2: "Total",
+  A3: "Alice", B3: 9200,   C3: 10500,  D3: 11800,
+  A4: "Bob",   B4: 7400,   C4: 8100,   D4: 9300,
+  A5: "Carol", B5: 11000,  C5: 12500,  D5: 13200,
+  A6: "David", B6: 6800,   C6: 7200,   D6: 8400,
+  A7: "Total",
+  E3: "=SUM(B3:D3)", E4: "=SUM(B4:D4)", E5: "=SUM(B5:D5)", E6: "=SUM(B6:D6)",
+  B7: "=SUM(B3:B6)", C7: "=SUM(C3:C6)", D7: "=SUM(D3:D6)", E7: "=SUM(E3:E6)",
 };
 
 const initialFormats: Record<string, CellFormat> = {
-  A1: { bold: true, background: '#f1f5f9' },
-  B1: { bold: true, background: '#f1f5f9' },
-  C1: { bold: true, background: '#f1f5f9' },
-  D1: { bold: true, background: '#f1f5f9' },
-  E1: { bold: true, background: '#f1f5f9' },
-  A6: { bold: true, background: '#f1f5f9' },
-  B2: { numberFormat: 'currency' }, C2: { numberFormat: 'currency' }, D2: { numberFormat: 'currency' },
+  A1: { bold: true, background: '#1e293b', color: '#ffffff' },
+  A2: { bold: true, background: '#f1f5f9' }, B2: { bold: true, background: '#f1f5f9' },
+  C2: { bold: true, background: '#f1f5f9' }, D2: { bold: true, background: '#f1f5f9' },
+  E2: { bold: true, background: '#f1f5f9' },
+  A7: { bold: true, background: '#f1f5f9' },
   B3: { numberFormat: 'currency' }, C3: { numberFormat: 'currency' }, D3: { numberFormat: 'currency' },
   B4: { numberFormat: 'currency' }, C4: { numberFormat: 'currency' }, D4: { numberFormat: 'currency' },
   B5: { numberFormat: 'currency' }, C5: { numberFormat: 'currency' }, D5: { numberFormat: 'currency' },
-  B6: { bold: true, numberFormat: 'currency' },
-  C6: { bold: true, numberFormat: 'currency' },
-  D6: { bold: true, numberFormat: 'currency' },
-  E2: { numberFormat: 'currency', color: '#16a34a' },
-  E3: { numberFormat: 'currency', color: '#16a34a' },
-  E4: { numberFormat: 'currency', color: '#16a34a' },
-  E5: { numberFormat: 'currency', color: '#16a34a' },
-  E6: { bold: true, numberFormat: 'currency', color: '#16a34a', background: '#f0fdf4' },
+  B6: { numberFormat: 'currency' }, C6: { numberFormat: 'currency' }, D6: { numberFormat: 'currency' },
+  B7: { bold: true, numberFormat: 'currency' }, C7: { bold: true, numberFormat: 'currency' },
+  D7: { bold: true, numberFormat: 'currency' },
+  E3: { numberFormat: 'currency', color: '#16a34a' }, E4: { numberFormat: 'currency', color: '#16a34a' },
+  E5: { numberFormat: 'currency', color: '#16a34a' }, E6: { numberFormat: 'currency', color: '#16a34a' },
+  E7: { bold: true, numberFormat: 'currency', color: '#16a34a', background: '#f0fdf4' },
+};
+
+const initialMerges: Record<string, MergeRegion> = {
+  A1: { colSpan: 5, rowSpan: 1 },
 };
 
 function SpreadsheetDemo() {
   const [cells, setCells] = useState<CellMap>(initialCells);
   const [formats, setFormats] = useState<Record<string, CellFormat>>(initialFormats);
+  const [merges, setMerges] = useState<Record<string, MergeRegion>>(initialMerges);
 
   return (
     <Spreadsheet
@@ -465,8 +445,10 @@ function SpreadsheetDemo() {
       maxHeight={360}
       showToolbar
       formats={formats}
+      merges={merges}
       onCellsChange={setCells}
       onFormatsChange={setFormats}
+      onMergesChange={setMerges}
     />
   );
 }

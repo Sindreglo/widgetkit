@@ -6,6 +6,7 @@ import { DragDropDemo } from "./DragDropDemo";
 import { CustomRenderDemo } from "./CustomRenderDemo";
 import { ReadOnlyDemo } from "./ReadOnlyDemo";
 import { CodeBlock } from "./CodeBlock";
+import { PropsTable } from "./PropsTable";
 
 export const metadata: Metadata = {
   title: "Scheduler — WidgetKit",
@@ -192,6 +193,40 @@ const CUSTOM_RENDER_SNIPPET = `function renderItem(item: TimelineItem) {
   onDateChange={setDate}
 />`;
 
+const TYPES_SNIPPET = `interface Resource {
+  id:      string;
+  name:    string;
+  avatar?: string; // URL to avatar image
+}
+
+interface TimelineItem {
+  id:           string;
+  resourceId:   string; // must match a Resource.id
+  name:         string;
+  color:        string; // any valid CSS color
+  start:        Date;
+  end:          Date;
+  description?: string;
+}
+
+// Callback detail types
+interface ItemCreateDetail      { resourceId: string; start: Date; end: Date }
+interface ItemClickDetail       { item: TimelineItem }
+interface ItemDblClickDetail    { item: TimelineItem }
+interface ItemHoverDetail       { item: TimelineItem; type: "enter" | "leave" }
+interface ItemContextMenuDetail { item: TimelineItem; x: number; y: number }
+interface ItemDragStartDetail   { item: TimelineItem }
+interface ItemResizeStartDetail { item: TimelineItem }
+interface ItemDragEndDetail     { item: TimelineItem; resourceId: string; start: Date; end: Date }
+interface ItemResizeEndDetail   { item: TimelineItem; start: Date; end: Date }`;
+
+const SHORTCUTS = [
+  { keys: ["←", "→"],            action: "Move selected event by one snap interval" },
+  { keys: ["↑", "↓"],            action: "Move selected event to the previous / next resource" },
+  { keys: ["Delete", "⌫"],       action: "Delete the selected event" },
+  { keys: ["Escape"],             action: "Deselect event / close edit modal" },
+];
+
 const READONLY_SNIPPET = `const resources: Resource[] = [
   { id: "r1", name: "Alice Hansen", avatar: "https://..." },
   { id: "r2", name: "Bob Nilsen",   avatar: "https://..." },
@@ -328,6 +363,50 @@ export default function SchedulerPage() {
             </p>
             <ReadOnlyDemo />
             <CodeBlock code={READONLY_SNIPPET} />
+          </section>
+
+          <section id="props" className="docs-section">
+            <p className="docs-section-tag">Reference</p>
+            <h2>Props</h2>
+            <p>
+              All props except <code className="inline-code">resources</code>,{" "}
+              <code className="inline-code">items</code>, and{" "}
+              <code className="inline-code">date</code> are optional.
+              Props marked <span className="prop-required">*</span> are required.
+            </p>
+            <PropsTable />
+          </section>
+
+          <section id="types" className="docs-section">
+            <p className="docs-section-tag">Reference</p>
+            <h2>TypeScript types</h2>
+            <p>
+              All types are exported from{" "}
+              <code className="inline-code">@widgetkit/scheduler-react</code> and
+              can be imported alongside the component.
+            </p>
+            <CodeBlock code={TYPES_SNIPPET} />
+          </section>
+
+          <section id="keyboard" className="docs-section">
+            <p className="docs-section-tag">Reference</p>
+            <h2>Keyboard shortcuts</h2>
+            <p>
+              When an event is selected, the following keyboard shortcuts are
+              available. Interactions respect{" "}
+              <code className="inline-code">readonly</code> — shortcuts are
+              disabled when it is set.
+            </p>
+            <div className="shortcuts-table">
+              {SHORTCUTS.map(({ keys, action }) => (
+                <div key={action} className="shortcut-row">
+                  <div className="shortcut-keys">
+                    {keys.map((k) => <kbd key={k} className="kbd">{k}</kbd>)}
+                  </div>
+                  <span className="shortcut-action">{action}</span>
+                </div>
+              ))}
+            </div>
           </section>
         </main>
       </div>

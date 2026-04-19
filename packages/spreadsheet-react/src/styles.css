@@ -293,6 +293,12 @@
   background: color-mix(in srgb, var(--ss-accent) 12%, var(--ss-bg));
 }
 
+/* Merged cell overlay */
+.ss-merged-cell {
+  border-bottom: 1px solid var(--ss-border);
+  z-index: 1;
+}
+
 /* Single border rectangle around the whole selection */
 .ss-selection-overlay {
   position: absolute;
