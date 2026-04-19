@@ -1050,7 +1050,9 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
                             e.preventDefault();
                             if (!showContextMenu) return;
                             if (editingRef && editingRef !== ref) commitEdit(editingRef, editValue);
-                            setSelection({ anchor: { col: colIdx, row: rowIdx }, active: { col: colIdx, row: rowIdx } });
+                            if (!isInRange) {
+                              setSelection({ anchor: { col: colIdx, row: rowIdx }, active: { col: colIdx, row: rowIdx } });
+                            }
                             setCtxMenu({ x: e.clientX, y: e.clientY });
                           }}
                         >
@@ -1148,7 +1150,9 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
                     e.preventDefault();
                     if (!showContextMenu) return;
                     if (editingRef && editingRef !== mRef) commitEdit(editingRef, editValue);
-                    setSelection({ anchor: { col: aC, row: aR }, active: { col: aC + effCols - 1, row: aR + effRows - 1 } });
+                    if (!isInRange) {
+                      setSelection({ anchor: { col: aC, row: aR }, active: { col: aC + effCols - 1, row: aR + effRows - 1 } });
+                    }
                     setCtxMenu({ x: e.clientX, y: e.clientY });
                   }}
                 >

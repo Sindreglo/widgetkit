@@ -217,7 +217,10 @@ export default function SchedulerPage() {
 
         <main className="docs-content">
           <div className="docs-page-header">
-            <span className="hero-badge">@widgetkit/scheduler-react · @widgetkit/scheduler-vue</span>
+            <div className="docs-pkg-badges">
+              <span className="docs-pkg-badge">@widgetkit/scheduler-react</span>
+              <span className="docs-pkg-badge">@widgetkit/scheduler-vue</span>
+            </div>
             <h1 className="docs-page-title">Scheduler</h1>
             <p className="docs-page-desc">
               A time-based multi-resource scheduler with drag-and-drop, resize,
