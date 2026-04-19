@@ -668,6 +668,11 @@ export function Spreadsheet({
                           onPointerDown={e => {
                             if (e.button !== 0 || editingRef === ref) return;
                             if (editingRef && editingRef !== ref) commitEdit(editingRef, editValue);
+                            if (e.shiftKey) {
+                              setSelection(prev => ({ anchor: prev.anchor, active: { col: colIdx, row: rowIdx } }));
+                              gridWrapperRef.current?.focus();
+                              return;
+                            }
                             if (isInRange) {
                               startSelectionDrag(colIdx, rowIdx, e.clientX, e.clientY);
                             } else {
