@@ -5,8 +5,8 @@
 - [x] Keyboard navigation (arrow keys, Tab, Enter)
 - [x] Cell editing (inline + formula bar)
 - [x] Formula support (`=SUM`, `=IF`, etc.)
-- [ ] Copy/paste — context menu cut/copy/paste fungerer (enkeltcelle), men mangler `Ctrl+C/V` og range-paste
-- [ ] Undo/redo
+- [x] Copy/paste — `Ctrl+C/V/X` + context menu, støtter range
+- [x] Undo/redo — `Ctrl+Z` / `Ctrl+Shift+Z` / `Ctrl+Y`, 50-stegs historikk
 - [x] Column resize + row resize
 - [x] Multi-cell range selection (drag, Shift+click, Shift+arrow)
 - [x] Row/column header click to select entire row/col

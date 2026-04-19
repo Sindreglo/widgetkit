@@ -122,6 +122,13 @@ interface Sel {
   active: { col: number; row: number };
 }
 
+interface RangeClipboard {
+  data: CellValue[][];
+  cut: boolean;
+  srcMinCol: number; srcMinRow: number;
+  srcMaxCol: number; srcMaxRow: number;
+}
+
 function selectionBounds(sel: Sel) {
   return {
     minCol: Math.min(sel.anchor.col, sel.active.col),
@@ -174,11 +181,74 @@ export function Spreadsheet({
     return `${addressToRef(selMinCol, selMinRow)}:${addressToRef(selMaxCol, selMaxRow)}`;
   }, [selMinCol, selMaxCol, selMinRow, selMaxRow, selectedRef]);
 
-  // Context menu + clipboard
+  // Context menu
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
   const closeCtx = useCallback(() => setCtxMenu(null), []);
-  const clipboardRef = useRef<{ value: CellValue; cut: boolean; fromRef: string } | null>(null);
   const editSourceRef = useRef<'cell' | 'bar'>('cell');
+
+  // Undo / redo
+  const historyRef = useRef<CellMap[]>([]);
+  const futureRef = useRef<CellMap[]>([]);
+  const pushHistory = useCallback(() => {
+    historyRef.current = [...historyRef.current.slice(-49), { ...cellsRef.current }];
+    futureRef.current = [];
+  }, []);
+  const undo = useCallback(() => {
+    if (!historyRef.current.length) return;
+    const prev = historyRef.current[historyRef.current.length - 1];
+    historyRef.current = historyRef.current.slice(0, -1);
+    futureRef.current = [{ ...cellsRef.current }, ...futureRef.current.slice(0, 49)];
+    onCellsChangeRef.current?.(prev);
+  }, []);
+  const redo = useCallback(() => {
+    if (!futureRef.current.length) return;
+    const next = futureRef.current[0];
+    futureRef.current = futureRef.current.slice(1);
+    historyRef.current = [...historyRef.current.slice(-49), { ...cellsRef.current }];
+    onCellsChangeRef.current?.(next);
+  }, []);
+
+  // Range clipboard (copy / cut / paste)
+  const rangeClipboardRef = useRef<RangeClipboard | null>(null);
+  const selectionRef = useRef(selection);
+  selectionRef.current = selection;
+  const boundsRef = useRef({ selMinCol, selMaxCol, selMinRow, selMaxRow });
+  boundsRef.current = { selMinCol, selMaxCol, selMinRow, selMaxRow };
+
+  const copySelection = useCallback((cut: boolean) => {
+    const { selMinCol, selMaxCol, selMinRow, selMaxRow } = boundsRef.current;
+    const data: CellValue[][] = [];
+    for (let r = selMinRow; r <= selMaxRow; r++) {
+      const row: CellValue[] = [];
+      for (let c = selMinCol; c <= selMaxCol; c++)
+        row.push(cellsRef.current[addressToRef(c, r)] ?? null);
+      data.push(row);
+    }
+    rangeClipboardRef.current = { data, cut, srcMinCol: selMinCol, srcMinRow: selMinRow, srcMaxCol: selMaxCol, srcMaxRow: selMaxRow };
+    const tsv = data.map(r => r.map(v => v === null ? '' : String(v)).join('\t')).join('\n');
+    navigator.clipboard.writeText(tsv).catch(() => {});
+  }, []);
+
+  const pasteSelection = useCallback(() => {
+    const cb = rangeClipboardRef.current;
+    if (!cb) return;
+    pushHistory();
+    const next = { ...cellsRef.current };
+    if (cb.cut) {
+      for (let r = cb.srcMinRow; r <= cb.srcMaxRow; r++)
+        for (let c = cb.srcMinCol; c <= cb.srcMaxCol; c++)
+          delete next[addressToRef(c, r)];
+      rangeClipboardRef.current = null;
+    }
+    const { col: anchorCol, row: anchorRow } = selectionRef.current.anchor;
+    for (let r = 0; r < cb.data.length; r++)
+      for (let c = 0; c < cb.data[r].length; c++) {
+        const val = cb.data[r][c];
+        if (val !== null && val !== undefined)
+          next[addressToRef(anchorCol + c, anchorRow + r)] = val;
+      }
+    onCellsChangeRef.current?.(next);
+  }, [pushHistory]);
 
   // Drag-to-move (selection)
   const cellsRef = useRef(cells);
@@ -282,13 +352,14 @@ export function Spreadsheet({
 
   const commitEdit = useCallback(
     (ref: string, value: string) => {
+      pushHistory();
       const cellValue = toCellValue(value);
       onCellChange?.(ref, cellValue as string | number | null);
       onCellsChange?.({ ...cells, [ref]: cellValue });
       setEditingRef(null);
       setEditValue('');
     },
-    [cells, onCellChange, onCellsChange]
+    [cells, onCellChange, onCellsChange, pushHistory]
   );
 
   const cancelEdit = useCallback(() => {
@@ -465,13 +536,33 @@ export function Spreadsheet({
           e.preventDefault();
           commitEdit(anchorRef, '');
           break;
+        case 'c':
+        case 'C':
+          if (e.ctrlKey || e.metaKey) { e.preventDefault(); copySelection(false); }
+          break;
+        case 'x':
+        case 'X':
+          if (e.ctrlKey || e.metaKey) { e.preventDefault(); copySelection(true); }
+          break;
+        case 'v':
+        case 'V':
+          if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); pasteSelection(); }
+          break;
+        case 'z':
+        case 'Z':
+          if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+          break;
+        case 'y':
+        case 'Y':
+          if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); redo(); }
+          break;
         default:
           if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
             enterEditMode(anchorRef, e.key);
           }
       }
     },
-    [editingRef, navigate, enterEditMode, selectedRef, commitEdit]
+    [editingRef, navigate, enterEditMode, selectedRef, commitEdit, copySelection, pasteSelection, undo, redo, readOnly]
   );
 
   // Inline cell input keydown
@@ -754,44 +845,35 @@ export function Spreadsheet({
       </div>
 
       {ctxMenu && (() => {
-        const cb = clipboardRef.current;
-        const rawVal = cells[selectedRef] ?? null;
+        const hasCb = !!rangeClipboardRef.current;
 
         const items: CtxEntry[] = [
-          {
-            label: 'Cut',
-            action: () => { clipboardRef.current = { value: rawVal, cut: true, fromRef: selectedRef }; },
-          },
-          {
-            label: 'Copy',
-            action: () => { clipboardRef.current = { value: rawVal, cut: false, fromRef: selectedRef }; },
-          },
+          { label: 'Cut',   action: () => copySelection(true) },
+          { label: 'Copy',  action: () => copySelection(false) },
           {
             label: 'Paste',
-            disabled: !cb,
-            action: () => {
-              if (!cb) return;
-              const next = { ...cells, [selectedRef]: cb.value };
-              if (cb.cut) { delete next[cb.fromRef]; clipboardRef.current = null; }
-              onCellsChange?.(next);
-            },
+            disabled: !hasCb,
+            action: () => pasteSelection(),
           },
           {
             label: 'Clear',
             action: () => {
+              pushHistory();
               const next = { ...cells };
-              delete next[selectedRef];
+              for (let r = selMinRow; r <= selMaxRow; r++)
+                for (let c = selMinCol; c <= selMaxCol; c++)
+                  delete next[addressToRef(c, r)];
               onCellsChange?.(next);
             },
           },
           null,
-          { label: 'Insert row above', action: () => onCellsChange?.(shiftRows(cells, selectedAddr.row,     1)) },
-          { label: 'Insert row below', action: () => onCellsChange?.(shiftRows(cells, selectedAddr.row + 1, 1)) },
-          { label: 'Delete row',       action: () => onCellsChange?.(shiftRows(cells, selectedAddr.row,    -1)) },
+          { label: 'Insert row above', action: () => { pushHistory(); onCellsChange?.(shiftRows(cells, selectedAddr.row,     1)); } },
+          { label: 'Insert row below', action: () => { pushHistory(); onCellsChange?.(shiftRows(cells, selectedAddr.row + 1, 1)); } },
+          { label: 'Delete row',       action: () => { pushHistory(); onCellsChange?.(shiftRows(cells, selectedAddr.row,    -1)); } },
           null,
-          { label: 'Insert column left',  action: () => onCellsChange?.(shiftCols(cells, selectedAddr.col,     1)) },
-          { label: 'Insert column right', action: () => onCellsChange?.(shiftCols(cells, selectedAddr.col + 1, 1)) },
-          { label: 'Delete column',       action: () => onCellsChange?.(shiftCols(cells, selectedAddr.col,    -1)) },
+          { label: 'Insert column left',  action: () => { pushHistory(); onCellsChange?.(shiftCols(cells, selectedAddr.col,     1)); } },
+          { label: 'Insert column right', action: () => { pushHistory(); onCellsChange?.(shiftCols(cells, selectedAddr.col + 1, 1)); } },
+          { label: 'Delete column',       action: () => { pushHistory(); onCellsChange?.(shiftCols(cells, selectedAddr.col,    -1)); } },
         ];
 
         return <CtxMenu x={ctxMenu.x} y={ctxMenu.y} items={items} onClose={closeCtx} />;
