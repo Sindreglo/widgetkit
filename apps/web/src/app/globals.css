@@ -576,6 +576,66 @@ a {
   text-overflow: ellipsis;
 }
 
+/* Demo controls panel */
+.demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.demo-controls-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.demo-controls-group-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.demo-controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.demo-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  line-height: 1.5;
+}
+
+.demo-toggle-btn:hover:not(.active) {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.demo-toggle-btn.active {
+  background: rgba(108, 99, 255, 0.12);
+  border-color: rgba(108, 99, 255, 0.3);
+  color: var(--accent-2);
+}
+
 /* Scheduler intro demo wrapper */
 .scheduler-demo {
   border-radius: var(--radius);

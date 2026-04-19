@@ -167,7 +167,7 @@ function Toolbar({ anchorRef, formats, onFormat }: {
           onChange={e => onFormat({ color: e.target.value })} />
       </label>
       <label className="ss-tb-color-btn" title="Fill color">
-        <span className="ss-tb-color-label" style={{ fontSize: 10 }}>▪</span>
+        <span className="ss-tb-fill-icon" />
         <span className="ss-tb-color-swatch" style={{ background: fmt.background ?? '#ffffff' }} />
         <input type="color" className="ss-tb-color-input"
           value={fmt.background ?? '#ffffff'}

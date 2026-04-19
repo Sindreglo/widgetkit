@@ -389,6 +389,15 @@
   border-radius: 1px;
 }
 
+.ss-tb-fill-icon {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--ss-muted);
+  background: #ffffff;
+  border-radius: 1px;
+}
+
 .ss-tb-color-input {
   position: absolute;
   inset: 0;
