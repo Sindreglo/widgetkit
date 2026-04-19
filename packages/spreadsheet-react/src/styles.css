@@ -409,6 +409,30 @@
   border: none;
 }
 
+.ss-tb-select {
+  height: 22px;
+  border: 1px solid var(--ss-border);
+  border-radius: 3px;
+  background: var(--ss-bg);
+  color: var(--ss-text);
+  font-family: var(--ss-font);
+  font-size: 12px;
+  padding: 0 4px;
+  cursor: pointer;
+  outline: none;
+}
+
+.ss-tb-select:focus {
+  border-color: var(--ss-accent);
+}
+
+.ss-tb-btn--wide {
+  width: auto;
+  padding: 0 5px;
+  font-family: var(--ss-font);
+  font-size: 11px;
+}
+
 /* ── Spacers ─────────────────────────────────────────────────────────────── */
 .ss-top-spacer,
 .ss-bottom-spacer {

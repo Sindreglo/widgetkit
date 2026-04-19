@@ -1,10 +1,14 @@
 import type { CellMap } from '@widgetkit/spreadsheet';
 
+export type NumberFormat = 'general' | 'number' | 'currency' | 'percent' | 'date';
+
 export interface CellFormat {
   bold?: boolean;
   italic?: boolean;
   color?: string;
   background?: string;
+  numberFormat?: NumberFormat;
+  decimalPlaces?: number;
 }
 
 export interface SpreadsheetProps {

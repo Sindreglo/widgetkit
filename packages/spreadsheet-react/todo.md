@@ -18,7 +18,7 @@
 ## Nice-to-haves
 
 - [x] Cell formatting (bold, italic, text color, background color)
-- [ ] Number formatting (currency, %, decimal places, date)
+- [x] Number formatting (currency, %, decimal places, date)
 - [ ] Frozen rows/cols (sticky while scrolling)
 - [ ] Fill handle (drag corner to auto-fill a range)
 - [ ] Sort/filter by column

@@ -14,7 +14,7 @@ import {
   type CellMap,
   type CellValue,
 } from '@widgetkit/spreadsheet';
-import type { SpreadsheetProps, CellFormat } from './types';
+import type { SpreadsheetProps, CellFormat, NumberFormat } from './types';
 
 const DEFAULT_ROWS = 50;
 const DEFAULT_COLS = 26;
@@ -138,6 +138,36 @@ function selectionBounds(sel: Sel) {
   };
 }
 
+// ── Number formatting ─────────────────────────────────────────────────────────
+
+function formatCellValue(val: CellValue, fmt: CellFormat): string {
+  if (val === null || val === undefined) return '';
+  const nf: NumberFormat = fmt.numberFormat ?? 'general';
+  if (nf === 'general') return String(val);
+  const decimals = fmt.decimalPlaces ?? (nf === 'percent' ? 0 : 2);
+  switch (nf) {
+    case 'number': {
+      const n = Number(val);
+      return isNaN(n) ? String(val) : n.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+    case 'currency': {
+      const n = Number(val);
+      return isNaN(n) ? String(val) : n.toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+    case 'percent': {
+      const n = Number(val);
+      return isNaN(n) ? String(val) : (n * 100).toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + '%';
+    }
+    case 'date': {
+      const n = Number(val);
+      if (!isNaN(n) && String(val).trim() !== '') return new Date(n).toLocaleDateString();
+      const d = new Date(String(val));
+      return isNaN(d.getTime()) ? String(val) : d.toLocaleDateString();
+    }
+    default: return String(val);
+  }
+}
+
 // ── Toolbar ───────────────────────────────────────────────────────────────────
 
 function Toolbar({ anchorRef, formats, onFormat }: {
@@ -164,6 +194,7 @@ function Toolbar({ anchorRef, formats, onFormat }: {
         <span className="ss-tb-color-swatch" style={{ background: fmt.color ?? '#1e293b' }} />
         <input type="color" className="ss-tb-color-input"
           value={fmt.color ?? '#1e293b'}
+          onMouseDown={e => e.stopPropagation()}
           onChange={e => onFormat({ color: e.target.value })} />
       </label>
       <label className="ss-tb-color-btn" title="Fill color">
@@ -171,8 +202,31 @@ function Toolbar({ anchorRef, formats, onFormat }: {
         <span className="ss-tb-color-swatch" style={{ background: fmt.background ?? '#ffffff' }} />
         <input type="color" className="ss-tb-color-input"
           value={fmt.background ?? '#ffffff'}
+          onMouseDown={e => e.stopPropagation()}
           onChange={e => onFormat({ background: e.target.value })} />
       </label>
+      <div className="ss-tb-sep" />
+      <select
+        className="ss-tb-select"
+        value={fmt.numberFormat ?? 'general'}
+        onChange={e => onFormat({ numberFormat: e.target.value as NumberFormat })}
+        onMouseDown={e => e.stopPropagation()}
+        title="Number format"
+      >
+        <option value="general">General</option>
+        <option value="number">Number</option>
+        <option value="currency">Currency</option>
+        <option value="percent">Percent</option>
+        <option value="date">Date</option>
+      </select>
+      {['number', 'currency', 'percent'].includes(fmt.numberFormat ?? 'general') && (<>
+        <button className="ss-tb-btn ss-tb-btn--wide" title="Decrease decimals"
+          onClick={() => onFormat({ decimalPlaces: Math.max(0, (fmt.decimalPlaces ?? (fmt.numberFormat === 'percent' ? 0 : 2)) - 1) })}
+        >.0−</button>
+        <button className="ss-tb-btn ss-tb-btn--wide" title="Increase decimals"
+          onClick={() => onFormat({ decimalPlaces: (fmt.decimalPlaces ?? (fmt.numberFormat === 'percent' ? 0 : 2)) + 1 })}
+        >.0+</button>
+      </>)}
     </div>
   );
 }
@@ -400,9 +454,12 @@ export function Spreadsheet({
     (ref: string): string => {
       const v = computed[ref];
       if (v === null || v === undefined) return '';
-      return String(v);
+      if (isError(v)) return String(v);
+      const fmt = formats?.[ref];
+      if (!fmt?.numberFormat || fmt.numberFormat === 'general') return String(v);
+      return formatCellValue(v, fmt);
     },
-    [computed]
+    [computed, formats]
   );
 
   const commitEdit = useCallback(
@@ -857,6 +914,7 @@ export function Spreadsheet({
                             ...(fmt?.italic && { fontStyle: 'italic' }),
                             ...(fmt?.color && !isErrorCel && { color: fmt.color }),
                             ...(cellBg && { background: cellBg }),
+                            ...(fmt?.numberFormat && fmt.numberFormat !== 'general' && fmt.numberFormat !== 'date' && typeof computed[ref] === 'number' && { textAlign: 'right' as const }),
                           }}
                           onPointerDown={e => {
                             if (e.button !== 0 || editingRef === ref) return;
