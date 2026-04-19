@@ -11,7 +11,7 @@ import type {
 } from "@widgetkit/booking-react";
 import "@widgetkit/booking-react/styles.css";
 import { Spreadsheet } from "@widgetkit/spreadsheet-react";
-import type { CellMap, CellFormat, MergeRegion } from "@widgetkit/spreadsheet-react";
+import type { CellMap, CellFormat, MergeRegion, SpreadsheetHandle } from "@widgetkit/spreadsheet-react";
 import "@widgetkit/spreadsheet-react/styles.css";
 
 const today = new Date();
@@ -436,20 +436,51 @@ function SpreadsheetDemo() {
   const [cells, setCells] = useState<CellMap>(initialCells);
   const [formats, setFormats] = useState<Record<string, CellFormat>>(initialFormats);
   const [merges, setMerges] = useState<Record<string, MergeRegion>>(initialMerges);
+  const [selection, setSelection] = useState("");
+  const [log, setLog] = useState("");
+  const [singleMode, setSingleMode] = useState(false);
+  const ref = useState(() => ({ current: null as SpreadsheetHandle | null }))[0];
 
   return (
-    <Spreadsheet
-      cells={cells}
-      rows={40}
-      cols={40}
-      maxHeight={360}
-      showToolbar
-      formats={formats}
-      merges={merges}
-      onCellsChange={setCells}
-      onFormatsChange={setFormats}
-      onMergesChange={setMerges}
-    />
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", gap: 12, fontSize: 13, alignItems: "center" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+          <input type="checkbox" checked={singleMode} onChange={e => setSingleMode(e.target.checked)} />
+          selectionMode=single
+        </label>
+        <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => ref.current?.scrollToCell("A1")}>
+          scrollToCell(A1)
+        </button>
+        <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => ref.current?.setSelection("C5")}>
+          setSelection(C5)
+        </button>
+        <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => ref.current?.startEdit("B3")}>
+          startEdit(B3)
+        </button>
+        <span style={{ fontSize: 12, color: "#64748b" }}>sel: <strong>{selection}</strong></span>
+      </div>
+      {log && <div style={{ fontSize: 12, color: "#475569", background: "#f8fafc", padding: "4px 8px", borderRadius: 4 }}>{log}</div>}
+      <Spreadsheet
+        ref={r => { ref.current = r; }}
+        cells={cells}
+        rows={40}
+        cols={40}
+        maxHeight={360}
+        showToolbar
+        selectionMode={singleMode ? "single" : "range"}
+        formats={formats}
+        merges={merges}
+        onCellsChange={setCells}
+        onFormatsChange={setFormats}
+        onMergesChange={setMerges}
+        onSelectionChange={setSelection}
+        onCellClick={(ref, value) => setLog(`click ${ref} = ${JSON.stringify(value)}`)}
+        contextMenuItems={[
+          { label: "Log cell value", action: (r) => setLog(`ctx: ${r} = ${JSON.stringify(cells[r] ?? null)}`) },
+        ]}
+        aria-label="Sales report spreadsheet"
+      />
+    </div>
   );
 }
 

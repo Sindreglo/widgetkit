@@ -1,6 +1,8 @@
 import React, {
+  forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -14,7 +16,7 @@ import {
   type CellMap,
   type CellValue,
 } from '@widgetkit/spreadsheet';
-import type { SpreadsheetProps, CellFormat, NumberFormat } from './types';
+import type { SpreadsheetProps, SpreadsheetHandle, CellFormat, NumberFormat } from './types';
 
 const DEFAULT_ROWS = 50;
 const DEFAULT_COLS = 26;
@@ -233,26 +235,42 @@ function Toolbar({ anchorRef, formats, onFormat }: {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function Spreadsheet({
+export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(function Spreadsheet({
   cells,
   rows = DEFAULT_ROWS,
   cols = DEFAULT_COLS,
   colWidths,
   rowHeight = DEFAULT_ROW_HEIGHT,
+  defaultColWidth,
+  width,
+  height,
+  className,
+  style,
   showFormulaBar = true,
   showToolbar = false,
   showRowNumbers = true,
   showColHeaders = true,
+  showContextMenu = true,
   readOnly = false,
+  resizableCols = true,
+  resizableRows = true,
+  selectionMode = 'range',
   maxHeight = DEFAULT_MAX_HEIGHT,
   formats,
   merges,
-  onCellChange,
+  renderCell,
+  onBeforeEdit,
+  onCellClick,
+  onCellDoubleClick,
+  onKeyDown: onKeyDownProp,
   onSelectionChange,
+  onCellChange,
   onCellsChange,
   onFormatsChange,
   onMergesChange,
-}: SpreadsheetProps) {
+  contextMenuItems,
+  'aria-label': ariaLabel,
+}: SpreadsheetProps, ref) {
   const computed = useMemo(() => evaluate(cells), [cells]);
 
   // Map every cell ref in a merged region → its merge anchor info
@@ -390,11 +408,19 @@ export function Spreadsheet({
     () => ({ ...(colWidths ?? {}) })
   );
   const [internalRowHeights, setInternalRowHeights] = useState<Record<number, number>>({});
-  const colWidth = (col: number) => internalColWidths[col] ?? DEFAULT_COL_WIDTH;
+  const colWidth = (col: number) => internalColWidths[col] ?? defaultColWidth ?? DEFAULT_COL_WIDTH;
+
+  const rowNumWidth = 40;
+
+  const totalGridWidth = useMemo(() => {
+    let w = showRowNumbers ? rowNumWidth : 0;
+    for (let c = 0; c < cols; c++) w += internalColWidths[c] ?? defaultColWidth ?? DEFAULT_COL_WIDTH;
+    return w;
+  }, [showRowNumbers, cols, internalColWidths, defaultColWidth]);
   const rowHeightOf = (row: number) => internalRowHeights[row] ?? rowHeight;
 
   const startColResize = useCallback((col: number, startX: number) => {
-    const initW = internalColWidths[col] ?? DEFAULT_COL_WIDTH;
+    const initW = internalColWidths[col] ?? defaultColWidth ?? DEFAULT_COL_WIDTH;
     const onMove = (e: PointerEvent) => {
       document.documentElement.style.cursor = 'col-resize';
       document.body.style.userSelect = 'none';
@@ -441,7 +467,7 @@ export function Spreadsheet({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, internalRowHeights, rowHeight]);
 
-  const scrollBodyHeight = maxHeight;
+  const scrollBodyHeight = typeof height === 'number' ? height : maxHeight;
 
   const visibleStart = useMemo(() => {
     let r = 0;
@@ -499,12 +525,13 @@ export function Spreadsheet({
   const enterEditMode = useCallback(
     (ref: string, initialValue?: string) => {
       if (readOnly) return;
+      if (onBeforeEdit && !onBeforeEdit(ref, cells[ref] ?? null)) return;
       editSourceRef.current = 'cell';
       const raw = initialValue !== undefined ? initialValue : getRawValue(ref);
       setEditingRef(ref);
       setEditValue(raw);
     },
-    [readOnly, getRawValue]
+    [readOnly, cells, onBeforeEdit, getRawValue]
   );
 
   const scrollActiveIntoView = useCallback(
@@ -525,13 +552,14 @@ export function Spreadsheet({
       const newCol = Math.max(0, Math.min(cols - 1, selection.active.col + dCol));
       const newRow = Math.max(0, Math.min(rows - 1, selection.active.row + dRow));
       const newActive = { col: newCol, row: newRow };
+      const shouldExtend = extend && selectionMode !== 'single';
       setSelection({
-        anchor: extend ? selection.anchor : newActive,
+        anchor: shouldExtend ? selection.anchor : newActive,
         active: newActive,
       });
       scrollActiveIntoView(newRow);
     },
-    [selection, cols, rows, scrollActiveIntoView]
+    [selection, cols, rows, selectionMode, scrollActiveIntoView]
   );
 
   // Range select via pointer drag
@@ -540,6 +568,7 @@ export function Spreadsheet({
       setSelection({ anchor: { col, row }, active: { col, row } });
 
       const onMove = (e: PointerEvent) => {
+        if (selectionMode === 'single') return;
         document.body.style.userSelect = 'none';
         const el = document.elementFromPoint(e.clientX, e.clientY);
         const cellEl = el?.closest<HTMLElement>('[data-ref]');
@@ -558,7 +587,7 @@ export function Spreadsheet({
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
     },
-    []
+    [selectionMode]
   );
 
   // Drag-to-move the current selection
@@ -644,6 +673,7 @@ export function Spreadsheet({
   // Grid-level keydown (when not editing)
   const handleGridKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      onKeyDownProp?.(e);
       if (editingRef) return;
 
       switch (e.key) {
@@ -651,6 +681,24 @@ export function Spreadsheet({
         case 'ArrowDown':  e.preventDefault(); navigate(0, 1, e.shiftKey); break;
         case 'ArrowLeft':  e.preventDefault(); navigate(-1, 0, e.shiftKey); break;
         case 'ArrowRight': e.preventDefault(); navigate(1, 0, e.shiftKey); break;
+        case 'Home':
+          e.preventDefault();
+          if (e.ctrlKey) navigate(-selection.active.col, -selection.active.row, e.shiftKey);
+          else navigate(-selection.active.col, 0, e.shiftKey);
+          break;
+        case 'End':
+          e.preventDefault();
+          if (e.ctrlKey) navigate(cols - 1 - selection.active.col, rows - 1 - selection.active.row, e.shiftKey);
+          else navigate(cols - 1 - selection.active.col, 0, e.shiftKey);
+          break;
+        case 'PageUp':
+          e.preventDefault();
+          navigate(0, -Math.max(1, Math.floor(scrollBodyHeight / rowHeight)), e.shiftKey);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          navigate(0, Math.max(1, Math.floor(scrollBodyHeight / rowHeight)), e.shiftKey);
+          break;
         case 'Tab':
           e.preventDefault();
           navigate(e.shiftKey ? -1 : 1, 0);
@@ -699,7 +747,7 @@ export function Spreadsheet({
           }
       }
     },
-    [editingRef, navigate, enterEditMode, selectedRef, commitEdit, copySelection, pasteSelection, undo, redo, readOnly, applyFormat, formats, anchorRef]
+    [editingRef, navigate, enterEditMode, selectedRef, commitEdit, copySelection, pasteSelection, undo, redo, readOnly, applyFormat, formats, anchorRef, onKeyDownProp, selection, cols, rows, scrollBodyHeight, rowHeight]
   );
 
   // Inline cell input keydown
@@ -745,12 +793,42 @@ export function Spreadsheet({
     onSelectionChange?.(selectionLabel);
   }, [selectionLabel, onSelectionChange]);
 
+  useImperativeHandle(ref, () => ({
+    scrollToCell: (cellRef: string) => {
+      const addr = parseRef(cellRef);
+      if (!addr) return;
+      setSelection({ anchor: addr, active: addr });
+      scrollActiveIntoView(addr.row);
+    },
+    setSelection: (cellRef: string) => {
+      const addr = parseRef(cellRef);
+      if (!addr) return;
+      setSelection({ anchor: addr, active: addr });
+      scrollActiveIntoView(addr.row);
+    },
+    startEdit: (cellRef: string) => {
+      const addr = parseRef(cellRef);
+      if (!addr) return;
+      setSelection({ anchor: addr, active: addr });
+      scrollActiveIntoView(addr.row);
+      enterEditMode(cellRef);
+    },
+    exportCsv: () => exportCsv(cells, computed, rows, cols),
+    getCells: () => ({ ...cells }),
+  }), [scrollActiveIntoView, enterEditMode, cells, computed, rows, cols]);
+
   const formulaBarValue = editingRef ? editValue : getRawValue(anchorRef);
 
-  const rowNumWidth = 40;
-
   return (
-    <div className="ss-root">
+    <div
+      className={`ss-root${className ? ` ${className}` : ''}`}
+      style={{
+        ...(width !== undefined && { width }),
+        ...(height !== undefined && { height }),
+        ...style,
+      }}
+      aria-label={ariaLabel}
+    >
       {showFormulaBar && (
         <div className="ss-formula-bar">
           <input
@@ -806,13 +884,17 @@ export function Spreadsheet({
         <div
           className="ss-scroll-body"
           ref={scrollBodyRef}
-          style={{ maxHeight: scrollBodyHeight, overflowY: 'auto', overflowX: 'auto' }}
+          style={{
+            ...(typeof height === 'number' ? { height: scrollBodyHeight } : { maxHeight: scrollBodyHeight }),
+            overflowY: 'auto',
+            overflowX: 'auto',
+          }}
           onScroll={e => setScrollTop((e.currentTarget as HTMLDivElement).scrollTop)}
         >
           {showColHeaders && (
             <div
               className="ss-col-header-row"
-              style={{ minWidth: (showRowNumbers ? rowNumWidth : 0) + cols * DEFAULT_COL_WIDTH }}
+              style={{ minWidth: totalGridWidth }}
             >
               {showRowNumbers && (
                 <div
@@ -836,11 +918,13 @@ export function Spreadsheet({
                     }}
                   >
                     {colToLetters(c)}
-                    <div
-                      className="ss-col-resize-handle"
-                      onClick={e => e.stopPropagation()}
-                      onPointerDown={e => { e.stopPropagation(); e.preventDefault(); startColResize(c, e.clientX); }}
-                    />
+                    {resizableCols && (
+                      <div
+                        className="ss-col-resize-handle"
+                        onClick={e => e.stopPropagation()}
+                        onPointerDown={e => { e.stopPropagation(); e.preventDefault(); startColResize(c, e.clientX); }}
+                      />
+                    )}
                   </div>
                 );
               })}
@@ -856,7 +940,7 @@ export function Spreadsheet({
               position: 'relative',
               height: rowTops[rows],
               outline: 'none',
-              minWidth: (showRowNumbers ? rowNumWidth : 0) + cols * DEFAULT_COL_WIDTH,
+              minWidth: totalGridWidth,
             }}
           >
             {topSpacerHeight > 0 && (
@@ -882,11 +966,13 @@ export function Spreadsheet({
                         }}
                       >
                         {rowIdx + 1}
-                        <div
-                          className="ss-row-resize-handle"
-                          onClick={e => e.stopPropagation()}
-                          onPointerDown={e => { e.stopPropagation(); e.preventDefault(); startRowResize(rowIdx, e.clientY); }}
-                        />
+                        {resizableRows && (
+                          <div
+                            className="ss-row-resize-handle"
+                            onClick={e => e.stopPropagation()}
+                            onPointerDown={e => { e.stopPropagation(); e.preventDefault(); startRowResize(rowIdx, e.clientY); }}
+                          />
+                        )}
                       </div>
                     )}
                     {Array.from({ length: cols }, (_, colIdx) => {
@@ -946,7 +1032,7 @@ export function Spreadsheet({
                           onPointerDown={e => {
                             if (e.button !== 0 || editingRef === ref) return;
                             if (editingRef && editingRef !== ref) commitEdit(editingRef, editValue);
-                            if (e.shiftKey) {
+                            if (e.shiftKey && selectionMode !== 'single') {
                               setSelection(prev => ({ anchor: prev.anchor, active: { col: colIdx, row: rowIdx } }));
                               gridWrapperRef.current?.focus({ preventScroll: true });
                               return;
@@ -958,9 +1044,11 @@ export function Spreadsheet({
                             }
                             gridWrapperRef.current?.focus({ preventScroll: true });
                           }}
-                          onDoubleClick={() => enterEditMode(ref)}
+                          onClick={e => onCellClick?.(ref, computed[ref] ?? null, e)}
+                          onDoubleClick={e => { enterEditMode(ref); onCellDoubleClick?.(ref, computed[ref] ?? null, e); }}
                           onContextMenu={e => {
                             e.preventDefault();
+                            if (!showContextMenu) return;
                             if (editingRef && editingRef !== ref) commitEdit(editingRef, editValue);
                             setSelection({ anchor: { col: colIdx, row: rowIdx }, active: { col: colIdx, row: rowIdx } });
                             setCtxMenu({ x: e.clientX, y: e.clientY });
@@ -978,7 +1066,9 @@ export function Spreadsheet({
                               style={{ width: '100%', height: '100%' }}
                             />
                           ) : (
-                            <span className="ss-cell-content">{displayVal}</span>
+                            <span className="ss-cell-content">
+                              {renderCell ? renderCell(ref, computed[ref] ?? null, formats?.[ref]) : displayVal}
+                            </span>
                           )}
                         </div>
                       );
@@ -1052,9 +1142,11 @@ export function Spreadsheet({
                     setSelection({ anchor: { col: aC, row: aR }, active: { col: aC + effCols - 1, row: aR + effRows - 1 } });
                     gridWrapperRef.current?.focus({ preventScroll: true });
                   }}
-                  onDoubleClick={() => enterEditMode(mRef)}
+                  onClick={e => onCellClick?.(mRef, computed[mRef] ?? null, e)}
+                  onDoubleClick={e => { enterEditMode(mRef); onCellDoubleClick?.(mRef, computed[mRef] ?? null, e); }}
                   onContextMenu={e => {
                     e.preventDefault();
+                    if (!showContextMenu) return;
                     if (editingRef && editingRef !== mRef) commitEdit(editingRef, editValue);
                     setSelection({ anchor: { col: aC, row: aR }, active: { col: aC + effCols - 1, row: aR + effRows - 1 } });
                     setCtxMenu({ x: e.clientX, y: e.clientY });
@@ -1069,7 +1161,9 @@ export function Spreadsheet({
                       onClick={e => e.stopPropagation()}
                       style={{ width: '100%', height: '100%' }} />
                   ) : (
-                    <span className="ss-cell-content">{displayVal}</span>
+                    <span className="ss-cell-content">
+                      {renderCell ? renderCell(mRef, computed[mRef] ?? null, formats?.[mRef]) : displayVal}
+                    </span>
                   )}
                 </div>
               );
@@ -1097,7 +1191,7 @@ export function Spreadsheet({
         </div>
       </div>
 
-      {ctxMenu && (() => {
+      {ctxMenu && showContextMenu && (() => {
         const hasCb = !!rangeClipboardRef.current;
 
         const items: CtxEntry[] = [
@@ -1153,8 +1247,18 @@ export function Spreadsheet({
           },
         ];
 
+        if (contextMenuItems?.length) {
+          items.push(null);
+          for (const item of contextMenuItems) {
+            if (item === null) {
+              items.push(null);
+            } else {
+              items.push({ label: item.label, disabled: item.disabled, action: () => item.action(anchorRef) });
+            }
+          }
+        }
         return <CtxMenu x={ctxMenu.x} y={ctxMenu.y} items={items} onClose={closeCtx} />;
       })()}
     </div>
   );
-}
+});

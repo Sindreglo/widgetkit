@@ -1,4 +1,5 @@
-import type { CellMap } from '@widgetkit/spreadsheet';
+import type { CSSProperties, ReactNode, MouseEvent } from 'react';
+import type { CellMap, CellValue } from '@widgetkit/spreadsheet';
 
 export type NumberFormat = 'general' | 'number' | 'currency' | 'percent' | 'date';
 
@@ -16,25 +17,76 @@ export interface CellFormat {
   decimalPlaces?: number;
 }
 
+export interface ContextMenuItem {
+  label: string;
+  action: (anchorRef: string) => void;
+  disabled?: boolean;
+}
+
+export interface SpreadsheetHandle {
+  scrollToCell: (ref: string) => void;
+  setSelection: (ref: string) => void;
+  startEdit: (ref: string) => void;
+  exportCsv: () => string;
+  getCells: () => CellMap;
+}
+
 export interface SpreadsheetProps {
+  // Data
   cells: CellMap;
+  formats?: Record<string, CellFormat>;
+  merges?: Record<string, MergeRegion>;
+
+  // Grid dimensions
   rows?: number;
   cols?: number;
-  colWidths?: Record<number, number>;
   rowHeight?: number;
-  frozenRows?: number;
-  frozenCols?: number;
+  defaultColWidth?: number;
+  colWidths?: Record<number, number>;
+
+  // Layout / container sizing
+  width?: number | string;
+  height?: number | string;
+  maxHeight?: number;
+  className?: string;
+  style?: CSSProperties;
+
+  // UI visibility
   showFormulaBar?: boolean;
   showToolbar?: boolean;
   showRowNumbers?: boolean;
   showColHeaders?: boolean;
+  showContextMenu?: boolean;
+
+  // Feature flags
   readOnly?: boolean;
-  maxHeight?: number;
-  formats?: Record<string, CellFormat>;
-  merges?: Record<string, MergeRegion>;
+  resizableCols?: boolean;
+  resizableRows?: boolean;
+  selectionMode?: 'single' | 'range';
+  frozenRows?: number;
+  frozenCols?: number;
+
+  // Custom rendering
+  renderCell?: (ref: string, value: CellValue, format?: CellFormat) => ReactNode;
+
+  // Editing hooks
+  onBeforeEdit?: (ref: string, currentValue: CellValue) => boolean;
+
+  // Cell events
+  onCellClick?: (ref: string, value: CellValue, event: MouseEvent) => void;
+  onCellDoubleClick?: (ref: string, value: CellValue, event: MouseEvent) => void;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
+
+  // Data callbacks
   onSelectionChange?: (ref: string) => void;
   onCellChange?: (ref: string, value: string | number | null) => void;
   onCellsChange?: (cells: CellMap) => void;
   onFormatsChange?: (formats: Record<string, CellFormat>) => void;
   onMergesChange?: (merges: Record<string, MergeRegion>) => void;
+
+  // Context menu extension
+  contextMenuItems?: Array<ContextMenuItem | null>;
+
+  // Accessibility
+  'aria-label'?: string;
 }

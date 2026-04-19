@@ -7,129 +7,77 @@ import { CustomRenderDemo } from "./CustomRenderDemo";
 import { ReadOnlyDemo } from "./ReadOnlyDemo";
 import { CodeBlock } from "./CodeBlock";
 import { PropsTable } from "./PropsTable";
+import { GettingStartedSection } from "./GettingStartedSection";
 
 export const metadata: Metadata = {
   title: "Scheduler — WidgetKit",
   description: "A time-based scheduler with drag-and-drop, multi-resource views, snapping, and collision detection.",
 };
 
-const INSTALL_SNIPPET = `npm install @widgetkit/scheduler-react
-# or
-pnpm add @widgetkit/scheduler-react`;
 
-const IMPORT_SNIPPET = `import { TimelineScheduler } from "@widgetkit/scheduler-react";
-import "@widgetkit/scheduler-react/styles.css";`;
+const DRAG_DROP_VUE = `<SchedulerVue
+  :resources="resources"
+  v-model:items="items"
+  v-model:date="date"
+  draggable
+  resizable
+  creatable
+  :snap-minutes="15"
+  :start-hour="8"
+  :end-hour="18"
+  show-date-nav
+  show-zoom-controls
+  show-now-line
+  show-tooltip
+  @item-drag-end="({ item }) => console.log(\`Moved: \${item.name}\`)"
+  @item-resize-end="({ item }) => console.log(\`Resized: \${item.name}\`)"
+  @item-create="({ resourceId, start }) => console.log(\`New at: \${start}\`)"
+/>`;
 
-const BASIC_SNIPPET = `import { useState } from "react";
-import { TimelineScheduler } from "@widgetkit/scheduler-react";
-import "@widgetkit/scheduler-react/styles.css";
-import type { Resource, TimelineItem } from "@widgetkit/scheduler-react";
+const CUSTOM_RENDER_VUE = `<SchedulerVue
+  :resources="resources"
+  v-model:items="items"
+  v-model:date="date"
+  draggable
+  resizable
+  :start-hour="8"
+  :end-hour="18"
+>
+  <template #item="{ item }">
+    <div style="display: flex; height: 100%; overflow: hidden;">
+      <div :style="{ width: '3px', flexShrink: 0, background: item.color }" />
+      <div style="padding: 3px 6px; overflow: hidden;">
+        <div style="font-weight: 600; font-size: 12px; white-space: nowrap;
+          overflow: hidden; text-overflow: ellipsis;">
+          {{ item.name }}
+        </div>
+        <div v-if="item.description" style="font-size: 11px; opacity: 0.7;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          {{ item.description }}
+        </div>
+      </div>
+    </div>
+  </template>
+</SchedulerVue>`;
 
-const resources: Resource[] = [
-  { id: "alice", name: "Alice Hansen" },
-  { id: "bob",   name: "Bob Nilsen" },
+const READONLY_VUE = `const resources = [
+  { id: "r1", name: "Alice Hansen", avatar: "https://..." },
+  { id: "r2", name: "Bob Nilsen",   avatar: "https://..." },
 ];
 
-const initialItems: TimelineItem[] = [
-  {
-    id: "1",
-    resourceId: "alice",
-    name: "Team standup",
-    color: "#6c63ff",
-    start: new Date("2024-06-10T09:00"),
-    end:   new Date("2024-06-10T09:30"),
-  },
-];
-
-export function App() {
-  const [items, setItems] = useState(initialItems);
-  const [date, setDate] = useState(new Date());
-
-  return (
-    <TimelineScheduler
-      resources={resources}
-      items={items}
-      date={date}
-      startHour={8}
-      endHour={20}
-      draggable
-      resizable
-      creatable
-      showDateNav
-      showZoomControls
-      showNowLine
-      showTooltip
-      onItemsChange={setItems}
-      onDateChange={setDate}
-    />
-  );
-}`;
-
-const INTRO_SNIPPET = `const resources: Resource[] = [
-  { id: "alice", name: "Alice Hansen", avatar: "https://..." },
-  { id: "bob",   name: "Bob Nilsen",   avatar: "https://..." },
-  { id: "carol", name: "Carol Berg",   avatar: "https://..." },
-  { id: "dave",  name: "Dave Lund",    avatar: "https://..." },
-];
-
-const initialItems: TimelineItem[] = [
-  { id: "1",  resourceId: "alice", name: "Standup",         color: "#6c63ff", start: d(9,  0),  end: d(9,  30) },
-  { id: "2",  resourceId: "alice", name: "Design review",   color: "#a78bfa", start: d(11, 0),  end: d(12, 30) },
-  { id: "3",  resourceId: "alice", name: "Lunch w/ client", color: "#f472b6", start: d(13, 0),  end: d(14, 0)  },
-  { id: "4",  resourceId: "alice", name: "Late sync",       color: "#6c63ff", start: d(17, 30), end: d(19, 0)  },
-  { id: "5",  resourceId: "bob",   name: "Sprint planning", color: "#34d399", start: d(9,  30), end: d(11, 0)  },
-  // ... more items
-];
-
-const DEFAULTS = {
-  draggable:        true,
-  resizable:        true,
-  creatable:        true,
-  editable:         true,
-  readonly:         false,
-  showTime:         true,
-  showTooltip:      true,
-  showNowLine:      true,
-  showAvatar:       false,
-  showEventCount:   false,
-  showDateNav:      true,
-  showZoomControls: true,
-  showNav:          false,
-};
-
-export function App() {
-  const [items, setItems] = useState(initialItems);
-  const [date, setDate]   = useState(new Date());
-  const [opts, setOpts]   = useState(DEFAULTS);
-
-  const toggle = (key: keyof typeof DEFAULTS) =>
-    setOpts((prev) => ({ ...prev, [key]: !prev[key] }));
-
-  return (
-    <TimelineScheduler
-      resources={resources}
-      items={items}
-      date={date}
-      startHour={8}
-      endHour={20}
-      draggable={opts.draggable}
-      resizable={opts.resizable}
-      creatable={opts.creatable}
-      editable={opts.editable}
-      readonly={opts.readonly}
-      showTime={opts.showTime}
-      showTooltip={opts.showTooltip}
-      showNowLine={opts.showNowLine}
-      showAvatar={opts.showAvatar}
-      showEventCount={opts.showEventCount}
-      showDateNav={opts.showDateNav}
-      showZoomControls={opts.showZoomControls}
-      showNav={opts.showNav}
-      onItemsChange={setItems}
-      onDateChange={setDate}
-    />
-  );
-}`;
+<SchedulerVue
+  :resources="resources"
+  :items="items"
+  v-model:date="date"
+  readonly
+  show-date-nav
+  show-zoom-controls
+  show-avatar
+  show-now-line
+  show-tooltip
+  :start-hour="8"
+  :end-hour="18"
+/>`;
 
 const DRAG_DROP_SNIPPET = `<TimelineScheduler
   resources={resources}
@@ -269,7 +217,7 @@ export default function SchedulerPage() {
 
         <main className="docs-content">
           <div className="docs-page-header">
-            <span className="hero-badge">@widgetkit/scheduler-react</span>
+            <span className="hero-badge">@widgetkit/scheduler-react · @widgetkit/scheduler-vue</span>
             <h1 className="docs-page-title">Scheduler</h1>
             <p className="docs-page-desc">
               A time-based multi-resource scheduler with drag-and-drop, resize,
@@ -289,27 +237,12 @@ export default function SchedulerPage() {
               control of the data. Toggle the options below to explore all props.
             </p>
             <SchedulerDemo />
-            <CodeBlock code={INTRO_SNIPPET} />
           </section>
 
           <section id="installation" className="docs-section">
             <p className="docs-section-tag">Setup</p>
             <h2>Getting started</h2>
-            <p>Install the package from npm:</p>
-            <div className="code-block">
-              <pre>{INSTALL_SNIPPET}</pre>
-            </div>
-            <p>Import the component and its stylesheet:</p>
-            <div className="code-block">
-              <pre>{IMPORT_SNIPPET}</pre>
-            </div>
-            <p>
-              Pass <code className="inline-code">resources</code>,{" "}
-              <code className="inline-code">items</code>, and{" "}
-              <code className="inline-code">date</code> — those are the only
-              required props. Enable interactions with boolean flags:
-            </p>
-            <CodeBlock code={BASIC_SNIPPET} />
+            <GettingStartedSection />
           </section>
 
           <section id="drag-drop" className="docs-section">
@@ -332,7 +265,7 @@ export default function SchedulerPage() {
               updated position so you can persist changes to your backend.
             </p>
             <DragDropDemo />
-            <CodeBlock code={DRAG_DROP_SNIPPET} />
+            <CodeBlock code={DRAG_DROP_SNIPPET} vue={DRAG_DROP_VUE} />
           </section>
 
           <section id="custom-render" className="docs-section">
@@ -347,7 +280,7 @@ export default function SchedulerPage() {
               for showing notes, metadata, or custom badges inside events.
             </p>
             <CustomRenderDemo />
-            <CodeBlock code={CUSTOM_RENDER_SNIPPET} />
+            <CodeBlock code={CUSTOM_RENDER_SNIPPET} vue={CUSTOM_RENDER_VUE} />
           </section>
 
           <section id="readonly" className="docs-section">
@@ -362,7 +295,7 @@ export default function SchedulerPage() {
               photos alongside their rows.
             </p>
             <ReadOnlyDemo />
-            <CodeBlock code={READONLY_SNIPPET} />
+            <CodeBlock code={READONLY_SNIPPET} vue={READONLY_VUE} />
           </section>
 
           <section id="props" className="docs-section">

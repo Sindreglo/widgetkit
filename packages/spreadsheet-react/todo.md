@@ -19,11 +19,11 @@
 ### API / konfigurering (mangler)
 
 **Layout & dimensjoner**
-- [ ] `width` — CSS-bredde på komponenten (i dag bare `maxHeight`)
-- [ ] `height` — fast høyde i stedet for `maxHeight`
-- [ ] `className` / `style` — pass-through til root-elementet for custom styling
-- [ ] `defaultColWidth` — global standard kolonnebredde (nå hardkodet til 100 px)
-- [ ] `resizableCols` / `resizableRows` — boolean for å skru av/på resize-håndtak
+- [x] `width` — CSS-bredde på komponenten
+- [x] `height` — fast høyde i stedet for `maxHeight`
+- [x] `className` / `style` — pass-through til root-elementet for custom styling
+- [x] `defaultColWidth` — global standard kolonnebredde
+- [x] `resizableCols` / `resizableRows` — boolean for å skru av/på resize-håndtak
 
 **Visning**
 - [x] `showFormulaBar`
@@ -33,25 +33,25 @@
 - [ ] `frozenCols` / `frozenRows` — sticky header-rader/-kolonner (prop finnes, ikke implementert)
 
 **Redigering & validering**
-- [ ] `onBeforeEdit(ref, currentValue) → boolean` — avbryt edit programmatisk
+- [x] `onBeforeEdit(ref, currentValue) → boolean` — avbryt edit programmatisk
 - [ ] `onValidate(ref, newValue) → string | null` — valider og vis feilmelding
 
 **Seleksjon**
-- [ ] `selectionMode: 'single' | 'range'` — begrens til enkeltcelle-seleksjon
+- [x] `selectionMode: 'single' | 'range'` — begrens til enkeltcelle-seleksjon
 - [ ] `defaultSelection` / `selection` + `onSelectionChange` — kontrollert seleksjon (selection er ucontrolled i dag)
 - [x] `onSelectionChange` callback
 
 **Events**
-- [ ] `onCellClick(ref, value, event)`
-- [ ] `onCellDoubleClick(ref, value, event)`
-- [ ] `onKeyDown(event)` — custom keydown hook
+- [x] `onCellClick(ref, value, event)`
+- [x] `onCellDoubleClick(ref, value, event)`
+- [x] `onKeyDown(event)` — custom keydown hook
 
 **Kontekstmeny**
-- [ ] `contextMenuItems` — legg til egne menypunkter
-- [ ] `showContextMenu: false` — skru av kontekstmenyen helt
+- [x] `contextMenuItems` — legg til egne menypunkter
+- [x] `showContextMenu: false` — skru av kontekstmenyen helt
 
 **Imperative API (ref)**
-- [ ] `useSpreadsheetRef()` / `forwardRef` med metoder:
+- [x] `forwardRef` med metoder:
   - `scrollToCell(ref)`
   - `setSelection(ref)`
   - `startEdit(ref)`
@@ -62,11 +62,11 @@
 - [ ] `defaultCells` / `defaultFormats` / `defaultMerges` — ukontrollert modus uten ekstern state
 
 **Custom rendering**
-- [ ] `renderCell(ref, value, format) → ReactNode` — custom cell renderer
+- [x] `renderCell(ref, value, format) → ReactNode` — custom cell renderer
 
 **Tilgjengelighet**
-- [ ] `aria-label` på root-elementet
-- [ ] Forbedret tastaturnavigasjon (Home/End, Ctrl+Home/End, Page Up/Down)
+- [x] `aria-label` på root-elementet
+- [x] Forbedret tastaturnavigasjon (Home/End, Ctrl+Home/End, Page Up/Down)
 
 ## Nice-to-haves
 
