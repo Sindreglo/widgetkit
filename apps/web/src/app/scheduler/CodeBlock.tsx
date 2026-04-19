@@ -6,14 +6,15 @@ import { Copy, Check } from "lucide-react";
 interface Props {
   code: string;
   vue?: string;
+  js?: string;
   compact?: boolean;
 }
 
-export function CodeBlock({ code, vue, compact }: Props) {
-  const [lang, setLang] = useState<"react" | "vue">("react");
+export function CodeBlock({ code, vue, js, compact }: Props) {
+  const [lang, setLang] = useState<"react" | "vue" | "js">("react");
   const [copied, setCopied] = useState(false);
 
-  const displayed = lang === "vue" && vue ? vue : code;
+  const displayed = lang === "vue" && vue ? vue : lang === "js" && js ? js : code;
 
   const copy = async () => {
     await navigator.clipboard.writeText(displayed);
@@ -21,10 +22,12 @@ export function CodeBlock({ code, vue, compact }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const hasTabs = vue || js;
+
   return (
     <div className={`demo-code-block${compact ? " demo-code-block-compact" : ""}`}>
       <div className="demo-code-header">
-        {vue ? (
+        {hasTabs ? (
           <div className="code-lang-tabs">
             <button
               type="button"
@@ -33,13 +36,24 @@ export function CodeBlock({ code, vue, compact }: Props) {
             >
               React
             </button>
-            <button
-              type="button"
-              className={`code-lang-btn${lang === "vue" ? " active" : ""}`}
-              onClick={() => setLang("vue")}
-            >
-              Vue
-            </button>
+            {vue && (
+              <button
+                type="button"
+                className={`code-lang-btn${lang === "vue" ? " active" : ""}`}
+                onClick={() => setLang("vue")}
+              >
+                Vue
+              </button>
+            )}
+            {js && (
+              <button
+                type="button"
+                className={`code-lang-btn${lang === "js" ? " active" : ""}`}
+                onClick={() => setLang("js")}
+              >
+                JS
+              </button>
+            )}
           </div>
         ) : (
           <div />

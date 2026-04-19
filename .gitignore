@@ -3,5 +3,6 @@ dist
 .turbo
 *.tsbuildinfo
 .next
+.vercel
 .changeset/*.md
 !.changeset/config.json

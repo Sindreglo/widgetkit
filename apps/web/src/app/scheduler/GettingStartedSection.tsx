@@ -109,9 +109,55 @@ const items = ref(initialItems);
 </template>`,
 };
 
+const JS = {
+  install: `npm install @widgetkit/scheduler-js
+# or
+pnpm add @widgetkit/scheduler-js`,
+
+  import: `import { createScheduler } from "@widgetkit/scheduler-js";
+import "@widgetkit/scheduler-js/styles.css";`,
+
+  basic: `import { createScheduler } from "@widgetkit/scheduler-js";
+import "@widgetkit/scheduler-js/styles.css";
+import type { Resource, TimelineItem } from "@widgetkit/scheduler-js";
+
+const resources: Resource[] = [
+  { id: "alice", name: "Alice Hansen" },
+  { id: "bob",   name: "Bob Nilsen" },
+];
+
+const initialItems: TimelineItem[] = [
+  {
+    id: "1",
+    resourceId: "alice",
+    name: "Team standup",
+    color: "#6c63ff",
+    start: new Date("2024-06-10T09:00"),
+    end:   new Date("2024-06-10T09:30"),
+  },
+];
+
+const scheduler = createScheduler(document.getElementById("scheduler"), {
+  resources,
+  items:     initialItems,
+  date:      new Date(),
+  startHour: 8,
+  endHour:   20,
+  draggable: true,
+  resizable: true,
+  creatable: true,
+  showDateNav:      true,
+  showZoomControls: true,
+  showNowLine:      true,
+  showTooltip:      true,
+  onItemsChange: (items) => scheduler.setOptions({ items }),
+  onDateChange:  (date)  => scheduler.setOptions({ date }),
+});`,
+};
+
 export function GettingStartedSection() {
-  const [lang, setLang] = useState<"react" | "vue">("react");
-  const s = lang === "react" ? REACT : VUE;
+  const [lang, setLang] = useState<"react" | "vue" | "js">("react");
+  const s = lang === "react" ? REACT : lang === "vue" ? VUE : JS;
 
   return (
     <div>
@@ -129,6 +175,13 @@ export function GettingStartedSection() {
           onClick={() => setLang("vue")}
         >
           Vue
+        </button>
+        <button
+          type="button"
+          className={`section-lang-btn${lang === "js" ? " active" : ""}`}
+          onClick={() => setLang("js")}
+        >
+          JS
         </button>
       </div>
 

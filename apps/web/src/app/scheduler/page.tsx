@@ -15,6 +15,64 @@ export const metadata: Metadata = {
 };
 
 
+const DRAG_DROP_JS = `import { createScheduler } from "@widgetkit/scheduler-js";
+import "@widgetkit/scheduler-js/styles.css";
+
+const scheduler = createScheduler(document.getElementById("scheduler"), {
+  resources,
+  items,
+  date:        new Date(),
+  draggable:   true,
+  resizable:   true,
+  creatable:   true,
+  snapMinutes: 15,
+  startHour:   8,
+  endHour:     18,
+  showDateNav:      true,
+  showZoomControls: true,
+  showNowLine:      true,
+  showTooltip:      true,
+  onItemsChange: (items) => scheduler.setOptions({ items }),
+  onDateChange:  (date)  => scheduler.setOptions({ date }),
+  onItemDragEnd:   ({ item }) => console.log(\`Moved "\${item.name}"\`),
+  onItemResizeEnd: ({ item }) => console.log(\`Resized "\${item.name}"\`),
+  onItemCreate:    ({ resourceId, start }) => console.log(\`New at \${start}\`),
+});`;
+
+const READONLY_JS = `import { createScheduler } from "@widgetkit/scheduler-js";
+import "@widgetkit/scheduler-js/styles.css";
+
+const scheduler = createScheduler(document.getElementById("scheduler"), {
+  resources,
+  items,
+  date:      new Date(),
+  readonly:  true,
+  startHour: 8,
+  endHour:   18,
+  showDateNav:      true,
+  showZoomControls: true,
+  showAvatar:       true,
+  showNowLine:      true,
+  showTooltip:      true,
+  onDateChange: (date) => scheduler.setOptions({ date }),
+});`;
+
+const TYPES_IMPORT_JS = `import type {
+  Resource,
+  TimelineItem,
+  ItemCreateDetail,
+  ItemClickDetail,
+  ItemDblClickDetail,
+  ItemHoverDetail,
+  ItemContextMenuDetail,
+  ItemDragStartDetail,
+  ItemDragEndDetail,
+  ItemResizeStartDetail,
+  ItemResizeEndDetail,
+  SchedulerOptions,
+  SchedulerInstance,
+} from "@widgetkit/scheduler-js";`;
+
 const DRAG_DROP_VUE = `<SchedulerVue
   :resources="resources"
   v-model:items="items"
@@ -141,17 +199,46 @@ const CUSTOM_RENDER_SNIPPET = `function renderItem(item: TimelineItem) {
   onDateChange={setDate}
 />`;
 
-const TYPES_SNIPPET = `interface Resource {
+const TYPES_IMPORT = `import type {
+  Resource,
+  TimelineItem,
+  ItemCreateDetail,
+  ItemClickDetail,
+  ItemDblClickDetail,
+  ItemHoverDetail,
+  ItemContextMenuDetail,
+  ItemDragStartDetail,
+  ItemDragEndDetail,
+  ItemResizeStartDetail,
+  ItemResizeEndDetail,
+} from "@widgetkit/scheduler-react";`;
+
+const TYPES_IMPORT_VUE = `import type {
+  Resource,
+  TimelineItem,
+  ItemCreateDetail,
+  ItemClickDetail,
+  ItemDblClickDetail,
+  ItemHoverDetail,
+  ItemContextMenuDetail,
+  ItemDragStartDetail,
+  ItemDragEndDetail,
+  ItemResizeStartDetail,
+  ItemResizeEndDetail,
+} from "@widgetkit/scheduler-vue";`;
+
+const TYPES_SNIPPET = `// Core data types
+interface Resource {
   id:      string;
   name:    string;
-  avatar?: string; // URL to avatar image
+  avatar?: string;
 }
 
 interface TimelineItem {
   id:           string;
-  resourceId:   string; // must match a Resource.id
+  resourceId:   string;
   name:         string;
-  color:        string; // any valid CSS color
+  color:        string;
   start:        Date;
   end:          Date;
   description?: string;
@@ -164,8 +251,8 @@ interface ItemDblClickDetail    { item: TimelineItem }
 interface ItemHoverDetail       { item: TimelineItem; type: "enter" | "leave" }
 interface ItemContextMenuDetail { item: TimelineItem; x: number; y: number }
 interface ItemDragStartDetail   { item: TimelineItem }
-interface ItemResizeStartDetail { item: TimelineItem }
 interface ItemDragEndDetail     { item: TimelineItem; resourceId: string; start: Date; end: Date }
+interface ItemResizeStartDetail { item: TimelineItem }
 interface ItemResizeEndDetail   { item: TimelineItem; start: Date; end: Date }`;
 
 const SHORTCUTS = [
@@ -220,6 +307,7 @@ export default function SchedulerPage() {
             <div className="docs-pkg-badges">
               <span className="docs-pkg-badge">@widgetkit/scheduler-react</span>
               <span className="docs-pkg-badge">@widgetkit/scheduler-vue</span>
+              <span className="docs-pkg-badge">@widgetkit/scheduler-js</span>
             </div>
             <h1 className="docs-page-title">Scheduler</h1>
             <p className="docs-page-desc">
@@ -268,7 +356,7 @@ export default function SchedulerPage() {
               updated position so you can persist changes to your backend.
             </p>
             <DragDropDemo />
-            <CodeBlock code={DRAG_DROP_SNIPPET} vue={DRAG_DROP_VUE} />
+            <CodeBlock code={DRAG_DROP_SNIPPET} vue={DRAG_DROP_VUE} js={DRAG_DROP_JS} />
           </section>
 
           <section id="custom-render" className="docs-section">
@@ -298,7 +386,7 @@ export default function SchedulerPage() {
               photos alongside their rows.
             </p>
             <ReadOnlyDemo />
-            <CodeBlock code={READONLY_SNIPPET} vue={READONLY_VUE} />
+            <CodeBlock code={READONLY_SNIPPET} vue={READONLY_VUE} js={READONLY_JS} />
           </section>
 
           <section id="props" className="docs-section">
@@ -317,10 +405,11 @@ export default function SchedulerPage() {
             <p className="docs-section-tag">Reference</p>
             <h2>TypeScript types</h2>
             <p>
-              All types are exported from{" "}
-              <code className="inline-code">@widgetkit/scheduler-react</code> and
-              can be imported alongside the component.
+              All types are exported from both{" "}
+              <code className="inline-code">@widgetkit/scheduler-react</code> and{" "}
+              <code className="inline-code">@widgetkit/scheduler-vue</code>.
             </p>
+            <CodeBlock code={TYPES_IMPORT} vue={TYPES_IMPORT_VUE} js={TYPES_IMPORT_JS} compact />
             <CodeBlock code={TYPES_SNIPPET} />
           </section>
 

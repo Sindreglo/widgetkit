@@ -27,6 +27,15 @@
   box-sizing: border-box;
 }
 
+/* ── Validation error ────────────────────────────────────────────────────── */
+.ss-validation-error {
+  padding: 4px 10px;
+  background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+  color: var(--ss-error);
+  font-size: 12px;
+}
+
 /* ── Formula Bar ─────────────────────────────────────────────────────────── */
 .ss-formula-bar {
   display: flex;

@@ -255,11 +255,16 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
   resizableCols = true,
   resizableRows = true,
   selectionMode = 'range',
+  autoExpandRows = true,
+  autoExpandCols = false,
+  expandRowsBy = 10,
+  expandColsBy = 10,
   maxHeight = DEFAULT_MAX_HEIGHT,
   formats,
   merges,
   renderCell,
   onBeforeEdit,
+  onValidate,
   onCellClick,
   onCellDoubleClick,
   onKeyDown: onKeyDownProp,
@@ -287,12 +292,18 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
     return map;
   }, [merges]);
 
+  const [extraRows, setExtraRows] = useState(0);
+  const [extraCols, setExtraCols] = useState(0);
+  const effectiveRows = rows + extraRows;
+  const effectiveCols = cols + extraCols;
+
   const [selection, setSelection] = useState<Sel>({
     anchor: { col: 0, row: 0 },
     active: { col: 0, row: 0 },
   });
   const [editingRef, setEditingRef] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const selectedAddr = selection.active;
   const selectedRef = useMemo(
@@ -414,9 +425,9 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
 
   const totalGridWidth = useMemo(() => {
     let w = showRowNumbers ? rowNumWidth : 0;
-    for (let c = 0; c < cols; c++) w += internalColWidths[c] ?? defaultColWidth ?? DEFAULT_COL_WIDTH;
+    for (let c = 0; c < effectiveCols; c++) w += internalColWidths[c] ?? defaultColWidth ?? DEFAULT_COL_WIDTH;
     return w;
-  }, [showRowNumbers, cols, internalColWidths, defaultColWidth]);
+  }, [showRowNumbers, effectiveCols, internalColWidths, defaultColWidth]);
   const rowHeightOf = (row: number) => internalRowHeights[row] ?? rowHeight;
 
   const startColResize = useCallback((col: number, startX: number) => {
@@ -460,29 +471,29 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
 
   // Cumulative row tops for accurate virtual scroll with variable row heights
   const rowTops = useMemo(() => {
-    const tops = new Array<number>(rows + 1);
+    const tops = new Array<number>(effectiveRows + 1);
     tops[0] = 0;
-    for (let r = 0; r < rows; r++) tops[r + 1] = tops[r] + rowHeightOf(r);
+    for (let r = 0; r < effectiveRows; r++) tops[r + 1] = tops[r] + rowHeightOf(r);
     return tops;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, internalRowHeights, rowHeight]);
+  }, [effectiveRows, internalRowHeights, rowHeight]);
 
   const scrollBodyHeight = typeof height === 'number' ? height : maxHeight;
 
   const visibleStart = useMemo(() => {
     let r = 0;
-    while (r < rows - 1 && rowTops[r + 1] <= scrollTop) r++;
+    while (r < effectiveRows - 1 && rowTops[r + 1] <= scrollTop) r++;
     return Math.max(0, r - BUFFER);
-  }, [scrollTop, rowTops, rows]);
+  }, [scrollTop, rowTops, effectiveRows]);
 
   const visibleEnd = useMemo(() => {
     let r = visibleStart;
-    while (r < rows - 1 && rowTops[r + 1] < scrollTop + scrollBodyHeight) r++;
-    return Math.min(rows - 1, r + BUFFER);
-  }, [visibleStart, scrollTop, scrollBodyHeight, rowTops, rows]);
+    while (r < effectiveRows - 1 && rowTops[r + 1] < scrollTop + scrollBodyHeight) r++;
+    return Math.min(effectiveRows - 1, r + BUFFER);
+  }, [visibleStart, scrollTop, scrollBodyHeight, rowTops, effectiveRows]);
 
   const topSpacerHeight = rowTops[visibleStart];
-  const bottomSpacerHeight = Math.max(0, rowTops[rows] - rowTops[Math.min(rows, visibleEnd + 1)]);
+  const bottomSpacerHeight = Math.max(0, rowTops[effectiveRows] - rowTops[Math.min(effectiveRows, visibleEnd + 1)]);
 
   const getRawValue = useCallback(
     (ref: string): string => {
@@ -507,19 +518,25 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
 
   const commitEdit = useCallback(
     (ref: string, value: string) => {
-      pushHistory();
       const cellValue = toCellValue(value);
+      if (onValidate) {
+        const err = onValidate(ref, cellValue);
+        if (err) { setValidationError(err); return; }
+      }
+      setValidationError(null);
+      pushHistory();
       onCellChange?.(ref, cellValue as string | number | null);
       onCellsChange?.({ ...cells, [ref]: cellValue });
       setEditingRef(null);
       setEditValue('');
     },
-    [cells, onCellChange, onCellsChange, pushHistory]
+    [cells, onCellChange, onCellsChange, onValidate, pushHistory]
   );
 
   const cancelEdit = useCallback(() => {
     setEditingRef(null);
     setEditValue('');
+    setValidationError(null);
   }, []);
 
   const enterEditMode = useCallback(
@@ -549,8 +566,8 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
 
   const navigate = useCallback(
     (dCol: number, dRow: number, extend = false) => {
-      const newCol = Math.max(0, Math.min(cols - 1, selection.active.col + dCol));
-      const newRow = Math.max(0, Math.min(rows - 1, selection.active.row + dRow));
+      const newCol = Math.max(0, Math.min(effectiveCols - 1, selection.active.col + dCol));
+      const newRow = Math.max(0, Math.min(effectiveRows - 1, selection.active.row + dRow));
       const newActive = { col: newCol, row: newRow };
       const shouldExtend = extend && selectionMode !== 'single';
       setSelection({
@@ -559,7 +576,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
       });
       scrollActiveIntoView(newRow);
     },
-    [selection, cols, rows, selectionMode, scrollActiveIntoView]
+    [selection, effectiveCols, effectiveRows, selectionMode, scrollActiveIntoView]
   );
 
   // Range select via pointer drag
@@ -619,8 +636,8 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
         if (!cellEl?.dataset.ref) return;
         const addr = parseRef(cellEl.dataset.ref);
         if (!addr) return;
-        const newMinCol = Math.max(0, Math.min(cols - 1 - selW, addr.col - offsetCol));
-        const newMinRow = Math.max(0, Math.min(rows - 1 - selH, addr.row - offsetRow));
+        const newMinCol = Math.max(0, Math.min(effectiveCols - 1 - selW, addr.col - offsetCol));
+        const newMinRow = Math.max(0, Math.min(effectiveRows - 1 - selH, addr.row - offsetRow));
         currentPreview = { minCol: newMinCol, maxCol: newMinCol + selW, minRow: newMinRow, maxRow: newMinRow + selH };
         setDragPreview(currentPreview);
       };
@@ -667,7 +684,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
     },
-    [readOnly, selMinCol, selMaxCol, selMinRow, selMaxRow, cols, rows]
+    [readOnly, selMinCol, selMaxCol, selMinRow, selMaxRow, effectiveCols, effectiveRows]
   );
 
   // Grid-level keydown (when not editing)
@@ -688,8 +705,8 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
           break;
         case 'End':
           e.preventDefault();
-          if (e.ctrlKey) navigate(cols - 1 - selection.active.col, rows - 1 - selection.active.row, e.shiftKey);
-          else navigate(cols - 1 - selection.active.col, 0, e.shiftKey);
+          if (e.ctrlKey) navigate(effectiveCols - 1 - selection.active.col, effectiveRows - 1 - selection.active.row, e.shiftKey);
+          else navigate(effectiveCols - 1 - selection.active.col, 0, e.shiftKey);
           break;
         case 'PageUp':
           e.preventDefault();
@@ -747,7 +764,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
           }
       }
     },
-    [editingRef, navigate, enterEditMode, selectedRef, commitEdit, copySelection, pasteSelection, undo, redo, readOnly, applyFormat, formats, anchorRef, onKeyDownProp, selection, cols, rows, scrollBodyHeight, rowHeight]
+    [editingRef, navigate, enterEditMode, selectedRef, commitEdit, copySelection, pasteSelection, undo, redo, readOnly, applyFormat, formats, anchorRef, onKeyDownProp, selection, effectiveCols, effectiveRows, scrollBodyHeight, rowHeight]
   );
 
   // Inline cell input keydown
@@ -813,9 +830,9 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
       scrollActiveIntoView(addr.row);
       enterEditMode(cellRef);
     },
-    exportCsv: () => exportCsv(cells, computed, rows, cols),
+    exportCsv: () => exportCsv(cells, computed, effectiveRows, effectiveCols),
     getCells: () => ({ ...cells }),
-  }), [scrollActiveIntoView, enterEditMode, cells, computed, rows, cols]);
+  }), [scrollActiveIntoView, enterEditMode, cells, computed, effectiveRows, effectiveCols]);
 
   const formulaBarValue = editingRef ? editValue : getRawValue(anchorRef);
 
@@ -870,6 +887,10 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
             ↓ CSV
           </button>
         </div>
+      )}
+
+      {validationError && (
+        <div className="ss-validation-error" role="alert">{validationError}</div>
       )}
 
       {showToolbar && !readOnly && (

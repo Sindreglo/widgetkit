@@ -65,12 +65,17 @@ export interface SpreadsheetProps {
   selectionMode?: 'single' | 'range';
   frozenRows?: number;
   frozenCols?: number;
+  autoExpandRows?: boolean;
+  autoExpandCols?: boolean;
+  expandRowsBy?: number;
+  expandColsBy?: number;
 
   // Custom rendering
   renderCell?: (ref: string, value: CellValue, format?: CellFormat) => ReactNode;
 
   // Editing hooks
   onBeforeEdit?: (ref: string, currentValue: CellValue) => boolean;
+  onValidate?: (ref: string, newValue: CellValue) => string | null;
 
   // Cell events
   onCellClick?: (ref: string, value: CellValue, event: MouseEvent) => void;

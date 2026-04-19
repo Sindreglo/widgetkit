@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TimelineScheduler } from "@widgetkit/scheduler-react";
 import type { Resource, TimelineItem } from "@widgetkit/scheduler-react";
@@ -436,47 +436,104 @@ function SpreadsheetDemo() {
   const [cells, setCells] = useState<CellMap>(initialCells);
   const [formats, setFormats] = useState<Record<string, CellFormat>>(initialFormats);
   const [merges, setMerges] = useState<Record<string, MergeRegion>>(initialMerges);
-  const [selection, setSelection] = useState("");
   const [log, setLog] = useState("");
-  const [singleMode, setSingleMode] = useState(false);
-  const ref = useState(() => ({ current: null as SpreadsheetHandle | null }))[0];
+
+  const [showFormulaBar, setShowFormulaBar] = useState(true);
+  const [showToolbar, setShowToolbar] = useState(true);
+  const [showRowNumbers, setShowRowNumbers] = useState(true);
+  const [showColHeaders, setShowColHeaders] = useState(true);
+  const [showContextMenu, setShowContextMenu] = useState(true);
+  const [readOnly, setReadOnly] = useState(false);
+  const [resizableCols, setResizableCols] = useState(true);
+  const [resizableRows, setResizableRows] = useState(true);
+  const [singleSelect, setSingleSelect] = useState(false);
+  const [validate, setValidate] = useState(false);
+
+  const ref = useRef<SpreadsheetHandle>(null);
+
+  const checkboxes: [string, boolean, (v: boolean) => void][] = [
+    ["Formula bar", showFormulaBar, setShowFormulaBar],
+    ["Toolbar", showToolbar, setShowToolbar],
+    ["Row numbers", showRowNumbers, setShowRowNumbers],
+    ["Col headers", showColHeaders, setShowColHeaders],
+    ["Context menu", showContextMenu, setShowContextMenu],
+    ["Read only", readOnly, setReadOnly],
+    ["Resizable cols", resizableCols, setResizableCols],
+    ["Resizable rows", resizableRows, setResizableRows],
+    ["Single select", singleSelect, setSingleSelect],
+    ["Validate numbers", validate, setValidate],
+  ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <div style={{ display: "flex", gap: 12, fontSize: 13, alignItems: "center" }}>
-        <label style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
-          <input type="checkbox" checked={singleMode} onChange={e => setSingleMode(e.target.checked)} />
-          selectionMode=single
-        </label>
-        <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => ref.current?.scrollToCell("A1")}>
-          scrollToCell(A1)
-        </button>
-        <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => ref.current?.setSelection("C5")}>
-          setSelection(C5)
-        </button>
-        <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => ref.current?.startEdit("B3")}>
-          startEdit(B3)
-        </button>
-        <span style={{ fontSize: 12, color: "#64748b" }}>sel: <strong>{selection}</strong></span>
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 13 }}>
+        {checkboxes.map(([label, value, setter]) => (
+          <label key={label} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+            <input type="checkbox" checked={value} onChange={e => setter(e.target.checked)} />
+            {label}
+          </label>
+        ))}
       </div>
-      {log && <div style={{ fontSize: 12, color: "#475569", background: "#f8fafc", padding: "4px 8px", borderRadius: 4 }}>{log}</div>}
+
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", fontSize: 13 }}>
+        {(
+          [
+            ["scrollToCell(A1)", () => ref.current?.scrollToCell("A1")],
+            ["setSelection(C5)", () => ref.current?.setSelection("C5")],
+            ["startEdit(B3)", () => ref.current?.startEdit("B3")],
+            ["exportCsv()", () => {
+              const csv = ref.current?.exportCsv();
+              if (csv) setLog("CSV: " + csv.slice(0, 80) + "…");
+            }],
+            ["getCells()", () => {
+              const c = ref.current?.getCells();
+              if (c) setLog("Cells: " + Object.keys(c).length + " entries");
+            }],
+          ] as [string, () => void][]
+        ).map(([label, action]) => (
+          <button key={label} style={{ fontSize: 12, padding: "2px 8px" }} onClick={action}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ background: "#f8fafc", padding: "4px 8px", borderRadius: 4, fontSize: 12, minHeight: 24, color: "#475569" }}>
+        {log || "Events will appear here"}
+      </div>
+
       <Spreadsheet
-        ref={r => { ref.current = r; }}
+        ref={ref}
         cells={cells}
         rows={40}
         cols={40}
         maxHeight={360}
-        showToolbar
-        selectionMode={singleMode ? "single" : "range"}
+        showFormulaBar={showFormulaBar}
+        showToolbar={showToolbar}
+        showRowNumbers={showRowNumbers}
+        showColHeaders={showColHeaders}
+        showContextMenu={showContextMenu}
+        readOnly={readOnly}
+        resizableCols={resizableCols}
+        resizableRows={resizableRows}
+        selectionMode={singleSelect ? "single" : "range"}
         formats={formats}
         merges={merges}
         onCellsChange={setCells}
         onFormatsChange={setFormats}
         onMergesChange={setMerges}
-        onSelectionChange={setSelection}
-        onCellClick={(ref, value) => setLog(`click ${ref} = ${JSON.stringify(value)}`)}
+        onSelectionChange={sel => setLog(`selection: ${sel}`)}
+        onCellClick={(cellRef, value) => setLog(`click ${cellRef} = ${JSON.stringify(value)}`)}
+        onCellDoubleClick={(cellRef) => setLog(`dblclick ${cellRef}`)}
+        onValidate={validate ? (cellRef, value) => {
+          const col = cellRef.replace(/\d+/, "");
+          const row = parseInt(cellRef.replace(/\D+/, ""), 10);
+          if (["B","C","D","E"].includes(col) && row >= 3 && row <= 6) {
+            if (value !== null && typeof value !== "number") return "Must be a number";
+          }
+          return null;
+        } : undefined}
         contextMenuItems={[
-          { label: "Log cell value", action: (r) => setLog(`ctx: ${r} = ${JSON.stringify(cells[r] ?? null)}`) },
+          { label: "Log cell value", action: r => setLog(`ctx: ${r} = ${JSON.stringify(cells[r] ?? null)}`) },
         ]}
         aria-label="Sales report spreadsheet"
       />

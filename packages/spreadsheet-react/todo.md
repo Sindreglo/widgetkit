@@ -34,7 +34,7 @@
 
 **Redigering & validering**
 - [x] `onBeforeEdit(ref, currentValue) → boolean` — avbryt edit programmatisk
-- [ ] `onValidate(ref, newValue) → string | null` — valider og vis feilmelding
+- [x] `onValidate(ref, newValue) → string | null` — valider og vis feilmelding
 
 **Seleksjon**
 - [x] `selectionMode: 'single' | 'range'` — begrens til enkeltcelle-seleksjon
