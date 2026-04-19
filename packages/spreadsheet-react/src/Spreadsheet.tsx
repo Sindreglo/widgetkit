@@ -14,7 +14,7 @@ import {
   type CellMap,
   type CellValue,
 } from '@widgetkit/spreadsheet';
-import type { SpreadsheetProps } from './types';
+import type { SpreadsheetProps, CellFormat } from './types';
 
 const DEFAULT_ROWS = 50;
 const DEFAULT_COLS = 26;
@@ -138,6 +138,45 @@ function selectionBounds(sel: Sel) {
   };
 }
 
+// ── Toolbar ───────────────────────────────────────────────────────────────────
+
+function Toolbar({ anchorRef, formats, onFormat }: {
+  anchorRef: string;
+  formats: Record<string, CellFormat> | undefined;
+  onFormat: (patch: Partial<CellFormat>) => void;
+}) {
+  const fmt = formats?.[anchorRef] ?? {};
+  return (
+    <div className="ss-toolbar" onMouseDown={e => e.preventDefault()}>
+      <button
+        className={`ss-tb-btn${fmt.bold ? ' ss-tb-btn--active' : ''}`}
+        onClick={() => onFormat({ bold: !fmt.bold })}
+        title="Bold (Ctrl+B)"
+      ><strong>B</strong></button>
+      <button
+        className={`ss-tb-btn${fmt.italic ? ' ss-tb-btn--active' : ''}`}
+        onClick={() => onFormat({ italic: !fmt.italic })}
+        title="Italic (Ctrl+I)"
+      ><em>I</em></button>
+      <div className="ss-tb-sep" />
+      <label className="ss-tb-color-btn" title="Text color">
+        <span className="ss-tb-color-label">A</span>
+        <span className="ss-tb-color-swatch" style={{ background: fmt.color ?? '#1e293b' }} />
+        <input type="color" className="ss-tb-color-input"
+          value={fmt.color ?? '#1e293b'}
+          onChange={e => onFormat({ color: e.target.value })} />
+      </label>
+      <label className="ss-tb-color-btn" title="Fill color">
+        <span className="ss-tb-color-label" style={{ fontSize: 10 }}>▪</span>
+        <span className="ss-tb-color-swatch" style={{ background: fmt.background ?? '#ffffff' }} />
+        <input type="color" className="ss-tb-color-input"
+          value={fmt.background ?? '#ffffff'}
+          onChange={e => onFormat({ background: e.target.value })} />
+      </label>
+    </div>
+  );
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function Spreadsheet({
@@ -147,12 +186,15 @@ export function Spreadsheet({
   colWidths,
   rowHeight = DEFAULT_ROW_HEIGHT,
   showFormulaBar = true,
+  showToolbar = false,
   showRowNumbers = true,
   showColHeaders = true,
   readOnly = false,
   maxHeight = DEFAULT_MAX_HEIGHT,
+  formats,
   onCellChange,
   onCellsChange,
+  onFormatsChange,
 }: SpreadsheetProps) {
   const computed = useMemo(() => evaluate(cells), [cells]);
 
@@ -249,6 +291,19 @@ export function Spreadsheet({
       }
     onCellsChangeRef.current?.(next);
   }, [pushHistory]);
+
+  // Cell formatting
+  const applyFormat = useCallback((patch: Partial<CellFormat>) => {
+    if (!onFormatsChange) return;
+    const { selMinCol, selMaxCol, selMinRow, selMaxRow } = boundsRef.current;
+    const next = { ...(formats ?? {}) };
+    for (let r = selMinRow; r <= selMaxRow; r++)
+      for (let c = selMinCol; c <= selMaxCol; c++) {
+        const ref = addressToRef(c, r);
+        next[ref] = { ...(next[ref] ?? {}), ...patch };
+      }
+    onFormatsChange(next);
+  }, [formats, onFormatsChange]);
 
   // Drag-to-move (selection)
   const cellsRef = useRef(cells);
@@ -556,13 +611,21 @@ export function Spreadsheet({
         case 'Y':
           if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); redo(); }
           break;
+        case 'b':
+        case 'B':
+          if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); applyFormat({ bold: !(formats?.[anchorRef]?.bold) }); }
+          break;
+        case 'i':
+        case 'I':
+          if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); applyFormat({ italic: !(formats?.[anchorRef]?.italic) }); }
+          break;
         default:
           if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
             enterEditMode(anchorRef, e.key);
           }
       }
     },
-    [editingRef, navigate, enterEditMode, selectedRef, commitEdit, copySelection, pasteSelection, undo, redo, readOnly]
+    [editingRef, navigate, enterEditMode, selectedRef, commitEdit, copySelection, pasteSelection, undo, redo, readOnly, applyFormat, formats, anchorRef]
   );
 
   // Inline cell input keydown
@@ -651,6 +714,14 @@ export function Spreadsheet({
             ↓ CSV
           </button>
         </div>
+      )}
+
+      {showToolbar && !readOnly && (
+        <Toolbar
+          anchorRef={anchorRef}
+          formats={formats}
+          onFormat={applyFormat}
+        />
       )}
 
       <div className="ss-container">
@@ -756,6 +827,7 @@ export function Spreadsheet({
                       const isFormulaCel = rawVal.startsWith('=');
                       const isErrorCel = isError(computed[ref]);
 
+                      const fmt = formats?.[ref];
                       let cellClass = 'ss-cell';
                       if (isInRange) cellClass += ' ss-cell--in-selection';
                       if (isInRange && !isAnchor) cellClass += ' ss-cell--in-range';
@@ -763,6 +835,15 @@ export function Spreadsheet({
                       if (isErrorCel) cellClass += ' ss-cell--error';
                       else if (isFormulaCel) cellClass += ' ss-cell--formula';
                       if (isInDragPreview) cellClass += ' ss-cell--drag-preview';
+
+                      let cellBg: string | undefined;
+                      if (isInDragPreview) {
+                        cellBg = `color-mix(in srgb, var(--ss-accent) 22%, ${fmt?.background ?? 'var(--ss-bg)'})`;
+                      } else if (isInRange && !isAnchor) {
+                        cellBg = `color-mix(in srgb, var(--ss-accent) 12%, ${fmt?.background ?? 'var(--ss-bg)'})`;
+                      } else if (fmt?.background) {
+                        cellBg = fmt.background;
+                      }
 
                       return (
                         <div
@@ -772,6 +853,10 @@ export function Spreadsheet({
                           style={{
                             width: colWidth(colIdx),
                             minWidth: colWidth(colIdx),
+                            ...(fmt?.bold && { fontWeight: 'bold' }),
+                            ...(fmt?.italic && { fontStyle: 'italic' }),
+                            ...(fmt?.color && !isErrorCel && { color: fmt.color }),
+                            ...(cellBg && { background: cellBg }),
                           }}
                           onPointerDown={e => {
                             if (e.button !== 0 || editingRef === ref) return;

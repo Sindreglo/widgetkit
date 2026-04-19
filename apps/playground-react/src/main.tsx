@@ -11,7 +11,7 @@ import type {
 } from "@widgetkit/booking-react";
 import "@widgetkit/booking-react/styles.css";
 import { Spreadsheet } from "@widgetkit/spreadsheet-react";
-import type { CellMap } from "@widgetkit/spreadsheet-react";
+import type { CellMap, CellFormat } from "@widgetkit/spreadsheet-react";
 import "@widgetkit/spreadsheet-react/styles.css";
 
 const today = new Date();
@@ -432,8 +432,26 @@ const initialCells: CellMap = {
   E6: "=SUM(E2:E5)",
 };
 
+const initialFormats: Record<string, CellFormat> = {
+  A1: { bold: true, background: '#f1f5f9' },
+  B1: { bold: true, background: '#f1f5f9' },
+  C1: { bold: true, background: '#f1f5f9' },
+  D1: { bold: true, background: '#f1f5f9' },
+  E1: { bold: true, background: '#f1f5f9' },
+  A6: { bold: true, background: '#f1f5f9' },
+  E2: { color: '#16a34a' },
+  E3: { color: '#16a34a' },
+  E4: { color: '#16a34a' },
+  E5: { color: '#16a34a' },
+  B6: { bold: true },
+  C6: { bold: true },
+  D6: { bold: true },
+  E6: { bold: true, color: '#16a34a', background: '#f0fdf4' },
+};
+
 function SpreadsheetDemo() {
   const [cells, setCells] = useState<CellMap>(initialCells);
+  const [formats, setFormats] = useState<Record<string, CellFormat>>(initialFormats);
 
   return (
     <Spreadsheet
@@ -441,7 +459,10 @@ function SpreadsheetDemo() {
       rows={40}
       cols={40}
       maxHeight={360}
+      showToolbar
+      formats={formats}
       onCellsChange={setCells}
+      onFormatsChange={setFormats}
     />
   );
 }

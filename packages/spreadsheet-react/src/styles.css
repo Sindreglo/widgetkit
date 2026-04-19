@@ -288,9 +288,9 @@
   color: var(--ss-text);
 }
 
-/* Non-anchor cells in the selection — blue tint */
+/* Non-anchor cells in the selection — blue tint (overridden by inline style when cell has a background format) */
 .ss-cell--in-range {
-  background: color-mix(in srgb, var(--ss-accent) 12%, transparent);
+  background: color-mix(in srgb, var(--ss-accent) 12%, var(--ss-bg));
 }
 
 /* Single border rectangle around the whole selection */
@@ -302,12 +302,102 @@
   z-index: 3;
 }
 
-/* Drag-to-move drop preview */
+/* Drag-to-move drop preview (background overridden by inline style when cell has a background format) */
 .ss-cell--drag-preview {
-  background: color-mix(in srgb, var(--ss-accent) 22%, transparent);
+  background: color-mix(in srgb, var(--ss-accent) 22%, var(--ss-bg));
   outline: 2px dashed var(--ss-accent);
   outline-offset: -2px;
   z-index: 2;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────────── */
+.ss-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 8px;
+  background: var(--ss-header-bg);
+  border-bottom: 1px solid var(--ss-border);
+  min-height: 28px;
+}
+
+.ss-tb-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 22px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+  font-family: serif;
+  font-size: 13px;
+  color: var(--ss-text);
+  padding: 0;
+}
+
+.ss-tb-btn:hover {
+  background: var(--ss-border);
+}
+
+.ss-tb-btn--active {
+  background: color-mix(in srgb, var(--ss-accent) 15%, transparent);
+  border-color: var(--ss-accent);
+  color: var(--ss-accent);
+}
+
+.ss-tb-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--ss-border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.ss-tb-color-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 22px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 2px 0 1px;
+  gap: 1px;
+}
+
+.ss-tb-color-btn:hover {
+  background: var(--ss-border);
+}
+
+.ss-tb-color-label {
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ss-text);
+  font-family: serif;
+  user-select: none;
+}
+
+.ss-tb-color-swatch {
+  display: block;
+  width: 14px;
+  height: 3px;
+  border-radius: 1px;
+}
+
+.ss-tb-color-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  padding: 0;
+  border: none;
 }
 
 /* ── Spacers ─────────────────────────────────────────────────────────────── */
