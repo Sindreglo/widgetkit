@@ -825,6 +825,122 @@ a {
   margin-top: 1.5rem;
 }
 
+/* ── Responsive ─────────────────────────────────────────── */
+
+/* Tablet — collapse sidebar */
+@media (max-width: 960px) {
+  .docs-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-sidebar {
+    display: none;
+  }
+
+  .docs-content {
+    padding: 2rem 4rem 4rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+/* Narrow tablet */
+@media (max-width: 768px) {
+  .docs-content {
+    padding: 2rem 2rem 4rem;
+    max-width: 100%;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hero {
+    padding: 4rem 2rem 3rem;
+  }
+
+  .products {
+    padding: 3rem 2rem 4rem;
+  }
+
+  .features {
+    gap: 2rem;
+    padding: 2rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .nav {
+    padding: 0 1rem;
+  }
+
+  .hero {
+    padding: 3rem 1rem 2.5rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    text-align: center;
+  }
+
+  .products {
+    padding: 2.5rem 1rem 3rem;
+  }
+
+  .features {
+    padding: 1.5rem 1rem;
+  }
+
+  .docs-content {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  .docs-page-title {
+    font-size: 1.5rem;
+  }
+
+  .docs-section h2 {
+    font-size: 1.125rem;
+  }
+
+  /* Props table — horizontal scroll */
+  .props-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .props-table {
+    min-width: 520px;
+  }
+
+  .shortcut-keys {
+    min-width: 80px;
+  }
+
+  .demo-controls {
+    gap: 0.75rem 1rem;
+  }
+
+  .demo-code-block {
+    height: 200px;
+  }
+
+  .code-block pre {
+    font-size: 0.75rem;
+  }
+
+  .footer {
+    padding: 1.5rem 1rem;
+  }
+}
+
 /* Footer */
 .footer {
   padding: 2rem;

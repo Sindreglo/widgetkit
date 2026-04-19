@@ -2,6 +2,7 @@
 
 ## Must-haves
 
+### Kjernefunksjonalitet (ferdig)
 - [x] Keyboard navigation (arrow keys, Tab, Enter)
 - [x] Cell editing (inline + formula bar)
 - [x] Formula support (`=SUM`, `=IF`, etc.)
@@ -13,7 +14,59 @@
 - [x] Context menu (cut, copy, paste, insert/delete row/col)
 - [x] Read-only mode
 - [x] `onCellChange` / `onCellsChange` callbacks
-- [x] CSV export (i `@widgetkit/spreadsheet` core)
+- [x] CSV export
+
+### API / konfigurering (mangler)
+
+**Layout & dimensjoner**
+- [ ] `width` — CSS-bredde på komponenten (i dag bare `maxHeight`)
+- [ ] `height` — fast høyde i stedet for `maxHeight`
+- [ ] `className` / `style` — pass-through til root-elementet for custom styling
+- [ ] `defaultColWidth` — global standard kolonnebredde (nå hardkodet til 100 px)
+- [ ] `resizableCols` / `resizableRows` — boolean for å skru av/på resize-håndtak
+
+**Visning**
+- [x] `showFormulaBar`
+- [x] `showToolbar`
+- [x] `showRowNumbers`
+- [x] `showColHeaders`
+- [ ] `frozenCols` / `frozenRows` — sticky header-rader/-kolonner (prop finnes, ikke implementert)
+
+**Redigering & validering**
+- [ ] `onBeforeEdit(ref, currentValue) → boolean` — avbryt edit programmatisk
+- [ ] `onValidate(ref, newValue) → string | null` — valider og vis feilmelding
+
+**Seleksjon**
+- [ ] `selectionMode: 'single' | 'range'` — begrens til enkeltcelle-seleksjon
+- [ ] `defaultSelection` / `selection` + `onSelectionChange` — kontrollert seleksjon (selection er ucontrolled i dag)
+- [x] `onSelectionChange` callback
+
+**Events**
+- [ ] `onCellClick(ref, value, event)`
+- [ ] `onCellDoubleClick(ref, value, event)`
+- [ ] `onKeyDown(event)` — custom keydown hook
+
+**Kontekstmeny**
+- [ ] `contextMenuItems` — legg til egne menypunkter
+- [ ] `showContextMenu: false` — skru av kontekstmenyen helt
+
+**Imperative API (ref)**
+- [ ] `useSpreadsheetRef()` / `forwardRef` med metoder:
+  - `scrollToCell(ref)`
+  - `setSelection(ref)`
+  - `startEdit(ref)`
+  - `exportCsv()`
+  - `getCells()`
+
+**Uncontrolled mode**
+- [ ] `defaultCells` / `defaultFormats` / `defaultMerges` — ukontrollert modus uten ekstern state
+
+**Custom rendering**
+- [ ] `renderCell(ref, value, format) → ReactNode` — custom cell renderer
+
+**Tilgjengelighet**
+- [ ] `aria-label` på root-elementet
+- [ ] Forbedret tastaturnavigasjon (Home/End, Ctrl+Home/End, Page Up/Down)
 
 ## Nice-to-haves
 
@@ -30,5 +83,4 @@
 - [ ] Keyboard shortcut hints in context menu
 - [ ] Touch / mobile support
 - [ ] Dark mode via CSS variables
-- [ ] `onSelectionChange` callback
 - [ ] Column type hints (text, number, date) for formatting/validation

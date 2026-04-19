@@ -32,6 +32,7 @@ export interface SpreadsheetProps {
   maxHeight?: number;
   formats?: Record<string, CellFormat>;
   merges?: Record<string, MergeRegion>;
+  onSelectionChange?: (ref: string) => void;
   onCellChange?: (ref: string, value: string | number | null) => void;
   onCellsChange?: (cells: CellMap) => void;
   onFormatsChange?: (formats: Record<string, CellFormat>) => void;

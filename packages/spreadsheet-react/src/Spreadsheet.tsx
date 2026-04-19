@@ -14,7 +14,7 @@ import {
   type CellMap,
   type CellValue,
 } from '@widgetkit/spreadsheet';
-import type { SpreadsheetProps, CellFormat, NumberFormat, MergeRegion } from './types';
+import type { SpreadsheetProps, CellFormat, NumberFormat } from './types';
 
 const DEFAULT_ROWS = 50;
 const DEFAULT_COLS = 26;
@@ -248,6 +248,7 @@ export function Spreadsheet({
   formats,
   merges,
   onCellChange,
+  onSelectionChange,
   onCellsChange,
   onFormatsChange,
   onMergesChange,
@@ -739,6 +740,10 @@ export function Spreadsheet({
   useEffect(() => {
     gridWrapperRef.current?.focus({ preventScroll: true });
   }, []);
+
+  useEffect(() => {
+    onSelectionChange?.(selectionLabel);
+  }, [selectionLabel, onSelectionChange]);
 
   const formulaBarValue = editingRef ? editValue : getRawValue(anchorRef);
 
