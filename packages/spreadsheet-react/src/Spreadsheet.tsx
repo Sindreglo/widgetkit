@@ -498,18 +498,18 @@ export function Spreadsheet({
       if (e.key === 'Enter') {
         e.preventDefault();
         commitEdit(editingRef ?? anchorRef, editValue);
-        gridWrapperRef.current?.focus();
+        gridWrapperRef.current?.focus({ preventScroll: true });
       } else if (e.key === 'Escape') {
         e.preventDefault();
         cancelEdit();
-        gridWrapperRef.current?.focus();
+        gridWrapperRef.current?.focus({ preventScroll: true });
       }
     },
     [editingRef, editValue, commitEdit, cancelEdit, selectedRef]
   );
 
   useEffect(() => {
-    gridWrapperRef.current?.focus();
+    gridWrapperRef.current?.focus({ preventScroll: true });
   }, []);
 
   const formulaBarValue = editingRef ? editValue : getRawValue(anchorRef);
@@ -575,7 +575,7 @@ export function Spreadsheet({
                         anchor: { col: c, row: 0 },
                         active: { col: c, row: rows - 1 },
                       });
-                      gridWrapperRef.current?.focus();
+                      gridWrapperRef.current?.focus({ preventScroll: true });
                     }}
                   >
                     {colToLetters(c)}
@@ -621,7 +621,7 @@ export function Spreadsheet({
                             anchor: { col: 0, row: rowIdx },
                             active: { col: cols - 1, row: rowIdx },
                           });
-                          gridWrapperRef.current?.focus();
+                          gridWrapperRef.current?.focus({ preventScroll: true });
                         }}
                       >
                         {rowIdx + 1}
@@ -670,7 +670,7 @@ export function Spreadsheet({
                             if (editingRef && editingRef !== ref) commitEdit(editingRef, editValue);
                             if (e.shiftKey) {
                               setSelection(prev => ({ anchor: prev.anchor, active: { col: colIdx, row: rowIdx } }));
-                              gridWrapperRef.current?.focus();
+                              gridWrapperRef.current?.focus({ preventScroll: true });
                               return;
                             }
                             if (isInRange) {
@@ -678,7 +678,7 @@ export function Spreadsheet({
                             } else {
                               startRangeSelect(colIdx, rowIdx);
                             }
-                            gridWrapperRef.current?.focus();
+                            gridWrapperRef.current?.focus({ preventScroll: true });
                           }}
                           onDoubleClick={() => enterEditMode(ref)}
                           onContextMenu={e => {
