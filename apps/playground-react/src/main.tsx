@@ -448,6 +448,8 @@ function SpreadsheetDemo() {
   const [resizableRows, setResizableRows] = useState(true);
   const [singleSelect, setSingleSelect] = useState(false);
   const [validate, setValidate] = useState(false);
+  const [autoExpandRows, setAutoExpandRows] = useState(true);
+  const [autoExpandCols, setAutoExpandCols] = useState(false);
 
   const ref = useRef<SpreadsheetHandle>(null);
 
@@ -462,6 +464,8 @@ function SpreadsheetDemo() {
     ["Resizable rows", resizableRows, setResizableRows],
     ["Single select", singleSelect, setSingleSelect],
     ["Validate numbers", validate, setValidate],
+    ["Auto expand rows", autoExpandRows, setAutoExpandRows],
+    ["Auto expand cols", autoExpandCols, setAutoExpandCols],
   ];
 
   return (
@@ -516,6 +520,8 @@ function SpreadsheetDemo() {
         resizableCols={resizableCols}
         resizableRows={resizableRows}
         selectionMode={singleSelect ? "single" : "range"}
+        autoExpandRows={autoExpandRows}
+        autoExpandCols={autoExpandCols}
         formats={formats}
         merges={merges}
         onCellsChange={setCells}

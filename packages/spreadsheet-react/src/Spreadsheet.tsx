@@ -910,7 +910,16 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
             overflowY: 'auto',
             overflowX: 'auto',
           }}
-          onScroll={e => setScrollTop((e.currentTarget as HTMLDivElement).scrollTop)}
+          onScroll={e => {
+            const el = e.currentTarget as HTMLDivElement;
+            setScrollTop(el.scrollTop);
+            if (autoExpandRows && el.scrollTop + el.clientHeight >= rowTops[effectiveRows] - rowHeight * 2) {
+              setExtraRows(prev => prev + expandRowsBy);
+            }
+            if (autoExpandCols && el.scrollLeft + el.clientWidth >= totalGridWidth - (defaultColWidth ?? DEFAULT_COL_WIDTH) * 2) {
+              setExtraCols(prev => prev + expandColsBy);
+            }
+          }}
         >
           {showColHeaders && (
             <div
@@ -923,7 +932,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
                   style={{ width: rowNumWidth, minWidth: rowNumWidth }}
                 />
               )}
-              {Array.from({ length: cols }, (_, c) => {
+              {Array.from({ length: effectiveCols }, (_, c) => {
                 const isColSelected = c >= selMinCol && c <= selMaxCol;
                 return (
                   <div
@@ -933,7 +942,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
                     onClick={() => {
                       setSelection({
                         anchor: { col: c, row: 0 },
-                        active: { col: c, row: rows - 1 },
+                        active: { col: c, row: effectiveRows - 1 },
                       });
                       gridWrapperRef.current?.focus({ preventScroll: true });
                     }}
@@ -959,7 +968,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
             onKeyDown={handleGridKeyDown}
             style={{
               position: 'relative',
-              height: rowTops[rows],
+              height: rowTops[effectiveRows],
               outline: 'none',
               minWidth: totalGridWidth,
             }}
@@ -981,7 +990,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
                         onClick={() => {
                           setSelection({
                             anchor: { col: 0, row: rowIdx },
-                            active: { col: cols - 1, row: rowIdx },
+                            active: { col: effectiveCols - 1, row: rowIdx },
                           });
                           gridWrapperRef.current?.focus({ preventScroll: true });
                         }}
@@ -996,7 +1005,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
                         )}
                       </div>
                     )}
-                    {Array.from({ length: cols }, (_, colIdx) => {
+                    {Array.from({ length: effectiveCols }, (_, colIdx) => {
                       const ref = addressToRef(colIdx, rowIdx);
                       // Hidden placeholder for any cell inside a merged region
                       if (mergeMap.has(ref)) {

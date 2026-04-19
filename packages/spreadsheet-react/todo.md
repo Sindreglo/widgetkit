@@ -31,6 +31,7 @@
 - [x] `showRowNumbers`
 - [x] `showColHeaders`
 - [ ] `frozenCols` / `frozenRows` — sticky header-rader/-kolonner (prop finnes, ikke implementert)
+- [x] `autoExpandRows` / `autoExpandCols` + `expandRowsBy` / `expandColsBy` — auto-utvid ved scroll til kanten
 
 **Redigering & validering**
 - [x] `onBeforeEdit(ref, currentValue) → boolean` — avbryt edit programmatisk
