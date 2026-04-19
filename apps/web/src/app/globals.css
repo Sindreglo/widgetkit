@@ -420,6 +420,7 @@ a {
   padding: 3rem 4rem 5rem;
   max-width: 1200px;
   width: 100%;
+  min-width: 0; /* prevent grid blowout */
 }
 
 /* Page header */
@@ -512,7 +513,8 @@ a {
 .demo-wrapper {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   margin-top: 1.5rem;
 }
 
@@ -582,7 +584,8 @@ a {
   margin-top: 1.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .props-table {
@@ -718,6 +721,7 @@ a {
 .demo-code-pre {
   height: 100%;
   overflow-y: auto;
+  overflow-x: auto;
   padding: 1rem 1.25rem 1rem 1.5rem;
   margin: 0;
   font-family: "Geist Mono", "SF Mono", "Fira Code", monospace;
@@ -820,7 +824,8 @@ a {
 /* Scheduler intro demo wrapper */
 .scheduler-demo {
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid var(--border);
   margin-top: 1.5rem;
 }
@@ -908,12 +913,6 @@ a {
 
   .docs-section h2 {
     font-size: 1.125rem;
-  }
-
-  /* Props table — horizontal scroll */
-  .props-table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   .props-table {
