@@ -121,6 +121,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@widgetkit/scheduler-react':
+        specifier: ^0.0.2
+        version: 0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       lucide-react:
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.5)
@@ -1397,6 +1400,12 @@ packages:
 
   '@widgetkit/core@0.0.3':
     resolution: {integrity: sha512-AgNAzU4skQjVnLWmkDOMaAm3TPu+4iTVt7kr717elVslNgjEbcviTxkQOzSVsY9c1tHib+gJCn7EBMhOTO5rRg==}
+
+  '@widgetkit/scheduler-react@0.0.2':
+    resolution: {integrity: sha512-w6rfTZwQvUtLafuD7ThbhN7c7qJRJHy6x5OveC87XHcH4juXkWCD25vgm9jcoLKFryNLPbWI+q12yMQfkpB9aA==}
+    peerDependencies:
+      react: '>=19.0.0'
+      react-dom: '>=19.0.0'
 
   '@widgetkit/scheduler@0.0.2':
     resolution: {integrity: sha512-Xe2pQUhzLUPo6x5qnj8VJeSNWu6R6rn+6MRQY+0WsVOfIGTxxBrLd+Kv7/Nl5YIFP6C44l9oA5x7r6QzMTEENA==}
@@ -3382,6 +3391,13 @@ snapshots:
   '@widgetkit/booking@0.0.2': {}
 
   '@widgetkit/core@0.0.3': {}
+
+  '@widgetkit/scheduler-react@0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@widgetkit/core': 0.0.3
+      '@widgetkit/scheduler': link:packages/scheduler
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   '@widgetkit/scheduler@0.0.2':
     dependencies:

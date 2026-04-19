@@ -77,6 +77,24 @@
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--ss-accent) 20%, transparent);
 }
 
+.ss-export-btn {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border: 1px solid var(--ss-border);
+  border-radius: 3px;
+  background: var(--ss-bg);
+  color: var(--ss-muted);
+  font-family: var(--ss-font);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ss-export-btn:hover {
+  border-color: var(--ss-accent);
+  color: var(--ss-accent);
+}
+
 /* ── Container ───────────────────────────────────────────────────────────── */
 .ss-container {
   position: relative;

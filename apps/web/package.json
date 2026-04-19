@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@widgetkit/scheduler-react": "^0.0.2",
     "lucide-react": "^1.8.0",
     "next": "^15.0.0",
     "react": "^19.0.0",

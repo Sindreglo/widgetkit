@@ -7,6 +7,7 @@ const products = [
     desc: "A powerful time-based scheduler with drag-and-drop, snapping, collision detection, and multi-resource views.",
     tags: ["React", "Vue"],
     soon: false,
+    href: "/scheduler",
   },
   {
     icon: "📅",
@@ -32,7 +33,7 @@ const products = [
 ];
 
 const features = [
-  { label: "Framework-agnostic core", desc: "Pure TypeScript, zero deps" },
+  { label: "Framework agnostic core", desc: "Pure TypeScript, zero deps" },
   { label: "Headless logic", desc: "Bring your own styles" },
   { label: "TypeScript-first", desc: "Full type safety" },
   { label: "Tree-shakeable", desc: "Only pay for what you use" },
@@ -95,6 +96,9 @@ export default function HomePage() {
                 ))}
                 {p.soon && <span className="tag tag-soon">Coming soon</span>}
               </div>
+              {"href" in p && p.href && (
+                <a href={p.href} className="product-link">View demo →</a>
+              )}
             </div>
           ))}
         </div>

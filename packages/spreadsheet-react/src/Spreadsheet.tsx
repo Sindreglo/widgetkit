@@ -10,6 +10,7 @@ import {
   colToLetters,
   addressToRef,
   isError,
+  exportCsv,
   type CellMap,
   type CellValue,
 } from '@widgetkit/spreadsheet';
@@ -542,6 +543,22 @@ export function Spreadsheet({
             readOnly={readOnly}
             aria-label="Formula input"
           />
+          <button
+            className="ss-export-btn"
+            title="Export CSV"
+            onClick={() => {
+              const csv = exportCsv(cells, computed, rows, cols);
+              const blob = new Blob([csv], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'spreadsheet.csv';
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            ↓ CSV
+          </button>
         </div>
       )}
 
