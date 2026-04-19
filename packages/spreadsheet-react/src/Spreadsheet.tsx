@@ -935,11 +935,14 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
           onScroll={e => {
             const el = e.currentTarget as HTMLDivElement;
             setScrollTop(el.scrollTop);
-            if (autoExpandRows && el.scrollTop + el.clientHeight >= rowTops[effectiveRows] - rowHeight * 2) {
-              setExtraRows(prev => prev + expandRowsBy);
-            }
-            if (autoExpandCols && el.scrollLeft + el.clientWidth >= totalGridWidth - (defaultColWidth ?? DEFAULT_COL_WIDTH) * 2) {
-              setExtraCols(prev => prev + expandColsBy);
+            if (!expandPendingRef.current) {
+              if (autoExpandRows && el.scrollTop + el.clientHeight >= rowTops[effectiveRows] - rowHeight * 2) {
+                expandPendingRef.current = true;
+                setExtraRows(prev => prev + expandRowsBy);
+              } else if (autoExpandCols && el.scrollLeft + el.clientWidth >= totalGridWidth - (defaultColWidth ?? DEFAULT_COL_WIDTH) * 2) {
+                expandPendingRef.current = true;
+                setExtraCols(prev => prev + expandColsBy);
+              }
             }
           }}
         >
