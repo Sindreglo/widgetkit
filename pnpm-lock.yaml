@@ -125,14 +125,14 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(next@15.5.15(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(vue@3.5.32(typescript@5.9.3))
       '@widgetkit/booking-react':
-        specifier: ^0.0.2
-        version: 0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: workspace:*
+        version: link:../../packages/booking-react
       '@widgetkit/scheduler-react':
-        specifier: ^0.0.2
-        version: 0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: workspace:*
+        version: link:../../packages/scheduler-react
       '@widgetkit/spreadsheet-react':
-        specifier: ^0.0.1
-        version: 0.0.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: workspace:*
+        version: link:../../packages/spreadsheet-react
       lucide-react:
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.5)
@@ -1433,32 +1433,14 @@ packages:
   '@vue/shared@3.5.32':
     resolution: {integrity: sha512-ksNyrmRQzWJJ8n3cRDuSF7zNNontuJg1YHnmWRJd2AMu8Ij2bqwiiri2lH5rHtYPZjj4STkNcgcmiQqlOjiYGg==}
 
-  '@widgetkit/booking-react@0.0.2':
-    resolution: {integrity: sha512-FG+CxU/xt3EEZgR/cZLgWAhlAymiD/MqmcmSrwuCcT6MWn5y4iNK6odXeNGpHkQaqlaEzZDg5ECEYmt4xhW4iw==}
-    peerDependencies:
-      react: '>=19.0.0'
-      react-dom: '>=19.0.0'
-
   '@widgetkit/booking@0.0.2':
     resolution: {integrity: sha512-9QIidWYONl96q+9WeEy0cSx/JU1mvFUmpOisj0Gsp2jd/n+vjt2ehDMqK4fh8fEX76AmMOhpeCHHlN7QiS3MvQ==}
 
   '@widgetkit/core@0.0.3':
     resolution: {integrity: sha512-AgNAzU4skQjVnLWmkDOMaAm3TPu+4iTVt7kr717elVslNgjEbcviTxkQOzSVsY9c1tHib+gJCn7EBMhOTO5rRg==}
 
-  '@widgetkit/scheduler-react@0.0.2':
-    resolution: {integrity: sha512-w6rfTZwQvUtLafuD7ThbhN7c7qJRJHy6x5OveC87XHcH4juXkWCD25vgm9jcoLKFryNLPbWI+q12yMQfkpB9aA==}
-    peerDependencies:
-      react: '>=19.0.0'
-      react-dom: '>=19.0.0'
-
   '@widgetkit/scheduler@0.0.2':
     resolution: {integrity: sha512-Xe2pQUhzLUPo6x5qnj8VJeSNWu6R6rn+6MRQY+0WsVOfIGTxxBrLd+Kv7/Nl5YIFP6C44l9oA5x7r6QzMTEENA==}
-
-  '@widgetkit/spreadsheet-react@0.0.1':
-    resolution: {integrity: sha512-NiHdy6E8jSlDUhCWk2oEehUFphFPVGsh3oOLC6K12suyuUhfG3E55v/jy40UnIi42nSMB02c3HdfCCRjpNf7cg==}
-    peerDependencies:
-      react: '>=19.0.0'
-      react-dom: '>=19.0.0'
 
   acorn@8.16.0:
     resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
@@ -3444,33 +3426,13 @@ snapshots:
 
   '@vue/shared@3.5.32': {}
 
-  '@widgetkit/booking-react@0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
-    dependencies:
-      '@widgetkit/booking': 0.0.2
-      '@widgetkit/core': 0.0.3
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
-
   '@widgetkit/booking@0.0.2': {}
 
   '@widgetkit/core@0.0.3': {}
 
-  '@widgetkit/scheduler-react@0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
-    dependencies:
-      '@widgetkit/core': 0.0.3
-      '@widgetkit/scheduler': link:packages/scheduler
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
-
   '@widgetkit/scheduler@0.0.2':
     dependencies:
       '@widgetkit/core': 0.0.3
-
-  '@widgetkit/spreadsheet-react@0.0.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
-    dependencies:
-      '@widgetkit/spreadsheet': link:packages/spreadsheet
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
 
   acorn@8.16.0: {}
 
