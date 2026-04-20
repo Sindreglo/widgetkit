@@ -33,9 +33,12 @@ export interface SpreadsheetHandle {
 
 export interface SpreadsheetProps {
   // Data
-  cells: CellMap;
+  cells?: CellMap;
+  defaultCells?: CellMap;
   formats?: Record<string, CellFormat>;
+  defaultFormats?: Record<string, CellFormat>;
   merges?: Record<string, MergeRegion>;
+  defaultMerges?: Record<string, MergeRegion>;
 
   // Grid dimensions
   rows?: number;

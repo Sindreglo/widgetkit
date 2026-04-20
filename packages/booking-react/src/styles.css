@@ -78,8 +78,37 @@
   color: #ffffff;
 }
 
+/* ── Loading ───────────────────────────────────────────────────────────────── */
+.bk-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  z-index: 1;
+}
+.bk-slots-loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+.bk-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--bk-border-color, #e2e8f0);
+  border-top-color: var(--bk-accent, #3b82f6);
+  border-radius: 50%;
+  animation: bk-spin 0.6s linear infinite;
+}
+@keyframes bk-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ── Month view ────────────────────────────────────────────────────────────── */
 .bk-month {
+  position: relative;
   padding: 20px;
 }
 .bk-month-nav {

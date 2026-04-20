@@ -15,6 +15,7 @@ interface Props {
   selectedTime: string | null;
   showPrice?: boolean;
   showDuration?: boolean;
+  loading?: boolean;
   onTimeSelect: (time: string, duration: number) => void;
   onBack?: () => void; // shown in month-day mode
 }
@@ -31,7 +32,7 @@ function formatDateLabel(dateStr: string): string {
   return `${DAY_NAMES[d.getDay()]}, ${d.getDate()}. ${MONTH_NAMES[d.getMonth()]}`;
 }
 
-export function DayView({ date, day, selectedTime, showPrice = true, showDuration = true, onTimeSelect, onBack }: Props) {
+export function DayView({ date, day, selectedTime, showPrice = true, showDuration = true, loading = false, onTimeSelect, onBack }: Props) {
   const slots = day?.slots ?? [];
   const hasSlots = slots.length > 0;
 
@@ -46,12 +47,17 @@ export function DayView({ date, day, selectedTime, showPrice = true, showDuratio
         <span className="bk-day-title">{formatDateLabel(date)}</span>
       </div>
 
-      {!hasSlots && (
-        <div className="bk-day-empty-msg">No available times</div>
-      )}
-
-      <div className="bk-slots">
-        {slots.map(slot => {
+      {loading ? (
+        <div className="bk-slots-loading">
+          <div className="bk-spinner" />
+        </div>
+      ) : (
+        <>
+          {!hasSlots && (
+            <div className="bk-day-empty-msg">No available times</div>
+          )}
+          <div className="bk-slots">
+            {slots.map(slot => {
           const disabled = !slot.available;
           const selected = slot.time === selectedTime;
           let cls = 'bk-slot';
@@ -77,7 +83,9 @@ export function DayView({ date, day, selectedTime, showPrice = true, showDuratio
             </button>
           );
         })}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

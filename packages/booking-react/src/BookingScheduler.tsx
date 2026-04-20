@@ -19,8 +19,10 @@ export interface BookingSchedulerProps {
   // Display
   showPrice?: boolean;
   showDuration?: boolean;
+  loading?: boolean;
 
   onSelect?: (selection: BookingSelection) => void;
+  onMonthChange?: (year: number, month: number) => void;
 }
 
 export function BookingScheduler({
@@ -32,7 +34,9 @@ export function BookingScheduler({
   maxDate,
   showPrice = true,
   showDuration = true,
+  loading = false,
   onSelect,
+  onMonthChange,
 }: BookingSchedulerProps) {
   const now = initialMonth ?? new Date();
 
@@ -81,7 +85,8 @@ export function BookingScheduler({
             minDate={minDate}
             maxDate={maxDate}
             showPrice={showPrice}
-            onMonthChange={(y, m) => { setViewYear(y); setViewMonth(m); }}
+            loading={loading}
+            onMonthChange={(y, m) => { setViewYear(y); setViewMonth(m); onMonthChange?.(y, m); }}
             onDateSelect={handleDateSelect}
           />
         )}
@@ -94,6 +99,7 @@ export function BookingScheduler({
           selectedTime={selectedTime}
           showPrice={showPrice}
           showDuration={showDuration}
+          loading={loading}
           onTimeSelect={handleTimeSelect}
           onBack={mode === 'month-day' ? handleBack : undefined}
         />

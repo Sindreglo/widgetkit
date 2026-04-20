@@ -18,13 +18,14 @@ interface Props {
   minDate?: Date;
   maxDate?: Date;
   showPrice?: boolean;
+  loading?: boolean;
   onMonthChange: (year: number, month: number) => void;
   onDateSelect: (date: string) => void;
 }
 
 export function MonthView({
   year, month, availability, selectedDate, minDate, maxDate, showPrice = true,
-  onMonthChange, onDateSelect,
+  loading = false, onMonthChange, onDateSelect,
 }: Props) {
   const weeks = buildMonthGrid(year, month);
   const dayMap = new Map(availability.map(d => [d.date, d]));
@@ -52,6 +53,11 @@ export function MonthView({
 
   return (
     <div className="bk-month">
+      {loading && (
+        <div className="bk-loading-overlay">
+          <div className="bk-spinner" />
+        </div>
+      )}
       <div className="bk-month-nav">
         <button className="bk-nav-btn" onClick={prevMonth} aria-label="Previous month">
           <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d={icons.chevronLeft} /></svg>

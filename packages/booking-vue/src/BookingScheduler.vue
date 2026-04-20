@@ -14,14 +14,17 @@ const props = withDefaults(defineProps<{
   maxDate?: Date;
   showPrice?: boolean;
   showDuration?: boolean;
+  loading?: boolean;
 }>(), {
   mode: 'month-day',
   showPrice: true,
   showDuration: true,
+  loading: false,
 });
 
 const emit = defineEmits<{
   select: [selection: BookingSelection];
+  'month-change': [year: number, month: number];
 }>();
 
 const now = props.initialMonth ?? new Date();
@@ -62,6 +65,7 @@ function handleBack() {
 function handleMonthChange(y: number, m: number) {
   viewYear.value = y;
   viewMonth.value = m;
+  emit('month-change', y, m);
 }
 </script>
 
@@ -77,6 +81,7 @@ function handleMonthChange(y: number, m: number) {
         :min-date="minDate"
         :max-date="maxDate"
         :show-price="showPrice"
+        :loading="loading"
         @month-change="handleMonthChange"
         @date-select="handleDateSelect"
       />
@@ -90,6 +95,7 @@ function handleMonthChange(y: number, m: number) {
       :show-back="mode === 'month-day'"
       :show-price="showPrice"
       :show-duration="showDuration"
+      :loading="loading"
       @time-select="handleTimeSelect"
       @back="handleBack"
     />

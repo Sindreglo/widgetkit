@@ -18,7 +18,8 @@ const props = withDefaults(defineProps<{
   minDate?: Date;
   maxDate?: Date;
   showPrice?: boolean;
-}>(), { showPrice: true });
+  loading?: boolean;
+}>(), { showPrice: true, loading: false });
 
 const emit = defineEmits<{
   monthChange: [year: number, month: number];
@@ -64,6 +65,9 @@ function dayClass(date: string): string {
 
 <template>
   <div class="bk-month">
+    <div v-if="loading" class="bk-loading-overlay">
+      <div class="bk-spinner" />
+    </div>
     <div class="bk-month-nav">
       <button class="bk-nav-btn" @click="prevMonth" aria-label="Previous month">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

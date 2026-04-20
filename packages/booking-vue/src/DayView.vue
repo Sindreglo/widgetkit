@@ -17,7 +17,8 @@ const props = withDefaults(defineProps<{
   showBack?: boolean;
   showPrice?: boolean;
   showDuration?: boolean;
-}>(), { showBack: false, showPrice: true, showDuration: true });
+  loading?: boolean;
+}>(), { showBack: false, showPrice: true, showDuration: true, loading: false });
 
 const emit = defineEmits<{
   timeSelect: [time: string, duration: number];
@@ -58,11 +59,14 @@ function slotClass(available: boolean, selected: boolean): string {
       <span class="bk-day-title">{{ formatDateLabel(date) }}</span>
     </div>
 
-    <div v-if="!slots.length" class="bk-day-empty-msg">No available times</div>
-
-    <div class="bk-slots">
-      <button
-        v-for="slot in slots"
+    <div v-if="loading" class="bk-slots-loading">
+      <div class="bk-spinner" />
+    </div>
+    <template v-else>
+      <div v-if="!slots.length" class="bk-day-empty-msg">No available times</div>
+      <div class="bk-slots">
+        <button
+          v-for="slot in slots"
         :key="slot.time"
         :class="slotClass(slot.available, slot.time === selectedTime)"
         :disabled="!slot.available"
@@ -76,7 +80,8 @@ function slotClass(available: boolean, selected: boolean): string {
         <span v-if="showPrice && slot.price != null" class="bk-slot-price">
           {{ slot.price }}
         </span>
-      </button>
-    </div>
+        </button>
+      </div>
+    </template>
   </div>
 </template>
