@@ -290,9 +290,6 @@ export default function SchedulerPage() {
         <a href="/" className="nav-logo">
           <span className="nav-logo-widget">Widget</span><span className="nav-logo-kit">Kit</span>
         </a>
-        <ul className="nav-links">
-          <li><a href="/#products">Products</a></li>
-        </ul>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <ThemeToggle />
           <a href="https://github.com/Sindreglo/widgetkit" target="_blank" rel="noopener noreferrer" className="theme-icon-btn" aria-label="GitHub">

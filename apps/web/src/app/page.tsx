@@ -41,9 +41,6 @@ export default function HomePage() {
         <div className="nav-logo">
           <span className="nav-logo-widget">Widget</span><span className="nav-logo-kit">Kit</span>
         </div>
-        <ul className="nav-links">
-          <li><a href="#products">Products</a></li>
-        </ul>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <ThemeToggle />
           <a href="https://github.com/Sindreglo/widgetkit" target="_blank" rel="noopener noreferrer" className="theme-icon-btn" aria-label="GitHub">
@@ -60,8 +57,8 @@ export default function HomePage() {
           <span>serious applications</span>
         </h1>
         <p className="hero-sub">
-          Production-ready scheduler, booking, kanban, and datagrid widgets.
-          Framework-agnostic core with React and Vue bindings.
+          Production-ready UI widgets for serious applications.
+          Framework-agnostic core with React, Vue, and vanilla JS bindings.
         </p>
         <div className="hero-actions">
           <a href="#products" className="btn-primary">Explore widgets</a>

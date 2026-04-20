@@ -11,7 +11,7 @@ const geist = Geist({
 export const metadata: Metadata = {
   title: "Widgetkit — UI widgets for developers",
   description:
-    "Production-ready scheduler, booking, kanban, and datagrid widgets. Framework-agnostic core with React bindings.",
+    "Production-ready UI widgets for developers. Scheduler and booking components with React, Vue, and vanilla JS bindings.",
 };
 
 export default function RootLayout({
