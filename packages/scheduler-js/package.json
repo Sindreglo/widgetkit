@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/scheduler-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Vanilla JavaScript timeline scheduler component",
   "license": "MIT",
   "author": "Sindre Glomnes",

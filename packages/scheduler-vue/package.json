@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/scheduler-vue",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Vue 3 timeline scheduler component",
   "license": "MIT",
   "author": "Sindre Glomnes",

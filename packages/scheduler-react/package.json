@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/scheduler-react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React timeline scheduler component",
   "license": "MIT",
   "author": "Sindre Glomnes",

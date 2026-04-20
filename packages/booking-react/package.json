@@ -1,6 +1,6 @@
 {
   "name": "@widgetkit/booking-react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React booking scheduler component",
   "license": "MIT",
   "author": "Sindre Glomnes",
