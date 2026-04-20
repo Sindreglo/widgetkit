@@ -50,6 +50,12 @@ importers:
       '@widgetkit/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@widgetkit/kanban':
+        specifier: workspace:*
+        version: link:../../packages/kanban
+      '@widgetkit/kanban-react':
+        specifier: workspace:*
+        version: link:../../packages/kanban-react
       '@widgetkit/scheduler':
         specifier: workspace:*
         version: link:../../packages/scheduler
@@ -235,6 +241,40 @@ importers:
       vitest:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@22.19.17)
+
+  packages/kanban:
+    devDependencies:
+      tsup:
+        specifier: ^8.3.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.2(@types/node@22.19.17))(postcss@8.5.9)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
+  packages/kanban-react:
+    dependencies:
+      '@widgetkit/kanban':
+        specifier: workspace:*
+        version: link:../kanban
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.14)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.5
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.5(react@19.2.5)
+      tsup:
+        specifier: ^8.3.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.2(@types/node@22.19.17))(postcss@8.5.9)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
   packages/scheduler:
     dependencies:

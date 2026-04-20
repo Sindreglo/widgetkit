@@ -1,0 +1,29 @@
+{
+  "name": "@widgetkit/kanban",
+  "version": "0.0.1",
+  "description": "Framework-agnostic kanban core for WidgetKit",
+  "license": "MIT",
+  "author": "Sindre Glomnes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sindreglo/widgetkit.git",
+    "directory": "packages/kanban"
+  },
+  "homepage": "https://github.com/Sindreglo/widgetkit/tree/main/packages/kanban",
+  "bugs": { "url": "https://github.com/Sindreglo/widgetkit/issues" },
+  "keywords": ["widgetkit", "kanban", "board", "drag-and-drop"],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": { "build": "tsup", "dev": "tsup --watch" },
+  "devDependencies": { "tsup": "^8.3.0", "typescript": "^5.7.0" }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@widgetkit/kanban-react",
+  "version": "0.0.1",
+  "description": "React kanban component for WidgetKit",
+  "license": "MIT",
+  "author": "Sindre Glomnes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sindreglo/widgetkit.git",
+    "directory": "packages/kanban-react"
+  },
+  "homepage": "https://github.com/Sindreglo/widgetkit/tree/main/packages/kanban-react",
+  "bugs": { "url": "https://github.com/Sindreglo/widgetkit/issues" },
+  "keywords": ["widgetkit", "react", "react-component", "kanban", "board", "drag-and-drop"],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "sideEffects": ["./dist/styles.css"],
+  "scripts": {
+    "build": "tsup && cp src/styles.css dist/styles.css",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@widgetkit/kanban": "workspace:*"
+  },
+  "peerDependencies": { "react": ">=19.0.0", "react-dom": ">=19.0.0" },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0"
+  }
+}

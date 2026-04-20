@@ -13,6 +13,9 @@ import "@widgetkit/booking-react/styles.css";
 import { Spreadsheet } from "@widgetkit/spreadsheet-react";
 import type { CellMap, CellFormat, MergeRegion, SpreadsheetHandle } from "@widgetkit/spreadsheet-react";
 import "@widgetkit/spreadsheet-react/styles.css";
+import { Kanban } from "@widgetkit/kanban-react";
+import type { KanbanColumn } from "@widgetkit/kanban-react";
+import "@widgetkit/kanban-react/styles.css";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -523,6 +526,57 @@ function SpreadsheetDemo() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+const initialKanbanColumns: KanbanColumn[] = [
+  {
+    id: "todo",
+    title: "To Do",
+    cards: [
+      { id: "c1", title: "Research competitors", priority: "high", labels: [{ text: "Research", color: "purple" }] },
+      { id: "c2", title: "Write project brief", priority: "medium", dueDate: "2026-04-25" },
+      { id: "c3", title: "Set up repo", labels: [{ text: "Dev", color: "blue" }] },
+    ],
+  },
+  {
+    id: "in-progress",
+    title: "In Progress",
+    cards: [
+      { id: "c4", title: "Design system tokens", priority: "high", labels: [{ text: "Design", color: "pink" }], description: "Colors, spacing, typography" },
+      { id: "c5", title: "API integration", labels: [{ text: "Dev", color: "blue" }, { text: "Backend", color: "orange" }], dueDate: "2026-04-22" },
+    ],
+  },
+  {
+    id: "review",
+    title: "Review",
+    cards: [
+      { id: "c6", title: "Homepage redesign", priority: "medium", labels: [{ text: "Design", color: "pink" }] },
+    ],
+  },
+  {
+    id: "done",
+    title: "Done",
+    cards: [
+      { id: "c7", title: "Project kickoff", labels: [{ text: "Meeting", color: "green" }] },
+      { id: "c8", title: "Stakeholder alignment", priority: "low" },
+    ],
+  },
+];
+
+function KanbanDemo() {
+  const [columns, setColumns] = useState<KanbanColumn[]>(initialKanbanColumns);
+
+  return (
+    <Kanban
+      columns={columns}
+      onColumnsChange={setColumns}
+      maxHeight={520}
+      enableDarkMode={false}
+      aria-label="Project board"
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 function App() {
   const [items, setItems] = useState(initialItems);
   const [date, setDate] = useState(today);
@@ -705,6 +759,19 @@ function App() {
       </h2>
 
       <SpreadsheetDemo />
+
+      <h2
+        style={{
+          fontSize: 16,
+          fontWeight: 700,
+          color: "#1e293b",
+          marginTop: 24,
+        }}
+      >
+        kanban-react
+      </h2>
+
+      <KanbanDemo />
 
       <div style={{ height: 80 }} />
     </div>

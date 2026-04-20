@@ -14,7 +14,9 @@
     "@widgetkit/booking-react": "workspace:*",
     "@widgetkit/booking": "workspace:*",
     "@widgetkit/spreadsheet": "workspace:*",
-    "@widgetkit/spreadsheet-react": "workspace:*"
+    "@widgetkit/spreadsheet-react": "workspace:*",
+    "@widgetkit/kanban": "workspace:*",
+    "@widgetkit/kanban-react": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
