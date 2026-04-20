@@ -31,6 +31,18 @@ A booking scheduler for displaying available dates and time slots — with per-s
 
 ---
 
+### Spreadsheet
+
+A full-featured spreadsheet with formula support, cell formatting, merged cells, frozen rows/columns, virtual scrolling, copy/paste, and undo/redo.
+
+![](https://raw.githubusercontent.com/Sindreglo/widgetkit/main/spreadsheet.png)
+
+| Package | Version |
+| ------- | ------- |
+| [`@widgetkit/spreadsheet-react`](packages/spreadsheet-react) | [![npm](https://img.shields.io/npm/v/@widgetkit/spreadsheet-react)](https://www.npmjs.com/package/@widgetkit/spreadsheet-react) |
+
+---
+
 ## Monorepo structure
 
 ```
@@ -43,6 +55,8 @@ packages/
   booking/           # Framework-agnostic booking core
   booking-react/     # React component
   booking-vue/       # Vue 3 component
+  spreadsheet/       # Framework-agnostic spreadsheet core
+  spreadsheet-react/ # React component
 apps/
   playground-react/  # React dev playground
   playground-vue/    # Vue dev playground
