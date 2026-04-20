@@ -171,8 +171,8 @@ export function TlItem({
         onPointerDown={readonly ? undefined : onPointerDown}
         onPointerMove={readonly ? undefined : onPointerMove}
         onPointerUp={readonly ? undefined : onPointerUp}
-        onPointerEnter={readonly ? undefined : onPointerEnter}
-        onPointerLeave={readonly ? undefined : onPointerLeave}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
         onContextMenu={readonly ? undefined : onCtxMenu}
         onKeyDown={readonly ? undefined : onKeyDown}
       >

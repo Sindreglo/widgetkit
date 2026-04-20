@@ -498,12 +498,12 @@ export function createScheduler(container: HTMLElement, initialOptions: Schedule
 
     // Items
     root.querySelectorAll<HTMLElement>('.tl-item-block[data-item-id]').forEach(block => {
+      block.addEventListener('pointerenter', handleItemPointerEnter);
+      block.addEventListener('pointerleave', handleItemPointerLeave);
       if (!opts.readonly) {
         block.addEventListener('pointerdown', handleItemPointerDown);
         block.addEventListener('pointermove', handleItemPointerMove);
         block.addEventListener('pointerup', handleItemPointerUp);
-        block.addEventListener('pointerenter', handleItemPointerEnter);
-        block.addEventListener('pointerleave', handleItemPointerLeave);
         block.addEventListener('contextmenu', handleItemContextMenu);
         block.addEventListener('keydown', handleItemKeyDown);
       }

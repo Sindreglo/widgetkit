@@ -88,7 +88,6 @@ function onPointerUp(e: PointerEvent) {
 }
 
 function onPointerEnter(e: PointerEvent) {
-  if (props.readonly) return;
   if (e.pointerType === 'touch') return;
   tooltipRect.value = blockRef.value?.getBoundingClientRect() ?? null;
   tooltipVisible.value = true;
@@ -96,7 +95,6 @@ function onPointerEnter(e: PointerEvent) {
 }
 
 function onPointerLeave(e: PointerEvent) {
-  if (props.readonly) return;
   if (e.pointerType === 'touch') return;
   tooltipVisible.value = false;
   tooltipRect.value = null;
