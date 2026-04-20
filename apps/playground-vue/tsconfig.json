@@ -17,7 +17,9 @@
     "paths": {
       "@widgetkit/scheduler-vue": ["../../packages/scheduler-vue/src/index.ts"],
       "@widgetkit/scheduler": ["../../packages/scheduler/src/index.ts"],
-      "@widgetkit/core": ["../../packages/core/src/index.ts"]
+      "@widgetkit/core": ["../../packages/core/src/index.ts"],
+      "@widgetkit/booking-vue": ["../../packages/booking-vue/src/index.ts"],
+      "@widgetkit/booking": ["../../packages/booking/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.vue"]
