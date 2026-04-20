@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Sidebar } from "./Sidebar";
 import { BookingDemo } from "./BookingDemo";
@@ -286,6 +287,7 @@ export default function BookingPage() {
           </section>
         </main>
       </div>
+      <Footer />
     </>
   );
 }

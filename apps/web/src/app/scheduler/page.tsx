@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Sidebar } from "./Sidebar";
 import { SchedulerDemo } from "./SchedulerDemo";
@@ -438,9 +439,7 @@ export default function SchedulerPage() {
         </main>
       </div>
 
-      <footer className="footer">
-        <p>© {new Date().getFullYear()} Widgetkit — MIT License. Built for developers.</p>
-      </footer>
+      <Footer />
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const products = [
@@ -107,9 +108,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="footer">
-        <p>© {new Date().getFullYear()} Widgetkit — MIT License. Built for developers.</p>
-      </footer>
+      <Footer />
     </>
   );
 }
