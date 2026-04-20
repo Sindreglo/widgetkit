@@ -130,6 +130,9 @@ importers:
       '@widgetkit/scheduler-react':
         specifier: ^0.0.2
         version: 0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@widgetkit/spreadsheet-react':
+        specifier: ^0.0.1
+        version: 0.0.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       lucide-react:
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.5)
@@ -1450,6 +1453,12 @@ packages:
 
   '@widgetkit/scheduler@0.0.2':
     resolution: {integrity: sha512-Xe2pQUhzLUPo6x5qnj8VJeSNWu6R6rn+6MRQY+0WsVOfIGTxxBrLd+Kv7/Nl5YIFP6C44l9oA5x7r6QzMTEENA==}
+
+  '@widgetkit/spreadsheet-react@0.0.1':
+    resolution: {integrity: sha512-NiHdy6E8jSlDUhCWk2oEehUFphFPVGsh3oOLC6K12suyuUhfG3E55v/jy40UnIi42nSMB02c3HdfCCRjpNf7cg==}
+    peerDependencies:
+      react: '>=19.0.0'
+      react-dom: '>=19.0.0'
 
   acorn@8.16.0:
     resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
@@ -3456,6 +3465,12 @@ snapshots:
   '@widgetkit/scheduler@0.0.2':
     dependencies:
       '@widgetkit/core': 0.0.3
+
+  '@widgetkit/spreadsheet-react@0.0.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@widgetkit/spreadsheet': link:packages/spreadsheet
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   acorn@8.16.0: {}
 

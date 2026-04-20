@@ -10,6 +10,7 @@ export function Footer() {
           <a href="/#products">Products</a>
           <a href="/scheduler">Scheduler</a>
           <a href="/booking">Booking</a>
+          <a href="/spreadsheet">Spreadsheet</a>
           <a href="https://github.com/Sindreglo/widgetkit" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
         <div className="footer-bottom">

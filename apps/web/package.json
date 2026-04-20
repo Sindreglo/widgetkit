@@ -12,6 +12,7 @@
     "@vercel/analytics": "^2.0.1",
     "@widgetkit/booking-react": "^0.0.2",
     "@widgetkit/scheduler-react": "^0.0.2",
+    "@widgetkit/spreadsheet-react": "^0.0.1",
     "lucide-react": "^1.8.0",
     "next": "^15.0.0",
     "react": "^19.0.0",

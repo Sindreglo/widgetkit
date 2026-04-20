@@ -23,7 +23,8 @@ const products = [
     name: "Spreadsheet",
     desc: "A lightweight spreadsheet with inline editing, formula support, column resizing, and keyboard navigation.",
     tags: ["React"],
-    soon: true,
+    soon: false,
+    href: "/spreadsheet",
   },
 ];
 
