@@ -124,6 +124,9 @@ importers:
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@15.5.15(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(vue@3.5.32(typescript@5.9.3))
+      '@widgetkit/booking-react':
+        specifier: ^0.0.2
+        version: 0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@widgetkit/scheduler-react':
         specifier: ^0.0.2
         version: 0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1426,6 +1429,12 @@ packages:
 
   '@vue/shared@3.5.32':
     resolution: {integrity: sha512-ksNyrmRQzWJJ8n3cRDuSF7zNNontuJg1YHnmWRJd2AMu8Ij2bqwiiri2lH5rHtYPZjj4STkNcgcmiQqlOjiYGg==}
+
+  '@widgetkit/booking-react@0.0.2':
+    resolution: {integrity: sha512-FG+CxU/xt3EEZgR/cZLgWAhlAymiD/MqmcmSrwuCcT6MWn5y4iNK6odXeNGpHkQaqlaEzZDg5ECEYmt4xhW4iw==}
+    peerDependencies:
+      react: '>=19.0.0'
+      react-dom: '>=19.0.0'
 
   '@widgetkit/booking@0.0.2':
     resolution: {integrity: sha512-9QIidWYONl96q+9WeEy0cSx/JU1mvFUmpOisj0Gsp2jd/n+vjt2ehDMqK4fh8fEX76AmMOhpeCHHlN7QiS3MvQ==}
@@ -3425,6 +3434,13 @@ snapshots:
       vue: 3.5.32(typescript@5.9.3)
 
   '@vue/shared@3.5.32': {}
+
+  '@widgetkit/booking-react@0.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@widgetkit/booking': 0.0.2
+      '@widgetkit/core': 0.0.3
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   '@widgetkit/booking@0.0.2': {}
 

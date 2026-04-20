@@ -372,24 +372,43 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
   }, []);
 
   const pasteSelection = useCallback(() => {
-    const cb = rangeClipboardRef.current;
-    if (!cb) return;
-    pushHistory();
-    const next = { ...cellsRef.current };
-    if (cb.cut) {
-      for (let r = cb.srcMinRow; r <= cb.srcMaxRow; r++)
-        for (let c = cb.srcMinCol; c <= cb.srcMaxCol; c++)
-          delete next[addressToRef(c, r)];
-      rangeClipboardRef.current = null;
-    }
     const { col: anchorCol, row: anchorRow } = selectionRef.current.anchor;
-    for (let r = 0; r < cb.data.length; r++)
-      for (let c = 0; c < cb.data[r].length; c++) {
-        const val = cb.data[r][c];
-        if (val !== null && val !== undefined)
-          next[addressToRef(anchorCol + c, anchorRow + r)] = val;
+
+    const applyData = (data: CellValue[][]) => {
+      pushHistory();
+      const next = { ...cellsRef.current };
+      const cb = rangeClipboardRef.current;
+      if (cb?.cut) {
+        for (let r = cb.srcMinRow; r <= cb.srcMaxRow; r++)
+          for (let c = cb.srcMinCol; c <= cb.srcMaxCol; c++)
+            delete next[addressToRef(c, r)];
+        rangeClipboardRef.current = null;
       }
-    onCellsChangeRef.current?.(next);
+      for (let r = 0; r < data.length; r++)
+        for (let c = 0; c < data[r].length; c++) {
+          const val = data[r][c];
+          if (val !== null && val !== undefined)
+            next[addressToRef(anchorCol + c, anchorRow + r)] = val;
+        }
+      onCellsChangeRef.current?.(next);
+    };
+
+    const parseTsv = (text: string): CellValue[][] =>
+      text.split(/\r?\n/).filter(row => row.length > 0).map(row =>
+        row.split('\t').map(cell => {
+          if (cell === '') return null;
+          const n = Number(cell);
+          return !isNaN(n) && cell.trim() !== '' ? n : cell;
+        })
+      );
+
+    navigator.clipboard.readText()
+      .then(text => applyData(parseTsv(text)))
+      .catch(() => {
+        // Clipboard API unavailable — fall back to internal clipboard
+        const cb = rangeClipboardRef.current;
+        if (cb) applyData(cb.data);
+      });
   }, [pushHistory]);
 
   // Cell formatting
@@ -574,16 +593,25 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
   );
 
   const scrollActiveIntoView = useCallback(
-    (row: number) => {
-      if (!scrollBodyRef.current) return;
+    (row: number, col: number) => {
+      const el = scrollBodyRef.current;
+      if (!el) return;
+
+      // Vertical
       const cellTop = rowTops[row];
       const cellBottom = rowTops[row + 1];
-      const st = scrollBodyRef.current.scrollTop;
-      const vh = scrollBodyRef.current.clientHeight;
-      if (cellTop < st) scrollBodyRef.current.scrollTop = cellTop;
-      else if (cellBottom > st + vh) scrollBodyRef.current.scrollTop = cellBottom - vh;
+      if (cellTop < el.scrollTop) el.scrollTop = cellTop;
+      else if (cellBottom > el.scrollTop + el.clientHeight) el.scrollTop = cellBottom - el.clientHeight;
+
+      // Horizontal
+      const rnw = showRowNumbers ? rowNumWidth : 0;
+      let cellLeft = rnw;
+      for (let c = 0; c < col; c++) cellLeft += internalColWidths[c] ?? defaultColWidth ?? DEFAULT_COL_WIDTH;
+      const cellRight = cellLeft + (internalColWidths[col] ?? defaultColWidth ?? DEFAULT_COL_WIDTH);
+      if (cellLeft - rnw < el.scrollLeft) el.scrollLeft = Math.max(0, cellLeft - rnw);
+      else if (cellRight > el.scrollLeft + el.clientWidth) el.scrollLeft = cellRight - el.clientWidth;
     },
-    [rowTops]
+    [rowTops, showRowNumbers, internalColWidths, defaultColWidth]
   );
 
   const navigate = useCallback(
@@ -596,7 +624,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
         anchor: shouldExtend ? selection.anchor : newActive,
         active: newActive,
       });
-      scrollActiveIntoView(newRow);
+      scrollActiveIntoView(newRow, newCol);
     },
     [selection, effectiveCols, effectiveRows, selectionMode, scrollActiveIntoView]
   );
@@ -772,6 +800,13 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
         case 'Y':
           if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); redo(); }
           break;
+        case 'a':
+        case 'A':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setSelection({ anchor: { col: 0, row: 0 }, active: { col: effectiveCols - 1, row: effectiveRows - 1 } });
+          }
+          break;
         case 'b':
         case 'B':
           if ((e.ctrlKey || e.metaKey) && !readOnly) { e.preventDefault(); applyFormat({ bold: !(formats?.[anchorRef]?.bold) }); }
@@ -837,19 +872,19 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
       const addr = parseRef(cellRef);
       if (!addr) return;
       setSelection({ anchor: addr, active: addr });
-      scrollActiveIntoView(addr.row);
+      scrollActiveIntoView(addr.row, addr.col);
     },
     setSelection: (cellRef: string) => {
       const addr = parseRef(cellRef);
       if (!addr) return;
       setSelection({ anchor: addr, active: addr });
-      scrollActiveIntoView(addr.row);
+      scrollActiveIntoView(addr.row, addr.col);
     },
     startEdit: (cellRef: string) => {
       const addr = parseRef(cellRef);
       if (!addr) return;
       setSelection({ anchor: addr, active: addr });
-      scrollActiveIntoView(addr.row);
+      scrollActiveIntoView(addr.row, addr.col);
       enterEditMode(cellRef);
     },
     exportCsv: () => exportCsv(cells, computed, effectiveRows, effectiveCols),

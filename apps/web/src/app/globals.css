@@ -299,6 +299,13 @@ a {
   transition: opacity 0.15s;
 }
 
+.product-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
 .product-link:hover {
   opacity: 0.75;
 }
@@ -920,6 +927,49 @@ a {
   overflow-y: hidden;
   border: 1px solid var(--border);
   margin-top: 1.5rem;
+}
+
+/* ── Booking ─────────────────────────────────────────────── */
+
+.booking-demo {
+  margin-top: 1.5rem;
+}
+
+/* Dark-mode overrides for the booking widget CSS variables */
+.bk-root {
+  --bk-bg:           var(--bg-card);
+  --bk-border-color: var(--border);
+  --bk-text-color:   var(--text);
+  --bk-muted-color:  var(--text-muted);
+  --bk-hover-bg:     var(--bg-card-hover);
+  --bk-accent:       var(--accent);
+}
+
+[data-theme="light"] .bk-root {
+  --bk-bg:           #ffffff;
+  --bk-border-color: #e2e8f0;
+  --bk-text-color:   #1e293b;
+  --bk-muted-color:  #64748b;
+  --bk-hover-bg:     #f1f5f9;
+  --bk-accent:       var(--accent);
+}
+
+.booking-selection {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding: 0.625rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.booking-selection-label {
+  font-weight: 500;
+  color: var(--text);
 }
 
 /* ── Responsive ─────────────────────────────────────────── */
