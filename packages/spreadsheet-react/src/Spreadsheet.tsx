@@ -12,8 +12,12 @@ import {
   evaluate,
   colToLetters,
   addressToRef,
+  refToAddress,
   isError,
   exportCsv,
+  toCellValue,
+  shiftRows,
+  shiftCols,
   type CellMap,
   type CellValue,
 } from '@widgetkit/spreadsheet';
@@ -26,49 +30,6 @@ const DEFAULT_COL_WIDTH = 100;
 const DEFAULT_MAX_HEIGHT = 400;
 const BUFFER = 5;
 
-function toCellValue(raw: string): CellValue {
-  if (raw === '') return null;
-  if (raw.startsWith('=')) return raw;
-  const n = Number(raw);
-  if (!isNaN(n) && raw.trim() !== '') return n;
-  return raw;
-}
-
-function parseRef(ref: string): { col: number; row: number } | null {
-  const m = ref.match(/^([A-Z]+)(\d+)$/i);
-  if (!m) return null;
-  let col = 0;
-  for (const ch of m[1].toUpperCase()) col = col * 26 + (ch.charCodeAt(0) - 64);
-  return { col: col - 1, row: parseInt(m[2], 10) - 1 };
-}
-
-// ── Row / column shift helpers ────────────────────────────────────────────────
-
-function shiftRows(cells: CellMap, fromRow: number, delta: number): CellMap {
-  const out: CellMap = {};
-  for (const [ref, val] of Object.entries(cells)) {
-    const m = ref.match(/^([A-Z]+)(\d+)$/i);
-    if (!m) { out[ref] = val; continue; }
-    const r = parseInt(m[2], 10) - 1;
-    if (delta < 0 && r === fromRow) continue;
-    out[r < fromRow ? ref : `${m[1]}${r + delta + 1}`] = val;
-  }
-  return out;
-}
-
-function shiftCols(cells: CellMap, fromCol: number, delta: number): CellMap {
-  const out: CellMap = {};
-  for (const [ref, val] of Object.entries(cells)) {
-    const m = ref.match(/^([A-Z]+)(\d+)$/i);
-    if (!m) { out[ref] = val; continue; }
-    let c = 0;
-    for (const ch of m[1].toUpperCase()) c = c * 26 + (ch.charCodeAt(0) - 64);
-    c--;
-    if (delta < 0 && c === fromCol) continue;
-    out[c < fromCol ? ref : `${colToLetters(c + delta)}${m[2]}`] = val;
-  }
-  return out;
-}
 
 // ── Context menu ──────────────────────────────────────────────────────────────
 
@@ -308,7 +269,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
     const map = new Map<string, { anchorCol: number; anchorRow: number; colSpan: number; rowSpan: number }>();
     if (!merges) return map;
     for (const [ref, { colSpan, rowSpan }] of Object.entries(merges)) {
-      const addr = parseRef(ref);
+      const addr = refToAddress(ref);
       if (!addr) continue;
       for (let r = addr.row; r < addr.row + rowSpan; r++)
         for (let c = addr.col; c < addr.col + colSpan; c++)
@@ -688,7 +649,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
         const el = document.elementFromPoint(e.clientX, e.clientY);
         const cellEl = el?.closest<HTMLElement>('[data-ref]');
         if (!cellEl?.dataset.ref) return;
-        const addr = parseRef(cellEl.dataset.ref);
+        const addr = refToAddress(cellEl.dataset.ref);
         if (!addr) return;
         setSelection(prev => ({ anchor: prev.anchor, active: addr }));
       };
@@ -732,7 +693,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
         const el = document.elementFromPoint(e.clientX, e.clientY);
         const cellEl = el?.closest<HTMLElement>('[data-ref]');
         if (!cellEl?.dataset.ref) return;
-        const addr = parseRef(cellEl.dataset.ref);
+        const addr = refToAddress(cellEl.dataset.ref);
         if (!addr) return;
         const newMinCol = Math.max(0, Math.min(effectiveCols - 1 - selW, addr.col - offsetCol));
         const newMinRow = Math.max(0, Math.min(effectiveRows - 1 - selH, addr.row - offsetRow));
@@ -929,19 +890,19 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
 
   useImperativeHandle(ref, () => ({
     scrollToCell: (cellRef: string) => {
-      const addr = parseRef(cellRef);
+      const addr = refToAddress(cellRef);
       if (!addr) return;
       setSelection({ anchor: addr, active: addr });
       scrollActiveIntoView(addr.row, addr.col);
     },
     setSelection: (cellRef: string) => {
-      const addr = parseRef(cellRef);
+      const addr = refToAddress(cellRef);
       if (!addr) return;
       setSelection({ anchor: addr, active: addr });
       scrollActiveIntoView(addr.row, addr.col);
     },
     startEdit: (cellRef: string) => {
-      const addr = parseRef(cellRef);
+      const addr = refToAddress(cellRef);
       if (!addr) return;
       setSelection({ anchor: addr, active: addr });
       scrollActiveIntoView(addr.row, addr.col);
@@ -1255,7 +1216,7 @@ export const Spreadsheet = forwardRef<SpreadsheetHandle, SpreadsheetProps>(funct
 
             {/* Merged cell overlays */}
             {merges && Object.entries(merges).map(([mRef, { colSpan, rowSpan }]) => {
-              const addr = parseRef(mRef);
+              const addr = refToAddress(mRef);
               if (!addr) return null;
               const { col: aC, row: aR } = addr;
               const effCols = Math.min(colSpan, cols - aC);

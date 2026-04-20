@@ -4,6 +4,8 @@ A clean, accessible booking scheduler component for React. Supports month + day 
 
 ![](https://raw.githubusercontent.com/Sindreglo/widgetkit/main/booking.png)
 
+**[Documentation & live demo →](https://widgetkit.vercel.app/booking)**
+
 ## Installation
 
 ```bash
@@ -73,18 +75,43 @@ export default function App() {
 
 ### Display
 
-| Prop           | Type      | Default | Description                                    |
-| -------------- | --------- | ------- | ---------------------------------------------- |
-| `showPrice`    | `boolean` | `true`  | Show prices on day cells and time slots.       |
-| `showDuration` | `boolean` | `true`  | Show duration label on each time slot.         |
+| Prop           | Type      | Default | Description                                                      |
+| -------------- | --------- | ------- | ---------------------------------------------------------------- |
+| `showPrice`    | `boolean` | `true`  | Show prices on day cells and time slots.                         |
+| `showDuration` | `boolean` | `true`  | Show duration label on each time slot.                           |
+| `loading`      | `boolean` | `false` | Show a spinner over the calendar and slot list while data loads. |
 
 ---
 
 ## Events
 
-| Prop       | Signature                              | Description                                                                      |
-| ---------- | -------------------------------------- | -------------------------------------------------------------------------------- |
-| `onSelect` | `(selection: BookingSelection) => void` | Fired when the user selects a date (`month-only`) or a time slot (`month-day`, `day-only`). |
+| Prop             | Signature                               | Description                                                                                     |
+| ---------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `onSelect`       | `(selection: BookingSelection) => void` | Fired when the user selects a date (`month-only`) or a time slot (`month-day`, `day-only`).     |
+| `onMonthChange`  | `(year: number, month: number) => void` | Fired when the user navigates to a different month. Use this to load availability data on demand. |
+
+### Loading availability on demand
+
+`onMonthChange` is ideal for fetching availability from an API per month rather than passing all dates upfront:
+
+```tsx
+const [availability, setAvailability] = useState<AvailabilityDay[]>([]);
+const [loading, setLoading] = useState(false);
+
+async function handleMonthChange(year: number, month: number) {
+  setLoading(true);
+  const data = await fetchAvailability(year, month);
+  setAvailability(data);
+  setLoading(false);
+}
+
+<BookingScheduler
+  availability={availability}
+  loading={loading}
+  onMonthChange={handleMonthChange}
+  onSelect={(s) => console.log(s)}
+/>
+```
 
 ---
 

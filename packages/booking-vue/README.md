@@ -4,6 +4,8 @@ A clean, accessible booking scheduler component for Vue 3. Supports month + day 
 
 ![](https://raw.githubusercontent.com/Sindreglo/widgetkit/main/booking.png)
 
+**[Documentation & live demo →](https://widgetkit.vercel.app/booking)**
+
 ## Installation
 
 ```bash
@@ -77,18 +79,50 @@ function onSelect(selection) {
 
 ### Display
 
-| Prop           | Type      | Default | Description                              |
-| -------------- | --------- | ------- | ---------------------------------------- |
-| `showPrice`    | `boolean` | `true`  | Show prices on day cells and time slots. |
-| `showDuration` | `boolean` | `true`  | Show duration label on each time slot.   |
+| Prop           | Type      | Default | Description                                                      |
+| -------------- | --------- | ------- | ---------------------------------------------------------------- |
+| `showPrice`    | `boolean` | `true`  | Show prices on day cells and time slots.                         |
+| `showDuration` | `boolean` | `true`  | Show duration label on each time slot.                           |
+| `loading`      | `boolean` | `false` | Show a spinner over the calendar and slot list while data loads. |
 
 ---
 
 ## Events
 
-| Event    | Payload             | Description                                                                      |
-| -------- | ------------------- | -------------------------------------------------------------------------------- |
-| `select` | `BookingSelection`  | Emitted when the user selects a date (`month-only`) or a time slot (`month-day`, `day-only`). |
+| Event          | Payload                              | Description                                                                                       |
+| -------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `select`       | `BookingSelection`                   | Emitted when the user selects a date (`month-only`) or a time slot (`month-day`, `day-only`).     |
+| `month-change` | `{ year: number, month: number }`    | Emitted when the user navigates to a different month. Use this to load availability data on demand. |
+
+### Loading availability on demand
+
+`month-change` is ideal for fetching availability from an API per month rather than passing all dates upfront:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { BookingScheduler } from "@widgetkit/booking-vue";
+import type { AvailabilityDay } from "@widgetkit/booking-vue";
+
+const availability = ref<AvailabilityDay[]>([]);
+const loading = ref(false);
+
+async function onMonthChange(year: number, month: number) {
+  loading.value = true;
+  availability.value = await fetchAvailability(year, month);
+  loading.value = false;
+}
+</script>
+
+<template>
+  <BookingScheduler
+    :availability="availability"
+    :loading="loading"
+    @month-change="onMonthChange"
+    @select="(s) => console.log(s)"
+  />
+</template>
+```
 
 ---
 

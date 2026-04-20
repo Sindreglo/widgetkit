@@ -4,6 +4,8 @@ A fast, accessible timeline scheduler component for Vue 3. Supports drag-and-dro
 
 ![](https://raw.githubusercontent.com/sindreglo/widgetkit/main/scheduler.png)
 
+**[Documentation & live demo →](https://widgetkit.vercel.app/scheduler)**
+
 ## Installation
 
 ```bash
@@ -92,7 +94,7 @@ const items = ref([
 | `resizable`          | `boolean` | `false` | Allow items to be resized by dragging their edges.                     |
 | `creatable`          | `boolean` | `false` | Allow new items to be created by clicking and holding on an empty row. |
 | `editable`           | `boolean` | `true`  | Show an edit modal on double-click.                                    |
-| `readonly`           | `boolean` | `false` | Disable all interactions. Overrides all of the above.                  |
+| `readonly`           | `boolean` | `false` | Disable all interactions (drag, resize, create, edit, keyboard). Tooltips and hover events still work. |
 | `minDurationMinutes` | `number`  | `0`     | Minimum item duration in minutes. `0` means no limit.                  |
 | `maxDurationMinutes` | `number`  | `0`     | Maximum item duration in minutes. `0` means no limit.                  |
 

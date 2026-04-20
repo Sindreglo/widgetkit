@@ -4,3 +4,4 @@ export { colToLetters, lettersToCol, refToAddress, addressToRef, expandRange } f
 export { evaluateFormula, extractDeps } from './parser';
 export { evaluate } from './engine';
 export { exportCsv } from './csv';
+export { toCellValue, shiftRows, shiftCols } from './utils';

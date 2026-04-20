@@ -4,6 +4,8 @@ A vanilla JavaScript timeline scheduler. No framework required — works in any 
 
 ![](https://raw.githubusercontent.com/Sindreglo/widgetkit/main/scheduler.png)
 
+**[Documentation & live demo →](https://widgetkit.vercel.app/scheduler)**
+
 ## Installation
 
 ```bash
@@ -104,7 +106,7 @@ Removes the scheduler from the DOM and cleans up all event listeners and timers.
 | `resizable`          | `boolean` | `false` | Show resize handles on items.                  |
 | `creatable`          | `boolean` | `false` | Hold on empty space to create a new item.      |
 | `editable`           | `boolean` | `true`  | Show edit option in context menu.              |
-| `readonly`           | `boolean` | `false` | Disables all interaction.                      |
+| `readonly`           | `boolean` | `false` | Disables all interaction (drag, resize, create, edit, keyboard). Tooltips and hover events still work. |
 | `minDurationMinutes` | `number`  | `0`     | Minimum item duration when resizing.           |
 | `maxDurationMinutes` | `number`  | `0`     | Maximum item duration (0 = unlimited).         |
 
