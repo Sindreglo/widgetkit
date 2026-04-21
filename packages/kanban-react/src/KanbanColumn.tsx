@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { KanbanCard, KanbanColumn } from '@widgetkit/kanban';
+import { icons } from '@widgetkit/core';
 import { KanbanCardComponent } from './KanbanCard';
 
 interface KanbanColumnProps {
@@ -59,7 +60,7 @@ export function KanbanColumnComponent({
             onClick={e => { e.stopPropagation(); onDeleteColumn(); }}
             aria-label={`Delete column ${column.title}`}
           >
-            ×
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: icons.close }} />
           </button>
         )}
       </div>
@@ -81,30 +82,37 @@ export function KanbanColumnComponent({
           </div>
         ))}
         {dropTarget === column.cards.length && <div className="kn-card-drop-indicator" />}
-
-        {isAddingCard ? (
-          <div className="kn-add-card-form">
-            <textarea
-              className="kn-input kn-add-card-input"
-              autoFocus
-              placeholder="Card title"
-              value={newCardTitle}
-              onChange={e => onNewCardTitleChange(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onAddCard(); }
-                if (e.key === 'Escape') onCancelAddCard();
-              }}
-              rows={2}
-            />
-            <div className="kn-add-card-actions">
-              <button className="kn-btn kn-btn--primary" onClick={onAddCard}>Add card</button>
-              <button className="kn-btn" onClick={onCancelAddCard}>Cancel</button>
-            </div>
-          </div>
-        ) : showAddCard ? (
-          <button className="kn-add-card-btn" onClick={onStartAddCard}>+ Add card</button>
-        ) : null}
       </div>
+
+      {showAddCard && (
+        <div className="kn-column-footer">
+          {isAddingCard ? (
+            <div className="kn-add-card-form">
+              <textarea
+                className="kn-input kn-add-card-input"
+                autoFocus
+                placeholder="Task title"
+                value={newCardTitle}
+                onChange={e => onNewCardTitleChange(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onAddCard(); }
+                  if (e.key === 'Escape') onCancelAddCard();
+                }}
+                rows={2}
+              />
+              <div className="kn-add-card-actions">
+                <button className="kn-btn kn-btn--primary" onClick={onAddCard}>Add task</button>
+                <button className="kn-btn" onClick={onCancelAddCard}>Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <button className="kn-add-card-btn" onClick={onStartAddCard}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: icons.plus }} />
+              Add task
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

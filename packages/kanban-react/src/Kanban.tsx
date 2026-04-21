@@ -19,6 +19,7 @@ import {
   findCard,
   generateId,
 } from '@widgetkit/kanban';
+import { icons } from '@widgetkit/core';
 import { KanbanColumnComponent } from './KanbanColumn';
 import { CardModal } from './CardModal';
 
@@ -393,7 +394,7 @@ export const Kanban = forwardRef<KanbanHandle, KanbanProps>((props, ref) => {
     <div
       className={`kn-board${enableDarkMode ? '' : ' kn-board--light'}`}
       ref={boardRef}
-      style={maxHeight ? { maxHeight, overflowY: 'hidden' } : undefined}
+      style={maxHeight ? { height: maxHeight, overflow: 'hidden' } : undefined}
       aria-label={props['aria-label']}
     >
       <div className="kn-board-scroll">
@@ -464,7 +465,8 @@ export const Kanban = forwardRef<KanbanHandle, KanbanProps>((props, ref) => {
               </div>
             ) : (
               <button className="kn-add-column-btn" onClick={() => setAddingColumn(true)}>
-                + Add column
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: icons.plus }} />
+                Add column
               </button>
             )}
           </div>

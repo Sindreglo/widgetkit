@@ -31,7 +31,8 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@widgetkit/kanban": "workspace:*"
+    "@widgetkit/kanban": "workspace:*",
+    "@widgetkit/core": "workspace:*"
   },
   "peerDependencies": { "react": ">=19.0.0", "react-dom": ">=19.0.0" },
   "devDependencies": {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { KanbanCard, KanbanLabel, LabelColor } from '@widgetkit/kanban';
+import { icons } from '@widgetkit/core';
 
 const LABEL_COLORS: LabelColor[] = [
   'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray',
@@ -59,7 +60,9 @@ export function CardModal({ card, onClose, onUpdate, onDelete }: CardModalProps)
             onChange={e => setTitle(e.target.value)}
             placeholder="Card title"
           />
-          <button className="kn-modal-close" onClick={() => { save(); onClose(); }} aria-label="Close">×</button>
+          <button className="kn-modal-close" onClick={() => { save(); onClose(); }} aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: icons.close }} />
+          </button>
         </div>
 
         <div className="kn-modal-body">
@@ -110,7 +113,7 @@ export function CardModal({ card, onClose, onUpdate, onDelete }: CardModalProps)
                       className="kn-label-remove"
                       onClick={() => setLabels(prev => prev.filter((_, j) => j !== i))}
                     >
-                      ×
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: icons.close }} />
                     </button>
                   </span>
                 ))}

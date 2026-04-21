@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { KanbanCard } from '@widgetkit/kanban';
+import { icons } from '@widgetkit/core';
 
 interface KanbanCardProps {
   card: KanbanCard;
@@ -76,7 +77,17 @@ export function KanbanCardComponent({
         <div className="kn-card-desc">{card.description}</div>
       )}
 
-      {(card.priority || card.dueDate || !readOnly) && (
+      {!readOnly && (
+        <button
+          className="kn-card-delete-btn"
+          onClick={e => { e.stopPropagation(); onDelete(); }}
+          aria-label="Delete card"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: icons.close }} />
+        </button>
+      )}
+
+      {(card.priority || card.dueDate) && (
         <div className="kn-card-meta">
           {card.priority && (
             <span className={`kn-card-priority kn-card-priority--${card.priority}`}>
@@ -85,17 +96,9 @@ export function KanbanCardComponent({
           )}
           {card.dueDate && (
             <span className={`kn-card-due${isOverdue(card.dueDate) ? ' kn-card-due--overdue' : ''}`}>
-              📅 {formatDate(card.dueDate)}
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: icons.calendar }} />
+              {formatDate(card.dueDate)}
             </span>
-          )}
-          {!readOnly && (
-            <button
-              className="kn-card-delete-btn"
-              onClick={e => { e.stopPropagation(); onDelete(); }}
-              aria-label="Delete card"
-            >
-              ×
-            </button>
           )}
         </div>
       )}

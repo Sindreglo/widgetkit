@@ -253,6 +253,9 @@ importers:
 
   packages/kanban-react:
     dependencies:
+      '@widgetkit/core':
+        specifier: workspace:*
+        version: link:../core
       '@widgetkit/kanban':
         specifier: workspace:*
         version: link:../kanban

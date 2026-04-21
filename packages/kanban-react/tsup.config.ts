@@ -6,7 +6,7 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', '@widgetkit/kanban'],
+  external: ['react', 'react-dom', '@widgetkit/kanban', '@widgetkit/core'],
   esbuildOptions(options) {
     options.jsx = 'automatic';
   },

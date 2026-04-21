@@ -6,7 +6,7 @@
   --kn-card-bg: #ffffff;
   --kn-card-border: #e2e8f0;
   --kn-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --kn-card-radius: 8px;
+  --kn-card-radius: 0px;
   --kn-text: #0f172a;
   --kn-text-muted: #64748b;
   --kn-text-subtle: #94a3b8;
@@ -50,6 +50,8 @@
   background: var(--kn-bg);
   font-family: inherit;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .kn-board *,
@@ -61,22 +63,20 @@
 /* Board scroll container */
 .kn-board-scroll {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: var(--kn-gap);
   padding: 16px;
   overflow-x: auto;
+  flex: 1;
   min-height: 200px;
 }
 
 /* Column */
 .kn-column {
   flex: 0 0 var(--kn-col-width);
-  background: var(--kn-column-bg);
-  border: 1px solid var(--kn-column-border);
-  border-radius: var(--kn-column-radius);
   display: flex;
   flex-direction: column;
-  max-height: 100%;
+  height: 100%;
 }
 
 .kn-column--dragging {
@@ -87,7 +87,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 12px 8px;
+  padding: 0 4px 10px;
+  border-bottom: 2px solid var(--kn-column-border);
+  margin-bottom: 4px;
   cursor: grab;
   user-select: none;
 }
@@ -141,7 +143,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 4px 8px 8px;
+  padding: 8px 4px 8px;
   overflow-y: auto;
   flex: 1;
 }
@@ -167,9 +169,10 @@
   opacity: 0.3;
 }
 
-.kn-card--priority-low   { border-left: 3px solid var(--kn-priority-low); }
+
+.kn-card--priority-low    { border-left: 3px solid var(--kn-priority-low); }
 .kn-card--priority-medium { border-left: 3px solid var(--kn-priority-medium); }
-.kn-card--priority-high  { border-left: 3px solid var(--kn-priority-high); }
+.kn-card--priority-high   { border-left: 3px solid var(--kn-priority-high); }
 
 .kn-card-labels {
   display: flex;
@@ -204,18 +207,19 @@
 
 .kn-card-priority {
   font-size: 0.7rem;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 99px;
 }
 
-.kn-card-priority--low    { color: var(--kn-priority-low);    background: color-mix(in srgb, var(--kn-priority-low)    12%, transparent); }
-.kn-card-priority--medium { color: var(--kn-priority-medium); background: color-mix(in srgb, var(--kn-priority-medium) 12%, transparent); }
-.kn-card-priority--high   { color: var(--kn-priority-high);   background: color-mix(in srgb, var(--kn-priority-high)   12%, transparent); }
+.kn-card-priority--low    { background: color-mix(in srgb, var(--kn-priority-low)    15%, transparent); color: color-mix(in srgb, var(--kn-priority-low)    70%, #14532d); }
+.kn-card-priority--medium { background: color-mix(in srgb, var(--kn-priority-medium) 15%, transparent); color: color-mix(in srgb, var(--kn-priority-medium) 70%, #78350f); }
+.kn-card-priority--high   { background: color-mix(in srgb, var(--kn-priority-high)   15%, transparent); color: var(--kn-priority-high); }
 
 .kn-card-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.7rem;
   color: var(--kn-text-muted);
 }
@@ -226,15 +230,16 @@
 }
 
 .kn-card-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
   background: none;
   border: none;
   color: var(--kn-text-subtle);
   cursor: pointer;
-  font-size: 1rem;
-  padding: 0 4px;
+  padding: 2px;
   border-radius: 4px;
   line-height: 1;
-  margin-left: auto;
   opacity: 0;
   transition: opacity 0.15s, color 0.15s;
 }
@@ -300,22 +305,29 @@
   min-height: 100px;
 }
 
-/* Add card */
+/* Add task footer */
+.kn-column-footer {
+  padding: 4px 4px 8px;
+  flex-shrink: 0;
+}
+
 .kn-add-card-btn {
   background: none;
   border: none;
   color: var(--kn-text-muted);
   font-size: 0.8rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   padding: 6px 4px;
   border-radius: 6px;
   text-align: left;
   width: 100%;
-  transition: background 0.15s, color 0.15s;
+  transition: color 0.15s;
 }
 
 .kn-add-card-btn:hover {
-  background: var(--kn-column-border);
   color: var(--kn-text);
 }
 
@@ -345,6 +357,9 @@
   color: var(--kn-text-muted);
   font-size: 0.875rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 12px 16px;
   border-radius: var(--kn-column-radius);
   width: 100%;
