@@ -299,7 +299,6 @@
   background: var(--kn-accent);
   border-radius: 99px;
   align-self: stretch;
-  min-height: 100px;
 }
 
 /* Add task footer */
