@@ -88,6 +88,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 4px 10px;
+  min-height: 36px;
   border-bottom: 2px solid var(--kn-column-border);
   margin-bottom: 4px;
   cursor: grab;
@@ -352,31 +353,34 @@
 }
 
 .kn-add-column-btn {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px dashed var(--kn-column-border);
+  background: none;
+  border: none;
+  border-bottom: 2px solid var(--kn-column-border);
   color: var(--kn-text-muted);
   font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 12px 16px;
-  border-radius: var(--kn-column-radius);
+  padding: 0 4px 10px;
+  min-height: 36px;
   width: 100%;
   text-align: left;
-  transition: background 0.15s, color 0.15s;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .kn-add-column-btn:hover {
-  background: rgba(0, 0, 0, 0.07);
   color: var(--kn-text);
+  border-color: var(--kn-text-muted);
 }
 
 .kn-add-column-form {
-  background: var(--kn-column-bg);
-  border: 1px solid var(--kn-column-border);
-  border-radius: var(--kn-column-radius);
-  padding: 12px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid var(--kn-column-border);
+  padding: 0 4px 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
