@@ -1,5 +1,4 @@
 .kn-board {
-  --kn-bg: #f8fafc;
   --kn-column-bg: #f1f5f9;
   --kn-column-border: #e2e8f0;
   --kn-column-radius: 10px;
@@ -34,7 +33,6 @@
 
 @media (prefers-color-scheme: dark) {
   .kn-board:not(.kn-board--light) {
-    --kn-bg: #0f172a;
     --kn-column-bg: #1e293b;
     --kn-column-border: #334155;
     --kn-card-bg: #1e293b;
@@ -47,7 +45,6 @@
 }
 
 .kn-board {
-  background: var(--kn-bg);
   font-family: inherit;
   box-sizing: border-box;
   display: flex;
@@ -65,7 +62,6 @@
   display: flex;
   align-items: stretch;
   gap: var(--kn-gap);
-  padding: 16px;
   overflow-x: auto;
   flex: 1;
   min-height: 200px;
